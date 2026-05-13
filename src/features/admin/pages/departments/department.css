@@ -1,0 +1,225 @@
+/* ── Department Section ──────────────────────────────────────── */
+.dept-section { width: 100%; }
+
+/* ── Department Grid ─────────────────────────────────────────── */
+.dept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* ── Department Card ─────────────────────────────────────────── */
+.dept-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  border: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dept-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  border-color: var(--accent);
+}
+
+.dept-inactive { opacity: 0.55; }
+
+.dept-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dept-icon    { font-size: 1.8rem; line-height: 1; }
+.dept-icon-lg { font-size: 2.4rem; line-height: 1; flex-shrink: 0; }
+
+.dept-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.dept-desc {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  line-height: 1.5;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dept-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.dept-stat { display: flex; flex-direction: column; }
+
+.dept-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  line-height: 1;
+}
+
+.dept-stat-label {
+  font-size: 0.7rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dept-head { display: flex; flex-direction: column; align-items: flex-end; max-width: 60%; }
+
+.dept-head-label {
+  font-size: 0.65rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dept-head-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-2);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ── Department Detail ───────────────────────────────────────── */
+.dept-detail { width: 100%; }
+
+.dept-detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.dept-detail-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dept-detail-title h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.dept-detail-title p { font-size: 0.8rem; color: var(--text-3); }
+
+/* ── Stats Row ───────────────────────────────────────────────── */
+.dept-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.dept-stat-box {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dsb-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dsb-label {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.text-green { color: #15803d !important; }
+.text-red   { color: #dc2626 !important; }
+
+/* ── Staff Panel ─────────────────────────────────────────────── */
+.dept-staff-section {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.dept-staff-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dept-staff-header h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Dept assignment badge in AddStaff ───────────────────────── */
+.dept-assignment-row {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+}
+
+.dept-badge { display: flex; flex-direction: column; gap: 3px; }
+
+.dept-badge-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+
+.dept-badge.primary .dept-badge-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.dept-badge-value { font-size: 0.875rem; font-weight: 500; color: var(--text); }
+
+.field-hint {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 4px;
+  line-height: 1.4;
+}
