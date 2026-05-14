@@ -6,17 +6,20 @@ const api= axios.create({
     withCredentials: true,
 });
 
-function getCsrfToken(){
-	return document.cookie.split(";").find((row)=>row.startsWith("csrftoken="))?.split("=")[1];
+let csrfToken = null;
+
+export async function initCsrf() {
+    const res = await api.get("/csrf/");
+    csrfToken = res.data.csrfToken; // Django returns it in body
 }
 
 //Attach X-CSRFToken header on all mutating requests
 api.interceptors.request.use((config)=>{
     const method=config.method?.toUpperCase();
     if (["POST","PUT","PATCH","DELETE"].includes(method)) {
-         const csrf=getCsrfToken();
-         if (csrf) config.headers["X-CSRFToken"]=csrf;
+        if (csrfToken) config.headers["X-CSRFToken"]=csrfToken;
     }
     return config;
 });
+
 export default api;
