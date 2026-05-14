@@ -13,7 +13,7 @@ export default function LoginPage(){
 
     if (loading) return null;
     if (user){
-       if (!user.has_changed_password) return <Navigate to="/change-password" replace />;
+      //  if (!user.has_changed_password) return <Navigate to="/change-password" replace />;
        if (user.role==="ADM") return <Navigate to="/superadmin" replace />;
     }
     const handleChange = (e) => {
@@ -27,10 +27,10 @@ export default function LoginPage(){
        try {
            await api.get("/csrf/");
            const{ redirectUrl, user:loggedInUser } = await login(form.email,form.password);
-           if (!loggedInUser.has_changed_password) {
-	navigate("/change-password", { replace: true });
-	return;
-           }
+   //         if (!loggedInUser.has_changed_password) {
+	// navigate("/change-password", { replace: true });
+	// return;
+   //         }
            navigate(redirectUrl, { replace:true });
        } catch(err) {
   	console.log("Login error:", err.response?.status, err.response?.data);
