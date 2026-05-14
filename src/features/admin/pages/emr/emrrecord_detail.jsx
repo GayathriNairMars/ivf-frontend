@@ -14,7 +14,7 @@ function InfoRow({label,value}) {
 }
 
 function FileLink({label,url}) {
-	if (!url) return useCallback;
+	if (!url) return null;
 	return (
 		<div className="info-row">
 			<span className="info-label">{label}</span>
@@ -57,7 +57,7 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 	const renderSubSection= () => {
 		const r =record;
 		switch(r.record_type){
-		
+
 			case "CONSULTATION":
 				return r.consultation ? (
 					<div className="form-card">
@@ -69,7 +69,7 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 						<InfoRow label="Plan" value={r.consultation.plan} />
 					</div>
 				): null;
-			case "NURSING_NOTE":
+			case "NURSING_NOTE": {
 				if (!r.nursing_note) return null;
 				const vitals = [
 					{label:"BP", value: r.nursing_note.vital_bp},
@@ -78,12 +78,12 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 					{label:"SpO2", value: r.nursing_note.vital_spo2},
 					{label:"Weight", value: r.nursing_note.vital_weight},
 				];
-				const details = [
+				const nursingDetails = [
 					{label:"Observations", value: r.nursing_note.observations},
 					{label:"Medications Given", value: r.nursing_note.medications_given},
 					{label:"Instructions", value: r.nursing_note.instructions_given}
 				];
-				return r.nursing_note ? (
+				return (
 					<div className="form-card">
 						<h3 className="form-section-grid">Nursing Note</h3>
 						<div className="form-grid" style={{gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))"}}>
@@ -91,12 +91,14 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 								<InfoRow key={index} label={item.label} value={item.value} />
 							))}
 						</div>
-						{details.map((item,index) => (
+						{nursingDetails.map((item,index) => (
 							<InfoRow key={index} label={item.label} value={item.value} />
 						))}
 					</div>
-				) : null;
-			case "COUNSELLING_NOTE":
+				);
+			}
+			case "COUNSELLING_NOTE": {
+				if (!r.counselling_note) return null;
 				notes=[
 					{label:"Session Type", value: r.counselling_note.session_type},
 					{label:"Concerns Raised", value: r.counselling_note.concerns_raised},
@@ -104,14 +106,15 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 					{label:"Follow-up Required", value: r.counselling_note.follow_up_required? "Yes": "No" },
 					{label:"Follow-up Date", value: r.counselling_note.follow_up_date},
 				]
-				return r.counselling_note? (
+				return (
 					<div className="form-card">
 						<h3 className="form-section-title">Counselling Note</h3>
 						{notes.map((item,index) => (
 							<InfoRow key={index} label={item.label} value={item.value} />
 						))}
 					</div>
-				) : null;
+				);
+			}
 			
 			case "PHARMACY_NOTE":
 				return r.pharmacy_note? (
@@ -124,7 +127,8 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 					</div>
 				) : null;
 			
-			case "ANDROLOGY_NOTE":
+			case "ANDROLOGY_NOTE": {
+				if (!r.andrology_note) return null;
 				andrology_notes=[
 					{label:"Sample Type", value:r.andrology_note.sample_type},
 					{label:"Volume(mL)", value:r.andrology_note.volume_ml},
@@ -133,8 +137,8 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 					{label:"Morphology %", value:r.andrology_note.morphology_percent},
 					{label:"DNA Fragmentation %", value:r.andrology_note.dna_fragmentation},
 					{label:"WHO Criteria", value:r.andrology_note.who_criteria}
-				]
-				return r.andrology_note ? (
+				];
+				return (
 					<div className="form-card">
 						<h3 className="form-section-title">Andrology Note</h3>
 						<div className="form-grid">
@@ -146,7 +150,8 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 						<FileLink label="Report PDF" url={r.andrology_note.report_file} />
 						<FileLink label="Microscopy Image" url={r.andrology_note.report_image} />
 					</div>
-				) : null;
+				);
+			}
 
 				case "LAB_RESULT":
 					return r.lab_results?.length>0 ? (
@@ -199,7 +204,8 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 						</div>
 					) : null;
 				
-				case "CYCLE":
+				case "CYCLE": {
+				if (!r.cycle) return null;
 					details=[
 						{label:"Cycle Type",value:r.cycle.cycle_type},
 						{label:"Cycle #",value:r.cycle.cycle_number},
@@ -212,7 +218,7 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 						{label:"Embryos Transferred",value:r.cycle.embryos_transferred},
 						{label:"Embryos Frozen",value:r.cycle.embryos_frozen},
 					]
-					return r.cycle ? (
+					return (
 						<div className="form-card">
 							<h3 className="form-section-title">Treatment Cycle</h3>
 							<div className="form-grid">
@@ -222,7 +228,8 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 							</div>
 							<InfoRow label="Outcome" value={r.cycle.outcome} />
 						</div>
-					) : null;
+					);
+				}
 				
 				case "DIAGNOSIS":
 					return r.diagnosis?.length>0 ? (
@@ -289,7 +296,7 @@ export default function EMRRecordDetail({record:initialRecord, patient,onBack,on
 			{record.notes && (
 				<div className="form-card">
 					<h3 className="form-section-title">Notes</h3>
-					<p style={{fontSize: "0.875rem", color:"var(--text-2",lineHeight:1.6}}>{record.notes}</p>
+					<p style={{fontSize: "0.875rem", color:"var(--text-2)",lineHeight:1.6}}>{record.notes}</p>
 				</div>
 			)}
 			{/* Sub-section */}
