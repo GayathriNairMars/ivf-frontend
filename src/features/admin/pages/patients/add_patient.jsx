@@ -23,6 +23,7 @@ export default function AddPatient() {
 	const [errors,setErrors] = useState({});
 	const [submitting,setSubmitting] = useState(false);
 	const [success,setSuccess] = useState(false);
+	const destination = user?.role === 'REC' ? '/receptionist':'/superadmin/patients';
 
 	useEffect(() => {
 		api.get("/patients/doctors/")
@@ -57,7 +58,7 @@ export default function AddPatient() {
 
 			const {data} = await api.post("/patients/",payload );
 			setSuccess(true);
-			setTimeout(() => navigate(`/superadmin/patients/${data.id}`),1500);
+			setTimeout(() => navigate(destination),1500);
 		} catch(err) {
 			const data = err.response?.data;
 			if (data && typeof data === "object") {
@@ -75,7 +76,7 @@ export default function AddPatient() {
 	return (
 		<div className="staff-form-page">
 			<div className="form-page-header">
-				<button className="btn-back" onClick={() => navigate("/superadmin/patients")} >
+				<button className="btn-back" onClick={() => navigate(destination)} >
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
 						<polyline points="15,18,9,12,15,6" />
 					</svg>
@@ -177,7 +178,7 @@ export default function AddPatient() {
 				</div>
 				{errors.general && <div className="error-banner">{errors.general}</div>}
 				<div className="form-actions">
-					<button type="button" className="btn-secondary" onClick={() => navigate("/superadmin/patients")} disabled={submitting}>Cancel</button>
+					<button type="button" className="btn-secondary" onClick={() => navigate(destination)} disabled={submitting}>Cancel</button>
 					<button type="submit" className="btn-primary" disabled={submitting}>
 						{submitting? "Registering...":"Register Patient"}
 					</button>

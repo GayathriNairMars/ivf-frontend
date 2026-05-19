@@ -14,6 +14,7 @@ import EditPatient from "./features/admin/pages/patients/edit_patient";
 import PatientProfile from "./features/admin/pages/patients/patient_profile";
 import EMRSection from "./features/admin/pages/emr/emr_section";
 import PatientEMR from "./features/admin/pages/emr/patient_emr";
+import ReceptionistDashboardSection from "./features/receptionist/pages/section";
 
 
 const Placeholder = ({title}) => (
@@ -60,6 +61,12 @@ export default function App(){
           <Route path="emr/:patientId" element={<EMRSection />} />
         </Route>
 
+        {/* Receptionist */}
+        <Route path="/receptionist" element={
+          <ProtectedRoute requiredRole="REC">
+            <ReceptionistDashboard />
+          </ProtectedRoute>
+        } />
         {/*Other roles-swap placeholder with real comp*/}
 
         {/*Fallback*/}
