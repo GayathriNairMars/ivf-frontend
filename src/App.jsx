@@ -15,6 +15,7 @@ import PatientProfile from "./features/admin/pages/patients/patient_profile";
 import EMRSection from "./features/admin/pages/emr/emr_section";
 import PatientEMR from "./features/admin/pages/emr/patient_emr";
 import ReceptionistDashboardSection from "./features/receptionist/pages/section";
+import AdminLoginPage from "./features/auth/pages/admin_login";
 
 
 const Placeholder = ({title}) => (
@@ -40,6 +41,7 @@ export default function App(){
       <Routes>
         {/*Public*/}
         <Route path="/login" element={<LoginPage/>}/>
+        <Route path="/admin-login" element={<AdminLoginPage/>}/>
         <Route path="/unauthorized" element={<Unauthorized/>}/>
 
         {/*Super Admin*/}
@@ -64,7 +66,7 @@ export default function App(){
         {/* Receptionist */}
         <Route path="/receptionist" element={
           <ProtectedRoute requiredRole="REC">
-            <ReceptionistDashboard />
+            <ReceptionistDashboardSection />
           </ProtectedRoute>
         } />
         {/*Other roles-swap placeholder with real comp*/}

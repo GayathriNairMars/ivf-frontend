@@ -1,6 +1,9 @@
 //Generate a new OP ticket
 import { useState,useEffect } from "react";
 import api from "../../../services/Client";
+import "./receptionist.css"
+import { VISIT_REASONS } from "../../../utils/constants";
+
 
 function Field({label,error,children}) {
 	return (
@@ -12,15 +15,6 @@ function Field({label,error,children}) {
 	);
 }
 
-const VISIT_REASONS = [
-	{value:"CONSULTATION", label:"Consultation"},
-	{value:"FOLLOW_UP", label:"Follow-up"},
-	{value:"LAB_COLLECTION", label:"Lab Sample Collection"},
-	{value:"SCAN", label:"Scan/Ultrasound"},
-	{value:"PROCEDURE", label:"Procedure"},
-	{value:"MEDICATION", label:"Medication Pickup"},
-	{value:"OTHER", label:"Other"},
-];
 
 export default function NewTicket({onSuccess,onCancel}) {
 	const [search,setSearch] = useState("");
@@ -29,7 +23,7 @@ export default function NewTicket({onSuccess,onCancel}) {
 	const [doctors,setDoctors] = useState([]);
 	const [departments,setDepartments] = useState([]);
 	const [form,setForm] = useState({
-		assigned_doctor:"",department:"",visit_reason:"CONSULTATION",cheif_complaint:"",
+		assigned_doctor:"",department:"",visit_reason:"CONSULTATION",notes:"",payment_done: false,
 	});
 	const [errors,setErrors] = useState({});
 	const [submitting,setSubmitting] = useState(false);
@@ -61,7 +55,7 @@ export default function NewTicket({onSuccess,onCancel}) {
 				assigned_doctor: form.assigned_doctor || null,
 				department: form.department || null,
 				visit_reason: form.visit_reason,
-				cheif_complaint: form.cheif_complaint,
+				notes: form.notes,
 			});
 			setTicket(data);
 		} catch(err) {
@@ -109,10 +103,10 @@ export default function NewTicket({onSuccess,onCancel}) {
 									<span style={{fontWeight:600}}>{value}</span>
 								</div>
 							))}
-							{ticket.cheif_complaint && (
+							{ticket.notes && (
 								<div style={{marginTop:8,padding:8,background:"#f8fafc",borderRadius:6,fontSize:"0.8rem"}}>
 									<div style={{color:"#666",fontWeight:500,marginBottom:4}}>Cheif Complaint</div>
-									<div>{ticket.cheif_complaint}</div>
+									<div>{ticket.notes}</div>
 								</div>
 							)}
 						</div>
@@ -210,10 +204,19 @@ export default function NewTicket({onSuccess,onCancel}) {
 								{departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
 							</select>
 						</Field>
-						<Field label="Cheif Complaint" error={errors.cheif_complaint}>
-							<textarea className="form-input" rows={3} placeholder="Breif Description of readon for visit"
-							value={form.cheif_complaint} onChange={e => setForm(p => ({...p,cheif_complaint:e.target.value}))} />
+						<Field label="Additional Notes" error={errors.notes}>
+							<textarea className="form-input" rows={3} placeholder="Breif Description of reason for visit"
+							value={form.notes} onChange={e => setForm(p => ({...p,notes:e.target.value}))} />
 						</Field>
+						<div className="payment-toggle-wrapper">
+							<label className="payment-toggle-label">
+								Payment Status
+							</label>
+							<button type="button" className={`payment-toggle-btn ${form.payment_done ? "paid" : "unpaid"}`} 
+								onClick={() => setForm(p => ({...p,payment_done: !p.payment_done}))}>
+									{form.payment_done ? "✓ Payment Completed" : "Mark Payment as Done"}
+							</button>
+						</div>	
 					</div>
 				</div>
 				{errors.general && <div className="error-banner">{errors.general}</div>}

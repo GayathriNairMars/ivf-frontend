@@ -3,15 +3,17 @@ import { useState,useEffect,useCallback } from "react";
 import api from "../../../services/Client";
 import PatientEditModal from "./patient_edit";
 import { PATIENT_STATUSES } from "../../../utils/constants";
+import PatientHistory from "./patient_op_history";
 
-export default function PatientSearch() {
+export default function PatientSearch({ onViewHistory }) {
 	const [patients,setPatients] = useState([]);
 	const [loading,setLoading] = useState(false);
 	const [search,setSearch] = useState("");
 	const [status,setStatus] = useState("");
 	const [editing,setEditing] = useState(null);
-	const [viewTickets,setViewTickets] = useState([]);
+	const [viewTickets,setViewTickets] = useState(null);
 	const [tickets,setTickets] = useState([]);
+	// const [viewHistory,setViewHistory] = useState(null);
 
 	const load = useCallback(async () => {
 		setLoading(true);
@@ -20,7 +22,8 @@ export default function PatientSearch() {
 			if (search) params.append("search",search);
 			if (status) params.append("status",status);
 			const {data} = await api.get(`/receptionist/patients/${params}`);
-			setPatients(Array.isArray(data) ? data : (data.results || []));
+			const result = Array.isArray(data) ? data : (data.results || []);
+			setPatients(result);
 		} catch {setPatients([]);}
 		finally {setLoading(false);}
 	},[search,status]);
@@ -36,6 +39,16 @@ export default function PatientSearch() {
 			setTickets(data.tickets || []);
 		} catch {setTickets([]);}
 	};
+
+	// if (viewHistory) {
+	// 	console.log("Rendering history for:", viewHistory, "id:", viewHistory?.id);
+	// 	return (
+	// 		<PatientHistory
+	// 			patient_id={viewHistory.id}
+	// 			onBack={() => setViewHistory(null)}
+	// 		/>
+	// 	);
+	// }
 
 	return (
 		<div>
@@ -73,11 +86,11 @@ export default function PatientSearch() {
 						</thead>
 						<tbody>
 							{patients.map(p => (
-								<tr key={p.id}>
+								<tr key={p.id} onClick={() => onViewHistory(p)} style={{cursor:"pointer"}}>
 									<td>
 										<div className="staff-name-cell">
 											<div className="staff-avatar" style={{background:"#0ea5e9"}}>
-												{p.full_name?.split(" ").map(n => n[0].slice(0,2).join("").toUpperCase())}
+												{p.full_name?.split(" ").map(n => n[0]).slice(0,2).join("").toUpperCase()}
 											</div>
 											<div>
 												<div className="staff-name">{p.full_name}</div>
@@ -95,6 +108,7 @@ export default function PatientSearch() {
 										<div className="action-btns">
 											<button className="btn-edit" onClick={() => setEditing(p)}>Edit</button>
 											<button className="btn-edit" onClick={() => loadTickets(p)}>Tickets</button>
+											<button className="btn-edit" onClick={e => { e.stopPropagation(); onViewHistory(p); }}>History</button>
 										</div>
 									</td>
 								</tr>
@@ -123,7 +137,13 @@ export default function PatientSearch() {
 							<p style={{color:"var(--text-2)",textAlign:"center"}}>No tickets generated yet.</p>
 						):(
 							<table className="staff-table">
-								<thead><tr><th>Token</th><th>Reason</th><th>Doctor</th><th>Status</th></tr></thead>
+								<thead><tr>
+								<th>Token</th>
+								<th>Date</th>
+								<th>Reason</th>
+								<th>Doctor</th>
+								<th>Status</th>
+								</tr></thead>
 								<tbody>
 									{tickets.map(t => (
 										<tr key={t.id}>

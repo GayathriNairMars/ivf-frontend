@@ -30,7 +30,7 @@ export default function PatientEditModal({patient,onClose,onSaved}) {
 	const handleChange = e => {
 		const {name,value} = e.target;
 		setForm(prev => ({...prev,[name]:value}));
-		setErrors({...prev,[name]:""});
+		setErrors(prev =>({...prev,[name]:""}));
 	};
 
 	const handleSubmit = async e => {
@@ -77,7 +77,7 @@ export default function PatientEditModal({patient,onClose,onSaved}) {
 							<select className="form-input" name="gender" value={form.gender} onChange={handleChange}>
 								<option value="">-Select-</option>
 								<option value="M">Male</option>
-								<option value="M">Female</option>
+								<option value="F">Female</option>
 								<option value="O">Other</option>
 							</select>
 						</Field>

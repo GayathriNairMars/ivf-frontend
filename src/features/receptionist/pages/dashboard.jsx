@@ -44,14 +44,15 @@ export default function RecDashboardHome(){
 		weekday:"long",day:"2-digit",month:"long",year:"numeric"
 	});
 	return (
+		<div>
 		<div className="section-header">
 			<h2>Good {getGreeting()},{stats?.receptionist_name?.split(" ")[0] || ""}!</h2>
 			<span className="section-date">{today}</span>
 		</div>
-		{/*Stat cards */}
+		{/* Stat cards */}
 		<div className="stats-grid" style={{marginBottom:24}}>
-			<StatCard label="Patients Today" value={stats?.patient_today ?? "-"} accent="#0ea5e9" sub="registered today" />
-			<StatCard label="Tickets Generated" value={stats?.ticket_today ?? "-"} accent="#6366f1" sub="OP tickets today" />
+			<StatCard label="Patients Today" value={stats?.patients_today ?? "-"} accent="#0ea5e9" sub="registered today" />
+			<StatCard label="Tickets Generated" value={stats?.tickets_today ?? "-"} accent="#6366f1" sub="OP tickets today" />
 			<StatCard label="Waiting" value={stats?.waiting ?? "-"} accent="#f59e0b" sub="in queue" />
 			<StatCard label="In Consultation" value={stats?.in_consult ?? "-"} accent="#3b82f6" sub="with doctor" />
 			<StatCard label="Done" value={stats?.done ?? "-"} accent="#10b981" sub="completed today" />
@@ -67,7 +68,7 @@ export default function RecDashboardHome(){
 						Next token: <strong>#{stats?.next_token?? "-"}</strong>
 					</span>
 				</div>
-				{loadig ? (
+				{loading ? (
 					<div className="panel-empty">Loading...</div>
 				):tickets.length===0?(
 					<div className="panel-empty">No tickets generated today.</div>
@@ -82,7 +83,7 @@ export default function RecDashboardHome(){
 									</div>
 									<div style={{flex:1,minWidth:0}}>
 										<div style={{fontWeight:600,fontSize:"0.88rem"}}>{t.patient_name}</div>
-										<div style={{fontSize:"0.72rem",color:"var(--text-2"}}>{t.patient_id_str} - {t.visit_reason_display}
+										<div style={{fontSize:"0.72rem",color:"var(--text-2)"}}>{t.patient_id_str} - {t.visit_reason_display}
 										</div>
 									</div>
 									<div style={{fontSize:"0.72rem",color:"var(--text-2)",textAlign:"right"}}>
@@ -128,6 +129,7 @@ export default function RecDashboardHome(){
 					</div>
 				)}
 			</div>
+		</div>
 		</div>
 	);
 }

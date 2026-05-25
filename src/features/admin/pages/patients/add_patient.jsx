@@ -1,5 +1,6 @@
 import { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../hooks/useAuth";
 import api from "../../../../services/Client";
 import { TREATMENT_TYPES } from "../../../../utils/constants";
 
@@ -23,6 +24,7 @@ export default function AddPatient() {
 	const [errors,setErrors] = useState({});
 	const [submitting,setSubmitting] = useState(false);
 	const [success,setSuccess] = useState(false);
+	const { user } = useAuth();
 	const destination = user?.role === 'REC' ? '/receptionist':'/superadmin/patients';
 
 	useEffect(() => {
@@ -41,7 +43,7 @@ export default function AddPatient() {
 		if(!form.full_name.trim()) errs.full_name = "Full name is required.";
 		if(!form.email.trim()) errs.email = "Email is required.";
 		else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = "Enter a valid email.";
-		if (!form.password) errors.password = "Password is required.";
+		if (!form.password) errs.password = "Password is required.";
 		else if (form.password.length < 6) errs.password = "Minimum 6 characters.";
 		return errs;
 	};
@@ -78,7 +80,7 @@ export default function AddPatient() {
 			<div className="form-page-header">
 				<button className="btn-back" onClick={() => navigate(destination)} >
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
-						<polyline points="15,18,9,12,15,6" />
+						<polyline points="15,18 9,12 15,6" />
 					</svg>
 					Back to Patients
 				</button>
@@ -135,6 +137,12 @@ export default function AddPatient() {
 						<FormField label="Address">
 							<input className="form-input" name="address" value={form.address} onChange={handleChange} placeholder="Street, City, State" />
 						</FormField>
+						<FormField label="Insurance Policy Number">
+							<input className="form-input" name="insurance_police_number" value={form.insurance_police_number} onChange={handleChange} placeholder="GHI-2026-9876543-00" />
+						</FormField>
+						<FormField label="Insurance Policy Details">
+							<input className="form-input" name="insurance_details" value={form.insurance_details} onChange={handleChange} placeholder="e.g.Star Health Insurance(expiring on 06/2028).." />
+						</FormField>
 						<FormField label="Emergency Contact Name">
 							<input className="form-input" name="emergency_contact_name" value={form.emergency_contact_name} onChange={handleChange} />
 						</FormField>
@@ -163,7 +171,7 @@ export default function AddPatient() {
 								<option value="HOL">On Hold</option>
 							</select>
 						</FormField>
-						<FormField label="Initial Status">
+						<FormField label="Assigned Doctor">
 							<select className="form-input" name="assigned_doctor_id" value={form.assigned_doctor_id} onChange={handleChange}>
 								<option value="">--Select Doctor--</option>
 								{doctors.map(d =>(

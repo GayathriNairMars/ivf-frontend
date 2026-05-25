@@ -1,13 +1,14 @@
 //Receptionist Dashboard -layout with sidebar nav
-import { useState } from "react";
+import { useState,useMemo } from "react";
 import {useAuth} from "../../../hooks/useAuth";
 import api from "../../../services/Client";
-import RecDashboardHome from "./RecDashboardHome";
-import OPQueue from "./OPQueue";
-import PatientSearch from "./PatientSearch";
-import NewTicket from "./NewTicket";
+import RecDashboardHome from "./dashboard";
+import OPQueue from "./opqueue";
+import PatientSearch from "./patient_list";
+import NewTicket from "./new_ticket";
 import AddPatient from "../../admin/pages/patients/add_patient";
 import Icon from "../../../components/Icons";
+import PatientHistory from "./patient_op_history";
 
 const NAV=[
 	{key:"dashboard",label:"Dashboard",icon:"dashboard"},
@@ -21,21 +22,35 @@ export default function ReceptionistDashboardSection() {
 	const {user,logout} = useAuth();
 	const [active,setActive] = useState("dashboard");
 	const [sidebarOpen,setSidebarOpen] = useState(true);
+	const [viewPatientId,setViewPatientId] = useState(null);
 
 	const handleLogout = async () => {
 		await logout();
 		setTimeout(() => {window.location.href = "/login";},100);
 	};
-	const renderContent = () =>{
-		switch(active) {
-			case "dashboard": return <RecDashboardHome/>;
-			case "queue": return <OPQueue onNewTicket={() => setActive("ticket")} />;
-			case "patients": return <PatientSearch />;
-			case "ticket": return <NewTicket onSuccess={() => setActive("queue")} onCancel={() => setActive("queue")} />;
-			case "addpatient": return <AddPatient />;
-			default: return <RecDashboardHome />;
-		}
-	};
+  const content = useMemo(() => {
+    switch (active) {
+      case "dashboard": return <RecDashboardHome />;
+      case "queue": return <OPQueue onNewTicket={() => setActive("ticket")} />;
+      case "patients":
+        return viewPatientId
+          ? <PatientHistory
+              patientId={viewPatientId}
+              onBack={() => setViewPatientId(null)}
+            />
+          : <PatientSearch
+              onViewHistory={(p) => setViewPatientId(p.id)}
+            />;
+      case "ticket": return <NewTicket onSuccess={() => setActive("queue")} onCancel={() => setActive("queue")} />;
+      case "addpatient": return <AddPatient />;
+      default: return <RecDashboardHome />;
+    }
+  }, [active, viewPatientId]); // ← add viewPatientId
+  // Reset viewPatientId when switching away from patients
+  const handleNavClick = (key) => {
+      if (key !== "patients") setViewPatientId(null);
+      setActive(key);
+  };
 
 	//Title map
 	const titles = {
@@ -54,7 +69,7 @@ export default function ReceptionistDashboardSection() {
 					{sidebarOpen && <span className="brand-name">HIMS</span>}
 				</div>
 				<nav className="sidebar-nav">
-					{NAV.map(item =(
+					{NAV.map(item => (
 						<button
 						key={item.key}
 						className={`nav-item ${active===item.key?"active":""}`}
@@ -68,8 +83,8 @@ export default function ReceptionistDashboardSection() {
 				</nav>
 				<div className="sidebar-footer">
 					<button className="nav-item logout-item" onClick={handleLogout} title={!sidebarOpen ? "Sign out" : ""}>
-						<Icon name={logout} />
-						{sidebarOpen && }
+						<Icon name="logout" />
+						{sidebarOpen && <span>Sign out</span>}
 					</button>
 				</div>
 			</aside>
@@ -96,7 +111,7 @@ export default function ReceptionistDashboardSection() {
 				{/* Content */}
 				<main className="sad-body">
 					<div className="section-content">
-						{renderContent()}
+						{content}
 					</div>
 				</main>
 			</div>

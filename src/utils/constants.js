@@ -162,3 +162,20 @@ export const PATIENT_STATUSES = [
     { value: "COM", label: "Completed" },
     { value: "CAN", label: "Cancelled" },
   ];
+
+export const STATUS_STYLES = {
+  WAITING:    { bg: "#fef3c7", color: "#92400e", label: "Waiting" },
+  IN_CONSULT: { bg: "#dbeafe", color: "#1e40af", label: "In Consultation" },
+  DONE:       { bg: "#d1fae5", color: "#065f46", label: "Done" },
+  CANCELLED:  { bg: "#fee2e2", color: "#991b1b", label: "Cancelled" },
+  };
+
+export const VISIT_REASONS = [
+    {value:"CONSULTATION", label:"Consultation"},
+    {value:"FOLLOW_UP", label:"Follow-up"},
+    {value:"LAB_COLLECTION", label:"Lab Sample Collection"},
+    {value:"SCAN", label:"Scan/Ultrasound"},
+    {value:"PROCEDURE", label:"Procedure"},
+    {value:"MEDICATION", label:"Medication Pickup"},
+    {value:"OTHER", label:"Other"},
+  ];
