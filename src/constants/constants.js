@@ -57,7 +57,7 @@ export const ROLE_PERMISSIONS = {
     {name:"is_department_head",label:"Is Department Head"},
   ],
   ANE: [
-    {name:"edit_anesthesia_records",label:"Edit Anesthesia Records"},
+    {name:"can_edit_anesthesia_records",label:"Edit Anesthesia Records"},
     {name:"is_department_head",label:"Is Department Head"},
   ],
   EMB: [
@@ -98,7 +98,7 @@ export const ROLE_DEFAULT_DEPT_CODE = {
 	  'REC': 'REC',
     'CCO': 'CCO',
     'FCO': 'FCO',
-    'REN': 'REN',
+    'END': 'END',
     'GYN': 'GYN',
     'ANE': 'ANE',
     'EMB': 'EMB',

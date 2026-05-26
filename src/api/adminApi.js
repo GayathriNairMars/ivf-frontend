@@ -9,7 +9,7 @@ export const adminApi = {
   getStaffList: () => api.get("/staff-management/").then(res => res.data),
   getStaffDetails: (id) => api.get(`/staff-management/${id}/`).then(res => res.data),
   createStaff: (payload, config = {}) => api.post("/staff-management/", payload, config).then(res => res.data),
-  updateStaff: (id, payload, config = {}) => api.post(`/staff-management/${id}/edit/`, payload, config).then(res => res.data),
+  updateStaff: (id, payload, config = {}) => api.patch(`/staff-management/${id}/`, payload, config).then(res => res.data),
   toggleStaffStatus: (id) => api.post(`/staff-management/${id}/toggle-status/`).then(res => res.data),
   getStaffAssignments: (id) => api.get(`/staff-management/${id}/assignments/`).then(res => res.data),
 

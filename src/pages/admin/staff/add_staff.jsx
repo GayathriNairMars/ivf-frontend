@@ -107,6 +107,9 @@ export default function AddStaff() {
         }
       }
     });
+    Object.entries(permissions).forEach(([k,v]) => {
+      payload.append(k, v ? "on" : "");
+      });
     await adminApi.createStaff(payload,{
       headers:{"Content-Type":"multipart/form-data"},
     });

@@ -106,8 +106,8 @@ export default function PatientSearch({ onViewHistory }) {
 									</td>
 									<td>
 										<div className="action-btns">
-											<button className="btn-edit" onClick={() => setEditing(p)}>Edit</button>
-											<button className="btn-edit" onClick={() => loadTickets(p)}>Tickets</button>
+											<button className="btn-edit" onClick={e => {e.stopPropagation(); setEditing(p)}}>Edit</button>
+											<button className="btn-edit" onClick={e => {e.stopPropagation(); loadTickets(p)}}>Tickets</button>
 											<button className="btn-edit" onClick={e => { e.stopPropagation(); onViewHistory(p); }}>History</button>
 										</div>
 									</td>

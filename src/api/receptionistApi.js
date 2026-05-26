@@ -8,7 +8,6 @@ export const receptionistApi = {
 
   // Patients (Receptionist context)
   searchPatients: (searchParams) => api.get(`/receptionist/patients/${searchParams}`).then(res => res.data),
-  updatePatient: (patientId, payload) => api.patch(`/receptionist/patients/${patientId}/`, payload).then(res => res.data),
   getPatientTickets: (patientId) => api.get(`/receptionist/patients/${patientId}/tickets/`).then(res => res.data),
   getPatientHistory: (patientId) => api.get(`/receptionist/patients/${patientId}/history/`).then(res => res.data),
   
