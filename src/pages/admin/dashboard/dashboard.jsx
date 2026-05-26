@@ -1,22 +1,11 @@
 import { useCallback, useState,useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import adminApi from "../../../api/adminApi";
-import Icon from "../../../components/Icons";
-import { ROLE_COLORS,ROLE_LABELS } from "../../../constants/constants";
+import { ROLE_LABELS } from "../../../constants/constants";
 
-// Stat card
-function StatCard({ label,value,accent,sub }) {
-     return (
-         <div className="stat-card" style={{"--accent":accent}}>
-	        <div className="stat-value">{value ?? <span className="loading-dot">-</span>}</div>
-         	<div className="stat-label">{label}</div>
-         	{sub && <div className="stat-sub">{sub}</div>}
-         </div>
-     );
-}
-
-
-//Dashboard Home
+// Dashboard Home
 export default function DashboardHome() {
+	const navigate = useNavigate();
 	const [stats, setStats] = useState(null);
 	const [sessions, setSessions] = useState([]);
 	const [patients, setPatients] = useState([]);
@@ -42,79 +31,122 @@ export default function DashboardHome() {
 	 }, [load]);
 
 	 return (
-		<div className="section-content">
-		  <div className="section-header">
-		<h2>Overview</h2>
-		<span className="section-date">{new Date().toLocaleDateString("en-IN",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}</span>
-		  </div>
-		  {/* Stat cards*/}
-		  <div className="stats-grid">
-			<StatCard label="New Patients Today" value={stats?.patient_today_count ?? "-"} accent="#0ea5e9" sub="registered today" />
-			<StatCard label="Staff Online" value={stats?.active_count ?? "-"} accent="#10b981" sub="active sessions" />
-			<StatCard label="Total Staff" value={stats?.staff_count ?? "-"} accent="#6366f1" sub="excluding patients" />
+		<div className="dashboard-content">
+		  <div className="dashboard-header">
+            <div>
+		      <h2>HIMS Overview</h2>
+              <p>Operational data and clinical performance monitoring</p>
+            </div>
+            <div className="header-actions">
+              <button className="btn-outline">Generate Report</button>
+              <button className="btn-primary" onClick={() => navigate("/superadmin/patients/add")}>New Registration</button>
+            </div>
 		  </div>
 
-		  <div className="dashboard-panels">
-			<div className="panel">
-	  		<div className="panel-header">
-				<Icon name="activity" />
-				<h3>Staff Currently Logged In</h3>
-	  		</div>
-	  {loading? (
-		<div className="panel-empty">Loading...</div>
-	  ): sessions.length===0?(
-		<div className="panel-empty">No Active sessions right now.</div>
-	  ) : (
-		<div className="session-list">
-		  {sessions.slice(0,8).map((s,i)=>(
-		<div className="session-row" key={i}>
-		  <div className="session-avatar" style={{background: ROLE_COLORS[s.user__role] || "#64748b"}}>
-		   {(s.user__full_name || "?")[0].toUpperCase()}
-		  </div>
-		<div className="session-info">
-		  <span className="session-name">{s.user__full_name || s.user__email}</span>
-		  <span className="session-role" style={{ color:ROLE_COLORS[s.user__role] }}>{ROLE_LABELS[s.user__role] || s.user__role}</span>
-		</div>
-		<div className="session-time">
-		  {s.login_time? new Date(s.login_time).toLocaleDateString("en-IN",{hour:"2-digit",minute:"2-digit"}):"-"}
-		</div>
-		<span className="session-dot" />
-		</div>
-		  ))}
-		</div>
-	  )}
-	</div>
+          <div className="dashboard-grid">
+            <div className="dashboard-sidebar">
+              <div className="stat-card">
+                <div className="stat-header">
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                  </div>
+                  <div className="stat-label">Total staff</div>
+                </div>
+                <div className="stat-value">{stats?.staff_count ?? "0"}</div>
+              </div>
 
-	{/* New Patient Registrations */}
-	<div className="panel">
-	  <div className="panel-header">
-		<Icon name="patients" />
-		<h3>New Patient Registrations Today</h3>
-	  </div>
-	  {loading?(
-		<div className="panel-empty">Loading..</div>
-	  ): patients.length===0?(
-		<div className="panel-empty">No New patients registered today</div>
-	  ):(
-		<div className="session-list">
-		  {patients.slice(0,8).map((p,i)=>(
-			<div className="session-row" key={i}>
-			 <div className="session-avatar" style={{ background:"#0ea5e9"}}>
-			  {(p.full_name|| "P")[0].toUpperCase()}
-			 </div>
-			 <div className="session-info">
-				<span className="session-name">{p.full_name}</span>
-				<span className="session-role" style={{color:"#0ea5e9"}}>{p.email}</span>
-			 </div>
-			 <div className="session-time">
-				{p.date_joined? new Date(p.date_joined).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}):"-"}
-			 </div>
-			</div>
-		  ))}
-		</div>
-	  )}
-	</div>
-		  </div>
+              <div className="stat-card">
+                <div className="stat-header">
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                  </div>
+                  <div className="stat-label">Active users</div>
+                </div>
+                <div className="stat-value">{stats?.active_count ?? "0"}</div>
+              </div>
+
+              <div className="stat-card">
+                <div className="stat-header">
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                    </svg>
+                  </div>
+                  <div className="stat-label">Daily patients</div>
+                </div>
+                <div className="stat-value">{stats?.patient_today_count ?? "0"}</div>
+              </div>
+            </div>
+
+            <div className="dashboard-main-panel">
+              <div className="panel">
+                <div className="panel-header-flex">
+                  <div>
+                    <h3>Recent active sessions</h3>
+                    <p>Currently active personnel within the hospital network</p>
+                  </div>
+                  <div className="panel-filters">
+                    <select><option>User role</option></select>
+                    <select><option>Active</option></select>
+                  </div>
+                </div>
+
+                <table className="sessions-table">
+                  <thead>
+                    <tr>
+                      <th>User name</th>
+                      <th>User role</th>
+                      <th>Date</th>
+                      <th>Log In</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? (
+                      <tr><td colSpan="5" style={{textAlign:"center"}}>Loading...</td></tr>
+                    ) : sessions.length === 0 ? (
+                      <tr><td colSpan="5" style={{textAlign:"center"}}>No active sessions right now.</td></tr>
+                    ) : (
+                      sessions.map((s, i) => (
+                        <tr key={i}>
+                          <td>
+                            <div className="table-user">
+                              <span className="table-user-name">{s.user__full_name || "Unknown"}</span>
+                              <span className="table-user-email">{s.user__email || "-"}</span>
+                            </div>
+                          </td>
+                          <td>{ROLE_LABELS[s.user__role] || s.user__role || "Staff"}</td>
+                          <td>{s.login_time ? new Date(s.login_time).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-"}</td>
+                          <td>{s.login_time ? new Date(s.login_time).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "-"}</td>
+                          <td><span className="status-badge">Active</span></td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+                <div className="pagination">
+                  <div className="pagination-text">Showing <span>{sessions.length}</span> of <span>{stats?.active_count || sessions.length}</span></div>
+                  <div className="pagination-controls">
+                    <button className="page-btn">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button className="page-btn">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 		</div>
 	 );
 }
