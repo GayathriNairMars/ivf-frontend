@@ -3,39 +3,23 @@ import { useAuth } from "../../../hooks/useAuth";
 import { useState,useEffect } from "react";
 import adminApi from "../../../api/adminApi";
 import "./superadmin.css"
-import StaffSection from "../staff/Staff_section";
 import Icon from "../../../components/Icons";
 import { ROLE_LABELS } from "../../../constants/constants";
 
-
-
-//placeholder sections
-function ComingSoon({title}){
-  return(
-    <div className="section-content coming-soon">
-      <div className="coming-soon-inner">
-        <div className="coming-soon-icon">🚧</div>
-        <h2>{title}</h2>
-      </div>
-    </div>
-  );
-}
-
-//Main Dashboard
 const NAV=[
   {id:"dashboard",label:"Dashboard",icon:"dashboard", path:"/superadmin/"},
-  {id:"department",label:"Department",icon:"department",path:"/superadmin/department/"},
+  {id:"department",label:"Departments",icon:"department",path:"/superadmin/department/"},
   {id:"emr",label:"EMR",icon:"emr",path:"/superadmin/emr/"},
-  {id:"staff",label:"Staff",icon:"staff",path:"/superadmin/staff/"},
-  {id:"patients",label:"Patients",icon:"patients",path:"/superadmin/patients/"},
+  {id:"staff",label:"Staff Management",icon:"staff",path:"/superadmin/staff/"},
+  {id:"patients",label:"Patient Directory",icon:"patients",path:"/superadmin/patients/"},
 ]
 
 export default function SuperAdminDashboard() {
    const { user,logout } = useAuth();
    const navigate = useNavigate();
    const location = useLocation();
-   const [active,setActive] =useState("dashboard")
-   const [sidebarOpen,setSidebarOpen] =useState(true)
+   const [profileOpen, setProfileOpen] = useState(false);
+   
    const isActive = (path) =>{
     if (path === "/superadmin/") {
       return location.pathname ==="/superadmin/" || location.pathname==="/superadmin";
@@ -59,63 +43,96 @@ export default function SuperAdminDashboard() {
 	 },[]);
 
    return (
-     <div className={`sad-root ${sidebarOpen?"sidebar-open":"sidebar-collapsed"}`}>
-     
-     {/* Sidebar  */}
-     <aside className="sad-sidebar">
-       <div className="sidebar-brand">
-         <div className="brand-logo">H</div>
-         {sidebarOpen && <span className="brand-name">HIMS</span>}
+     <div className="sad-root">
+       {/* Sidebar */}
+       <aside className="sad-sidebar">
+         <div className="sidebar-brand">
+           <div className="brand-logo">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+               <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+             </svg>
+           </div>
+           <span className="brand-name">HIMS</span>
+         </div>
+         
+         <nav className="sidebar-nav">
+           {NAV.map(item=>(
+             <button
+               key={item.id}
+               className={`nav-item ${isActive(item.path) ? "active":""}`}
+               onClick={()=>navigate(item.path)}
+             >
+               <div className="icon"><Icon name={item.icon}/></div>
+               <span>{item.label}</span>
+               {isActive(item.path) && <div className="nav-indicator" />}
+             </button>
+           ))}
+         </nav>
+
+         <div className="sidebar-footer">
+           <div className="organization-info" onClick={() => setProfileOpen(!profileOpen)}>
+             <div className="org-avatar-container">
+               <div className="org-avatar">
+                 <div className="org-icon">
+                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                 </div>
+               </div>
+             </div>
+             <div className="org-text">
+               <span className="org-name">City General</span>
+               <span className="org-district">Central District</span>
+             </div>
+           </div>
+           
+           {profileOpen && (
+             <div className="profile-dropdown-sidebar">
+               <div className="dropdown-user-info">
+                  <span className="user-name">{user?.full_name || "Arathy Sreekumar"}</span>
+                  <span className="user-role">{ROLE_LABELS[user?.role] || user?.role || "System Administrator"}</span>
+               </div>
+               <hr className="dropdown-divider" />
+               <button className="dropdown-item text-danger" onClick={handleLogout}>
+                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                   <polyline points="16 17 21 12 16 7"></polyline>
+                   <line x1="21" y1="12" x2="9" y2="12"></line>
+                 </svg>
+                 Sign out
+               </button>
+             </div>
+           )}
+         </div>
+       </aside>
+
+       {/* Main Area */}
+       <div className="sad-main">
+         <header className="sad-topbar">
+           <div className="search-bar">
+             <div className="icon">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                 <circle cx="11" cy="11" r="8"></circle>
+                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+               </svg>
+             </div>
+             <input type="text" placeholder="Search hospital database" />
+           </div>
+
+           <div className="user-area">
+             <button className="notification-btn">
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+               </svg>
+               <span className="dot"></span>
+             </button>
+           </div>
+         </header>
+
+         {/* Page content */}
+         <main className="sad-body">
+           <Outlet />
+         </main>
+       </div>
      </div>
-     <nav className="sidebar-nav">
-       {NAV.map(item=>(
-         <button
-           key={item.id}
-           className={`nav-item ${isActive(item.path) ? "active":""}`}
-           onClick={()=>navigate(item.path)}
-           title={!sidebarOpen? item.label:""}
-           >
-	          <Icon name={item.icon}/>
-	          {sidebarOpen && <span>{item.label}</span>}
-	          {isActive === item.id && <div className="nav-indicator" />}
-         </button>
-       ))}  
-     </nav>
-     <div className="sidebar-footer">
-       <button className="nav-item logout-item" onClick={handleLogout} title={!sidebarOpen ? "Sign out" : ""}>
-	      <Icon name="logout" />
-	      {sidebarOpen && <span>Sign out</span>}
-       </button>
-     </div>
-     </aside>
-     
-     {/* Main */}
-     <div className="sad-main">
-       {/* Topbar */}
-       <header className="sad-topbar">
-          <button className="collapse-btn" onClick={() => setSidebarOpen(o => !o)} title="Toggle sidebar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-            </svg>
-          </button>
-          <div className="topbar-title">
-            {NAV.find(n => location.pathname.startsWith(n.path) && n.path !=="/superadmin/")?.label || (location.pathname === "/superadmin/"? "Dashboard" : "")}
-          </div>
-          <div className="topbar-user">
-            <div className="user-avatar">{(user?.full_name || "A")[0]}</div>
-            <div className="user-info">
-              <span className="user-name">{user?.full_name}</span>
-              <span className="user-role">{ROLE_LABELS[user?.role] || user?.role}</span>
-            </div>
-          </div>
-        </header>
- 
-        {/* Page content */}
-        <main className="sad-body">
-          <Outlet />
-        </main>
-      </div>
-     </div>
-     
    );
 }
