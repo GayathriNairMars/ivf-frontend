@@ -34,24 +34,23 @@ export default function EditPatient() {
 			patientApi.getPatientDetails(id),
 			patientApi.getDoctors(),
 			patientApi.getPatients(),
-		]).then(([pRes,dRes,allRes]) => {
-			const p = pRes.data;
-			setPatient(p);
-			setForm({
-				phone:									p.phone || "",
-				date_of_birth:					p.date_of_birth || "",
-				gender:									p.gender || "",
-				blood_group:						p.blood_group || "",
-				address:								p.address || "",
-				emergency_contact_name:	p.emergency_contact_name || "",
-				emergency_contact_phone:p.emergency_contact_phone || "",
-				treatment_type:					p.treatment_type || "",
-				status:									p.status || "",
-				assigned_doctor_id:			p.assigned_doctor_id || "",
-				notes:									p.notes || "",
-			});
-			setDoctors(dRes.data);
-			setAllPatients(allRes.data.filter(ap => ap.id !== parseInt(id)));
+		]).then(([patient, doctors, allPatients]) => {
+  		setPatient(patient);
+  		setForm({
+  		  phone:                    patient.phone || "",
+  		  date_of_birth:            patient.date_of_birth || "",
+  		  gender:                   patient.gender || "",
+  		  blood_group:              patient.blood_group || "",
+  		  address:                  patient.address || "",
+  		  emergency_contact_name:   patient.emergency_contact_name || "",
+  		  emergency_contact_phone:  patient.emergency_contact_phone || "",
+  		  treatment_type:           patient.treatment_type || "",
+  		  status:                   patient.status || "",
+  		  assigned_doctor_id:       patient.assigned_doctor_id || "",
+  		  notes:                    patient.notes || "",
+  		});
+  		setDoctors(doctors);
+  		setAllPatients(allPatients.filter(ap => ap.id !== parseInt(id)));
 		}).catch(() => navigate("/superadmin/patients"))
 		.finally(() => setLoading(false));
 	}, [id]);
@@ -166,7 +165,7 @@ export default function EditPatient() {
 							</select>
 						</FormField>
 						<FormField label="Blood Group">
-							<select className="form-input" name="blood-group" value={form.blood_group} onChange={handleChange}>
+							<select className="form-input" name="blood_group" value={form.blood_group} onChange={handleChange}>
 								<option value="">--Select--</option>
 								{["A+","A-","B+","B-","O+","O-","AB+","AB-"].map(bg => (
 									<option key={bg} value={bg}>{bg}</option>

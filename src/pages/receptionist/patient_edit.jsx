@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import receptionistApi from "../../api/receptionistApi";
+import patientApi from "../../api/patientApi";
 
 function Field({label,error,children}) {
 	return (
@@ -37,7 +38,7 @@ export default function PatientEditModal({patient,onClose,onSaved}) {
 		e.preventDefault();
 		setSubmitting(true);
 		try {
-			await receptionistApi.updatePatient(patient.id, form);
+			await patientApi.updatePatient(patient.id, form);
 			setSuccess(true);
 			setTimeout(onSaved,1000);
 		} catch (err) {

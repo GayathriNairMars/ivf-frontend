@@ -9,7 +9,7 @@ export const patientApi = {
   getPatients: () => api.get("/patients/").then(res => res.data), // generic fetch
   createPatient: (payload) => api.post("/patients/", payload).then(res => res.data),
   updatePatient: (id, payload) => api.patch(`/patients/${id}/`, payload).then(res => res.data),
-  updatePatientStatus: (id, status) => api.post(`/patients/${id}/update-status`, { status }).then(res => res.data),
+  updatePatientStatus: (id, status) => api.post(`/patients/${id}/update-status/`, { status }).then(res => res.data),
   linkPartner: (id, partnerId) => api.post(`/patients/${id}/link-partner/`, { partner_id: partnerId }).then(res => res.data),
   unlinkPartner: (id) => api.post(`/patients/${id}/unlink-partner/`).then(res => res.data),
 
