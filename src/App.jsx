@@ -1,29 +1,44 @@
 import { Routes,Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./hooks/useAuth";
+import { AuthProvider, useAuth } from "./hooks/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
-import LoginPage from "./features/auth/pages/login";
-import SuperAdminDashboard from "./features/admin/pages/dashboard/superadmindashboard";
-import DashboardHome from "./features/admin/pages/dashboard/dashboard";
-import AddStaff from "./features/admin/pages/staff/add_staff";
-import EditStaff from "./features/admin/pages/staff/edit_staff";
-import StaffList from "./features/admin/pages/staff/staff_list";
-import DepartmentSection from "./features/admin/pages/departments/departmentsection";
-import PatientList from "./features/admin/pages/patients/patient_list";
-import AddPatient from "./features/admin/pages/patients/add_patient";
-import EditPatient from "./features/admin/pages/patients/edit_patient";
-import PatientProfile from "./features/admin/pages/patients/patient_profile";
-import EMRSection from "./features/admin/pages/emr/emr_section";
-import PatientEMR from "./features/admin/pages/emr/patient_emr";
-import ReceptionistDashboardSection from "./features/receptionist/pages/section";
-import AdminLoginPage from "./features/auth/pages/admin_login";
+import LoginPage from "./pages/auth/login";
+import SuperAdminDashboard from "./pages/admin/dashboard/superadmindashboard";
+import DashboardHome from "./pages/admin/dashboard/dashboard";
+import AddStaff from "./pages/admin/staff/add_staff";
+import EditStaff from "./pages/admin/staff/edit_staff";
+import StaffList from "./pages/admin/staff/staff_list";
+import DepartmentSection from "./pages/admin/departments/departmentsection";
+import PatientList from "./pages/admin/patients/patient_list";
+import AddPatient from "./pages/admin/patients/add_patient";
+import EditPatient from "./pages/admin/patients/edit_patient";
+import PatientProfile from "./pages/admin/patients/patient_profile";
+import EMRSection from "./pages/admin/emr/emr_section";
+import PatientEMR from "./pages/admin/emr/patient_emr";
+import ReceptionistDashboardSection from "./pages/receptionist/section";
+import AdminLoginPage from "./pages/auth/admin_login";
 
 
-const Placeholder = ({title}) => (
-  <div style={{ padding: "2rem"}}>
-    <h2>{title}</h2>
-    <p>The dashboard is under construction</p>
-  </div>
-);
+const Placeholder = ({title}) => {
+  const { logout } = useAuth();
+  
+  const handleLogout = async () => {
+    await logout();
+    window.location.href = "/login";
+  };
+
+  return (
+    <div style={{ padding: "2rem"}}>
+      <h2>{title}</h2>
+      <p>The dashboard is under construction</p>
+      <button 
+        onClick={handleLogout} 
+        style={{ marginTop: "1rem", padding: "0.5rem 1rem", background: "#6366f1", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}
+      >
+        Sign Out
+      </button>
+    </div>
+  );
+};
 
 function Unauthorized() {
   return(
@@ -70,6 +85,18 @@ export default function App(){
           </ProtectedRoute>
         } />
         {/*Other roles-swap placeholder with real comp*/}
+        <Route path="/hrm/*" element={<ProtectedRoute requiredRole="HRM"><Placeholder title="HR Manager Dashboard"/></ProtectedRoute>} />
+        <Route path="/cco/*" element={<ProtectedRoute requiredRole="CCO"><Placeholder title="Clinical Counsellor Dashboard"/></ProtectedRoute>} />
+        <Route path="/fco/*" element={<ProtectedRoute requiredRole="FCO"><Placeholder title="Financial Counsellor Dashboard"/></ProtectedRoute>} />
+        <Route path="/gyn/*" element={<ProtectedRoute requiredRole="GYN"><Placeholder title="Gynaecologist Dashboard"/></ProtectedRoute>} />
+        <Route path="/ane/*" element={<ProtectedRoute requiredRole="ANE"><Placeholder title="Anesthesiologist Dashboard"/></ProtectedRoute>} />
+        <Route path="/emb/*" element={<ProtectedRoute requiredRole="EMB"><Placeholder title="Embryologist Dashboard"/></ProtectedRoute>} />
+        <Route path="/nur/*" element={<ProtectedRoute requiredRole="NUR"><Placeholder title="Nurse Dashboard"/></ProtectedRoute>} />
+        <Route path="/pha/*" element={<ProtectedRoute requiredRole="PHA"><Placeholder title="Pharmacist Dashboard"/></ProtectedRoute>} />
+        <Route path="/tec/*" element={<ProtectedRoute requiredRole="TEC"><Placeholder title="Lab Technician Dashboard"/></ProtectedRoute>} />
+        <Route path="/and/*" element={<ProtectedRoute requiredRole="AND"><Placeholder title="Andrology Tech Dashboard"/></ProtectedRoute>} />
+        <Route path="/pat/*" element={<ProtectedRoute requiredRole="PAT"><Placeholder title="Patient Dashboard"/></ProtectedRoute>} />
+        <Route path="/end/*" element={<ProtectedRoute requiredRole="END"><Placeholder title="Endocrinologist Dashboard"/></ProtectedRoute>} />
 
         {/*Fallback*/}
         <Route path="/" element={<Navigate to="/login" replace />}/>
