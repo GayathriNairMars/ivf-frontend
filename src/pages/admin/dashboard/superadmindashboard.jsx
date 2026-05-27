@@ -6,6 +6,7 @@ import "./superadmin.css"
 import Icon from "../../../components/Icons";
 import { ROLE_LABELS } from "../../../constants/constants";
 import arathyAvatar from "../../../assets/arathy_avatar.png";
+import { IoNotificationsOutline } from "react-icons/io5";
 
 const NAV=[
   {id:"dashboard",label:"Dashboard",icon:"dashboard", path:"/superadmin/"},
@@ -119,16 +120,11 @@ export default function SuperAdminDashboard() {
             </div>
 
             <div className="user-area">
-              <button className="notification-btn-square">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2">
-                  <rect x="4" y="4" width="16" height="16" rx="3" />
-                  <path d="M9 12h6" />
-                  <path d="M12 9v6" />
-                </svg>
-                <span className="dot-red"></span>
-              </button>
-
               <div className="topbar-profile">
+                <button className="notification-btn-square">
+                    <IoNotificationsOutline />
+                  <span className="dot-red"></span>
+                </button>
                 <div className="profile-details">
                   <span className="profile-name">{user?.full_name || "Arathy Sreekumar"}</span>
                   <span className="profile-role">{ROLE_LABELS[user?.role] || user?.role || "System Administrator"}</span>
