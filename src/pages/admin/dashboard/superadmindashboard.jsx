@@ -31,7 +31,7 @@ export default function SuperAdminDashboard() {
    const handleLogout = async()=>{
       await logout();
       setTimeout(()=>{
-      window.location.href="/login";
+      window.location.href="login";
    },100);
    };
 
