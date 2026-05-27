@@ -119,6 +119,7 @@ export default function SuperAdminDashboard() {
             </div>
 
             <div className="user-area">
+              <div className="topbar-profile">
               <button className="notification-btn-square">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2">
                   <rect x="4" y="4" width="16" height="16" rx="3" />
@@ -128,7 +129,6 @@ export default function SuperAdminDashboard() {
                 <span className="dot-red"></span>
               </button>
 
-              <div className="topbar-profile">
                 <div className="profile-details">
                   <span className="profile-name">{user?.full_name || "Arathy Sreekumar"}</span>
                   <span className="profile-role">{ROLE_LABELS[user?.role] || user?.role || "System Administrator"}</span>

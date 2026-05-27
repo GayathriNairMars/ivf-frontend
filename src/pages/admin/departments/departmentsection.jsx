@@ -7,120 +7,106 @@ import "../staff/staff.css";
 //---Staff Table---
 function StaffTable({staff,loading,emptyMessage}) {
 	const [search,setSearch] = useState("");
-	const [roleFilter,setRole] = useState("");
-	const [statusFilter,setStatus] = useState("");
+	const [statusFilter,setStatusFilter] = useState("");
 	const [page,setPage] = useState(1);
 	const PER_PAGE = 8;
 
 	const filtered = staff.filter(s => {
 		const matchSearch = !search || 
 		s.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-		s.email?.toLowerCase().includes(search.toLowerCase());
-		const matchRole = !roleFilter || s.role ===roleFilter;
+		s.email?.toLowerCase().includes(search.toLowerCase()) ||
+		s.staff_id?.toLowerCase().includes(search.toLowerCase()) ||
+		s.role?.toLowerCase().includes(search.toLowerCase());
 		const matchStatus = 
-		  statusFilter ===""? true:
-		  statusFilter === "active"? s.is_active : !s.is_active;
-		return matchSearch && matchRole && matchStatus;
+		  statusFilter === "" ? true :
+		  statusFilter === "active" ? s.is_active : !s.is_active;
+		return matchSearch && matchStatus;
 	});
-	const totalPages =Math.ceil(filtered.length/PER_PAGE);
+	const totalPages = Math.ceil(filtered.length/PER_PAGE);
 	const paginated = filtered.slice((page-1)* PER_PAGE, page * PER_PAGE);
-	const hasFilters = search || roleFilter || statusFilter;
-	const reset = () => {setSearch(""); setRole("");setStatus("");setPage(1);};
 
 	if(loading) return <div className="staff-loading"><div className="spinner"/><span>Loading...</span></div>;
 
 	return (
-		<div>
-			{/* Filters bar */ }
-      		<div className="filters-bar">
-        	  <div className="search-wrap">
-          		<svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+		<div className="dept-staffs-card">
+			<div className="staffs-card-header">
+				<h3>Department Staffs</h3>
+				<div className="staffs-header-actions">
+					<div className="search-wrap-new">
+						<svg className="search-icon-new" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
 							<circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-          		</svg>
-          		<input
-           			className="search-input"
-           			type="text"
-           			placeholder="Search by name or email.."
-           			value={search}
-           			onChange={(e) => {setSearch(e.target.value); setPage(1); }}
-           		/>
-        	  </div>
-        	  <select className="filter-select" value={roleFilter} onChange={(e)=> {setRoleFilter(e.target.value); setPage(1);}}>
-				{ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option> )}
-        	  </select>
-        	  <select className="filter-select" value={statusFilter} onChange={(e) => {setStatusFilter(e.target.value); setPage(1);}}>
-				<option value="">All Status</option>
-				<option value="active">Active</option>
-				<option value="inactive">Inactive</option>
-        	  </select>
-        	  
-
-        	{hasFilters && (<button className="btn-clear" onClick={resetFilters}>Clear</button>)}
-        	<span className="result-count">{filtered.length} staff</span>
-          </div>
-
-		  {paginated.length === 0?(
-			<div className="staff-empty">
-				<div className="empty-icon">👥</div>
-				<p>{hasFilters ? "No staff matching your filters.": emptyMessage}</p>
-				{hasFilters && <button className="btn-clear" onClick={reset}>Clear Filters</button>}
-			</div>
-		  ):(
-			<>
-			 <div className="table-wrap">
-			  <table className="staff-table">
-				<thead>
-				 <tr>
-				  <th>Staff Member</th>
-				  <th>Role</th>
-				  <th>Email</th>
-				  <th>Unit</th>
-				  <th>Joined</th>
-				  <th>Status</th>
-				 </tr>
-				</thead>
-				<tbody>
-				 {paginated.map(s =>(
-				   <tr key={s.id} className={!s.is_active?"row-inactive" : ""}>
-					<td>
-					 <div className="staff-name-cell">
-					  <div className="staff-avatar" style={{ background:ROLE_COLORS[s.role] || "#64748b" }}>
-						{s.full_name?.split(" ").map(n =>n[0]).slice(0,2).join("").toUpperCase()}
-					  </div>
-					  <span className="staff-name">{s.full_name}</span>
-					 </div>
-					</td>
-					<td>
-					 <span className="role-pill" style={{"--rc": ROLE_COLORS[s.role] || "#64748b"}}>
-						{s.role_display}
-					 </span>
-					</td>
-					<td className="email-cell">{s.email}</td>
-					<td className="date-cell">{s.unit || "-"}</td>
-					<td className="date-cell">
-						{s.date_joined ? new Date(s.date_joined).toLocaleDateString("en-IN",{day:"2-digit", month:"short", year:"numeric"}):"-"}
-					</td>
-					<td>
-						<span className={`status-pill ${s.is_active ? "status-active" : "status-inactive"}`}>
-							{s.is_active ? "Active":"Inactive"}
-						</span>
-					</td>
-				   </tr>
-				 ))}
-				</tbody>
-			  </table>
-			 </div>
-			 {totalPages>1 && (
-				<div className="pagination">
-					<button className="page-btn" onClick={() => setPage(p => Math.max(1, p-1))} disabled={page === 1}> Prev </button>
-					{Array.from({length : totalPages},(_,i) => i+1).map(p => ( 
-						<button key={p} className={`page-btn ${p === page ? "page-active" : ""}`} onClick={() => setPage(p)}>{p}</button>
-					))}
-					<button key={p} className="page-btn" onClick={()=> setPage(p =>Math.min(ttotalPages, p + 1))} disabled={page === totalPages}>Next</button>
+						</svg>
+						<input
+							className="search-input-new"
+							type="text"
+							placeholder="Search by Staff Id, Name, Role"
+							value={search}
+							onChange={(e) => {setSearch(e.target.value); setPage(1); }}
+						/>
+					</div>
+					<select className="filter-select-new" value={statusFilter} onChange={(e) => {setStatusFilter(e.target.value); setPage(1);}}>
+						<option value="">Status</option>
+						<option value="active">Active</option>
+						<option value="inactive">Inactive</option>
+					</select>
 				</div>
-			 )}
-			</>
-		  )}
+			</div>
+
+			{paginated.length === 0 ? (
+				<div className="staff-empty">
+					<div className="empty-icon">👥</div>
+					<p>{emptyMessage}</p>
+				</div>
+			) : (
+				<>
+					<div className="table-wrap-new">
+						<table className="staff-table-new">
+							<thead>
+								<tr>
+									<th>Staff Id</th>
+									<th>Name</th>
+									<th>Email</th>
+									<th>Role</th>
+									<th>Status</th>
+									<th>Date joined</th>
+								</tr>
+							</thead>
+							<tbody>
+								{paginated.map(s => (
+									<tr key={s.id}>
+										<td className="staff-id-cell">{s.staff_id || s.id || "CD-2024-001"}</td>
+										<td>
+											<span className="staff-name-bold">{s.full_name}</span>
+										</td>
+										<td className="email-cell">{s.email}</td>
+										<td className="role-cell-new">{s.role_display || s.role}</td>
+										<td>
+											<span className={`status-badge-new ${s.is_active ? "active" : "inactive"}`}>
+												<span className="status-dot"></span>
+												{s.is_active ? "Active" : "Inactive"}
+											</span>
+										</td>
+										<td className="date-cell">
+											{s.date_joined ? new Date(s.date_joined).toLocaleDateString("en-GB",{day:"2-digit", month:"short", year:"numeric"}).replace(/ /g, ' ') : "14 Jan 2025"}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<div className="pagination-footer">
+						<span className="showing-text">Showing <strong style={{color:"#3b82f6"}}>{paginated.length}</strong> of <strong style={{color:"#3b82f6"}}>{filtered.length}</strong> staff members</span>
+						<div className="pagination-arrows">
+							<button className="page-arrow-btn" onClick={() => setPage(p => Math.max(1, p-1))} disabled={page === 1}>
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><polyline points="15 18 9 12 15 6"></polyline></svg>
+							</button>
+							<button className="page-arrow-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages || totalPages === 0}>
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><polyline points="9 18 15 12 9 6"></polyline></svg>
+							</button>
+						</div>
+					</div>
+				</>
+			)}
 		</div>
 	);
 }
@@ -128,6 +114,7 @@ function StaffTable({staff,loading,emptyMessage}) {
 //Department Detail
 function DeptDetail({dept,onBack}) {
 	console.log("DeptDetail rendering for:", dept);
+	const [activeTab, setActiveTab] = useState("primary");
 	const [primaryStaff, setPrimary] = useState([]);
 	const [secondaryStaff,setSecondary] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -150,72 +137,86 @@ function DeptDetail({dept,onBack}) {
 	},[dept.id]);
 
 	return (
-	  <div className="dept-detail">
-	    {/* Header */}
-		<div className="dept-detail-header">
-			<button className="btn-back" onClick={onBack}>
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
-          <polyline points="15,18 9,12 15,6"/>
-				</svg>
-				Back to Departments
-			</button>
-			<div className="dept-detail-title">
-				<span className="dept-icon-lg">{DEPT_ICONS[dept.code] || "🏥"}</span>
-				<div >
+		<div className="dept-detail-container">
+			{/* Breadcrumb Header */}
+			<div className="dept-breadcrumb">
+				<button className="breadcrumb-link" onClick={onBack}>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+						<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>
+					</svg>
+					Departments
+				</button>
+				<span className="breadcrumb-separator"> {'>'} </span>
+				<span className="breadcrumb-current">{dept.name}</span>
+			</div>
+
+			<div className="dept-detail-top">
+				<div className="dept-title-section">
 					<h2>{dept.name}</h2>
-					<p>{dept.description || "No description"}</p>
+					<span className={`dept-status-badge ${dept.is_active ? 'active' : 'inactive'}`}>
+						{dept.is_active ? 'Active' : 'Inactive'}
+					</span>
+				</div>
+				<div className="dept-stats-section">
+					<div className="dept-stat-item">
+						<span className="stat-label">Staff count</span>
+						<span className="stat-value">{dept.staff_count ?? "-"}</span>
+					</div>
+					<div className="dept-stat-item">
+						<span className="stat-label">Staff count</span>
+						<span className="stat-value">{primaryStaff.length}</span>
+					</div>
+					<div className="dept-stat-item">
+						<span className="stat-label">Staff count</span>
+						<span className="stat-value">{secondaryStaff.length}</span>
+					</div>
 				</div>
 			</div>
-		</div>
 
-		{/* Stats row */}
-		<div className="dept-stats-row">
-			<div className="dept-stat-box">
-				<span className="dsb-value">{dept.staff_count ?? "-"}</span>
-				<span className="dsb-label">Total Staff</span>
+			<div className="dept-head-info-card">
+				<div className="dept-head-left">
+					<div className="dept-head-profile">
+						<div className="hod-avatar-lg" style={{ background: dept.code === 'ADM' ? '#e0f2fe' : dept.code === 'EMB' ? '#ffedd5' : '#f1f5f9' }}>
+							{dept.head_name ? dept.head_name.split(" ").map(n=>n[0]).slice(0,2).join("").toUpperCase() : "H"}
+						</div>
+						<div className="hod-details">
+                            <div className="dept-head-label">Department head</div>
+							<span className="hod-name">{dept.head_name || "No Head Assigned"}</span>
+							<span className="hod-role">{dept.head_role || "Chief Physician"}</span>
+						</div>
+					</div>
+				</div>
+                <div className="dept-head-divider"></div>
+				<div className="dept-head-right">
+					<p>{dept.description || ""}</p>
+				</div>
 			</div>
-			<div className="dept-stat-box">
-				<span className="dsb-value">{primaryStaff.length}</span>
-				<span className="dsb-label">Primary Staff</span>
+
+			{/* Tabs */}
+			<div className="dept-tabs">
+				<button className={`tab-btn ${activeTab === 'primary' ? 'active' : ''}`} onClick={() => setActiveTab('primary')}>Primary staffs</button>
+				<button className={`tab-btn ${activeTab === 'secondary' ? 'active' : ''}`} onClick={() => setActiveTab('secondary')}>Secondary staffs</button>
 			</div>
-			<div className="dept-stat-box">
-				<span className="dsb-value">{secondaryStaff.length}</span>
-				<span className="dsb-label">Secondary / Temp</span>
+            <div className="dept-tabs-line"></div>
+
+			{/* Tab Content */}
+			<div className="dept-tab-content">
+				{activeTab === 'primary' ? (
+					<StaffTable 
+						staff={primaryStaff}
+						loading={loading}
+						emptyMessage="No primary staff assigned to this department."
+					/>
+				) : (
+					<StaffTable 
+						staff={secondaryStaff}
+						loading={loading}
+						emptyMessage="No secondary staff assigned to this department."
+					/>
+				)}
 			</div>
-			<div className="dept-stat-box">
-				<span className="dsb-value">{dept.head_name || "-"}</span>
-				<span className="dsb-label">Head of Department</span>
-			</div>
+
 		</div>
-		 {/* Primary Staff */}
-		 <div className="dept-staff-section">
-			<div className="dept-staff-header">
-				<h3>Primary Staff</h3>
-				<span className="result-count">{primaryStaff.length} members</span>
-			</div>
-			<div style={{ padding:"0 0 8px"}}>
-				<StaffTable 
-				  staff={primaryStaff}
-					loading={loading}
-					emptyMessage="No primary staff assigned to this department."
-				/>
-			</div>
-		 </div>
-		 {/* Secondary Staff */}
-		 <div className="dept-staff-section" style={{marginTop:20}}>
-			<div className="dept-staff-header">
-				<h3>Secondary & Temporary Staff</h3>
-				<span className="result-count">{secondaryStaff.length} members</span>
-			</div>
-			<div style={{ padding:"0 0 8px" }}>
-				<StaffTable
-					staff={secondaryStaff}
-					loading={loading}
-					emptyMessage="No secondary staff assigned to this department."
-				/>
-			</div>
-		 </div>
-	  </div>
 	);
 }
 
@@ -239,7 +240,7 @@ function DeptCard({ dept, onClick }) {
 				hour: "numeric",
 				minute: "2-digit",
 				hour12: true,
-			}).replace(/\s+/g, ""); // "10:42 AM" -> "10:42AM"
+			}).replace(/\s+/g, "");
 		} catch (e) {
 			return "10:42AM";
 		}
@@ -358,7 +359,7 @@ export default function DepartmentSection(){
 	});
 
 	if (view === "detail" && selected) {
-		return <DeptDetail dept ={selected} onBack={handleBlack} />
+		return <DeptDetail dept={selected} onBack={handleBlack} />
 	}
 
 	return(

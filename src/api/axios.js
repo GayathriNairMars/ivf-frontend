@@ -17,7 +17,7 @@ let csrfToken = null;
 
 export async function initCsrf() {
   try {
-    const res = await api.get("/csrf/");
+    const res = await api.get("csrf/");
     csrfToken = res.data.csrfToken; 
   } catch (error) {
     console.error("Failed to initialize CSRF token", error);
