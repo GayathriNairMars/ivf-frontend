@@ -5,6 +5,7 @@ import adminApi from "../../../api/adminApi";
 import "./superadmin.css"
 import Icon from "../../../components/Icons";
 import { ROLE_LABELS } from "../../../constants/constants";
+import arathyAvatar from "../../../assets/arathy_avatar.png";
 
 const NAV=[
   {id:"dashboard",label:"Dashboard",icon:"dashboard", path:"/superadmin/"},
@@ -106,27 +107,36 @@ export default function SuperAdminDashboard() {
 
        {/* Main Area */}
        <div className="sad-main">
-         <header className="sad-topbar">
-           <div className="search-bar">
-             <div className="icon">
-               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                 <circle cx="11" cy="11" r="8"></circle>
-                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-               </svg>
-             </div>
-             <input type="text" placeholder="Search hospital database" />
-           </div>
+          <header className="sad-topbar">
+            <div className="search-bar">
+              <div className="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <input type="text" placeholder="Search hospital database" />
+            </div>
 
-           <div className="user-area">
-             <button className="notification-btn">
-               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                 <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-               </svg>
-               <span className="dot"></span>
-             </button>
-           </div>
-         </header>
+            <div className="user-area">
+              <button className="notification-btn-square">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2">
+                  <rect x="4" y="4" width="16" height="16" rx="3" />
+                  <path d="M9 12h6" />
+                  <path d="M12 9v6" />
+                </svg>
+                <span className="dot-red"></span>
+              </button>
+
+              <div className="topbar-profile">
+                <div className="profile-details">
+                  <span className="profile-name">{user?.full_name || "Arathy Sreekumar"}</span>
+                  <span className="profile-role">{ROLE_LABELS[user?.role] || user?.role || "System Administrator"}</span>
+                </div>
+                <img src={arathyAvatar} alt="Arathy Sreekumar" className="profile-img" />
+              </div>
+            </div>
+          </header>
 
          {/* Page content */}
          <main className="sad-body">
