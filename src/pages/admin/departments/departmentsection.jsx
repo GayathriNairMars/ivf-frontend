@@ -220,28 +220,77 @@ function DeptDetail({dept,onBack}) {
 }
 
 //--Department Card--
-function DeptCard({dept,onClick}){
-	return(
-		<div className={`dept-card ${!dept.is_active ? "dept-inactive": ""}`} onClick={()=> onClick(dept)}>
-			<div className="dept-card-top">
-				<span className="dept-icon">{DEPT_ICONS[dept.code] || "🏥"}</span>
-				<span className={`status-pill ${dept.is_active? "status-active":"status-in"}`}>
-					{dept.is_active? "Active":"Inactive"}
-				</span>
-			</div>
-			<h3 className="dept-name">{dept.name}</h3>
-			<p className="dept-desc">{dept.description || "No description provided."}</p>
-			<div className="dept-footer">
-				<div className="dept-stat">
-					<span className="dept-stat-value">{dept.staff_count ?? 0}</span>
-					<span className="dept-stat-label">Staff</span>
-				</div>
-				{dept.head && (
-					<div className="dept-head">
-						<span className="dept-head-label">HOD</span>
-						<span className="dept-head-name">{dept.head}</span>
+function DeptCard({ dept, onClick }) {
+	const getInitials = (name) => {
+		if (!name) return "H";
+		return name
+			.split(" ")
+			.map((n) => n[0])
+			.slice(0, 2)
+			.join("")
+			.toUpperCase();
+	};
+
+	const formatTime = (isoString) => {
+		if (!isoString) return "10:42AM";
+		try {
+			const date = new Date(isoString);
+			return date.toLocaleTimeString("en-US", {
+				hour: "numeric",
+				minute: "2-digit",
+				hour12: true,
+			}).replace(/\s+/g, ""); // "10:42 AM" -> "10:42AM"
+		} catch (e) {
+			return "10:42AM";
+		}
+	};
+
+	return (
+		<div className={`dept-card-new ${!dept.is_active ? "dept-card-inactive" : ""}`} onClick={() => onClick(dept)}>
+			<div className="dept-card-left">
+				<div className="dept-card-header-row">
+					<h3 className="dept-card-title">{dept.name}</h3>
+					<div className="dept-card-status-badges">
+						<span className="status-dot-text">
+							<span className="dot-bullet"></span>
+							{dept.is_active ? "Active" : "Inactive"}
+						</span>
+						<span className="dept-card-updated">
+							<svg className="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+								<circle cx="12" cy="12" r="10" />
+								<polyline points="12,6 12,12 16,14" />
+							</svg>
+							Updated {formatTime(dept.updated_at || dept.created_at)}
+						</span>
 					</div>
-				)}
+				</div>
+				<p className="dept-card-description">{dept.description || "No description provided."}</p>
+				<div className="dept-card-hod-box">
+					<div className="hod-avatar" style={{ background: dept.code === 'ADM' ? '#e0f2fe' : dept.code === 'EMB' ? '#ffedd5' : '#f1f5f9' }}>
+						{getInitials(dept.head_name)}
+					</div>
+					<div className="hod-info">
+						<span className="hod-name">{dept.head_name || "No Head Assigned"}</span>
+						<span className="hod-role">{dept.head_role || "Department Head"}</span>
+					</div>
+				</div>
+			</div>
+			<div className="dept-card-divider"></div>
+			<div className="dept-card-right">
+				<div className="staff-stat-container">
+					<span className="staff-stat-number">{dept.staff_count ?? 0}</span>
+					<span className="staff-stat-label">Staff</span>
+				</div>
+				<button className="btn-manage-card" onClick={(e) => {
+					e.stopPropagation();
+					onClick(dept);
+				}}>
+					Manage 
+					<svg className="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12" style={{ marginLeft: "4px" }}>
+						<line x1="7" y1="17" x2="17" y2="7" />
+						<polyline points="7,7 17,7 17,17" />
+					</svg>
+				</button>
 			</div>
 		</div>
 	);
@@ -254,6 +303,9 @@ export default function DepartmentSection(){
 	const [loading,setLoading] = useState(true);
 	const [seeding, setSeeding] = useState(false);
 	const [view,setView] = useState("list");
+
+	const [searchQuery, setSearchQuery] = useState("");
+	const [statusFilter, setStatusFilter] = useState("active");
 
 	const fetchDepts = useCallback(async () => {
 		setLoading(true);
@@ -293,6 +345,18 @@ export default function DepartmentSection(){
 		fetchDepts();
 	};
 
+	const filteredDepts = departments.filter(dept => {
+		const matchesSearch = !searchQuery || 
+			dept.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+			(dept.head_name && dept.head_name.toLowerCase().includes(searchQuery.toLowerCase()));
+		
+		const matchesStatus = 
+			statusFilter === "all" ? true :
+			statusFilter === "active" ? dept.is_active : !dept.is_active;
+
+		return matchesSearch && matchesStatus;
+	});
+
 	if (view === "detail" && selected) {
 		return <DeptDetail dept ={selected} onBack={handleBlack} />
 	}
@@ -300,30 +364,65 @@ export default function DepartmentSection(){
 	return(
 		<div className="dept-section">
 			{/* Header */}
-			<div className="staff-subnav">
-				<div className="subnav-left">
-					<h2 className="staff-title">Departments</h2>
-					<p className="staff-subtitle">{departments.length} departments</p>
+			<div className="dept-header-container">
+				<div className="dept-header-left">
+					<h2 className="dept-main-title">Departments</h2>
+					<p className="dept-main-subtitle">Manage and monitor hospital departments and clinical performance.</p>
 				</div>
-				{departments.length === 0 && !loading && (
-					<button className="btn-secondary" onClick={handleSeed} disabled={seeding}>
-						{seeding ? "Setting up...":"⚡ Setup Default Departments"}
+				<div className="dept-header-right">
+					{departments.length === 0 && !loading && (
+						<button className="btn-seed-depts" onClick={handleSeed} disabled={seeding}>
+							{seeding ? "Setting up...":"⚡ Setup Default Departments"}
+						</button>
+					) }
+					<button className="btn-add-dept-action">
+						Add Department
 					</button>
-				) }
+				</div>
 			</div>
+
+			{/* Filters Bar */}
+			<div className="dept-filters-row">
+				<div className="dept-search-input-wrapper">
+					<svg className="dept-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+						<circle cx="11" cy="11" r="8" />
+						<line x1="21" y1="21" x2="16.65" y2="16.65" />
+					</svg>
+					<input
+						type="text"
+						className="dept-search-input-field"
+						placeholder="Search by department name, Head name"
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
+				</div>
+
+				<div className="dept-filter-dropdown-wrapper">
+					<select 
+						className="dept-filter-select-field"
+						value={statusFilter}
+						onChange={(e) => setStatusFilter(e.target.value)}
+					>
+						<option value="active">Active</option>
+						<option value="inactive">Inactive</option>
+						<option value="all">All Status</option>
+					</select>
+				</div>
+			</div>
+
 			{/* Department grid */}
 			{loading ? (
 				<div className="staff-loading">
 					<div className="spinner" /><span>Loading departments...</span>
 				</div>
-			): departments.length === 0 ? (
+			): filteredDepts.length === 0 ? (
 				<div className="staff-empty">
 					<div className="empty-icon">🏥</div>
-					<p>No Departments yet. Click "Setup Default Departments" to get started.</p>
+					<p>{departments.length === 0 ? "No Departments yet. Click 'Setup Default Departments' to get started." : "No departments matching your filters."}</p>
 				</div>
 			):(
-				<div className="dept-grif">
-					{departments.map(dept =>(
+				<div className="dept-grid-new">
+					{filteredDepts.map(dept =>(
 						<DeptCard key={dept.id} dept={dept} onClick={handleCardClick} />
 					))}
 				</div>
