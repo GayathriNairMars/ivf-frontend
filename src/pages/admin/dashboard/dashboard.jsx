@@ -34,7 +34,7 @@ export default function DashboardHome() {
 		<div className="dashboard-content">
 		  <div className="dashboard-header">
             <div>
-		      <h2>HIMS Overview</h2>
+		          <h2>HIMS Overview</h2>
               <p>Operational data and clinical performance monitoring</p>
             </div>
             <div className="header-actions">

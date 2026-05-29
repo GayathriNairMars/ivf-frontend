@@ -16,7 +16,9 @@ export const adminApi = {
   // Departments
   getDepartments: () => api.get("/departments/").then(res => res.data),
   seedDepartments: () => api.post("/departments/seed/").then(res => res.data),
-  getDepartmentStaff: (deptId) => api.get(`/departments/${deptId}/staff/`).then(res => res.data)
+  getDepartmentStaff: (deptId) => api.get(`/departments/${deptId}/staff/`).then(res => res.data),
+  setDepartmentHead: (deptId, staffId) => api.post(`/departments/${deptId}/set-head/`, { staff_id: staffId }).then(res => res.data),
+  clearDepartmentHead: (deptId) => api.post(`/departments/${deptId}/set-head/`, { staff_id: null }).then(res => res.data),
 };
 
 export default adminApi;

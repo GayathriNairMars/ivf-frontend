@@ -6,6 +6,7 @@ import "./superadmin.css"
 import Icon from "../../../components/Icons";
 import { ROLE_LABELS } from "../../../constants/constants";
 import arathyAvatar from "../../../assets/arathy_avatar.png";
+import { IoNotificationsOutline } from "react-icons/io5";
 
 const NAV=[
   {id:"dashboard",label:"Dashboard",icon:"dashboard", path:"/superadmin/"},
@@ -56,19 +57,122 @@ export default function SuperAdminDashboard() {
            <span className="brand-name">HIMS</span>
          </div>
          
-         <nav className="sidebar-nav">
-           {NAV.map(item=>(
-             <button
-               key={item.id}
-               className={`nav-item ${isActive(item.path) ? "active":""}`}
-               onClick={()=>navigate(item.path)}
-             >
-               <div className="icon"><Icon name={item.icon}/></div>
-               <span>{item.label}</span>
-               {isActive(item.path) && <div className="nav-indicator" />}
-             </button>
-           ))}
-         </nav>
+          <nav className="sidebar-nav">
+            {NAV.map(item => {
+              const active = isActive(item.path);
+              if (item.id === "emr") {
+                const isOverviewActive = location.pathname === "/superadmin/emr/overview";
+                const isManagementActive = location.pathname === "/superadmin/emr/management";
+                const isPatientRecordsActive = active && !isOverviewActive && !isManagementActive;
+                return (
+                  <div key={item.id} className="nav-group-wrapper" style={{ display: "flex", flexDirection: "column" }}>
+                    <button
+                      className={`nav-item ${active ? "active":""}`}
+                      onClick={() => navigate(item.path)}
+                    >
+                      <div className="icon"><Icon name={item.icon}/></div>
+                      <span>{item.label}</span>
+                      <span className="caret" style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", color: "var(--text-3)", transform: active ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </span>
+                    </button>
+                    {active && (
+                      <div className="sidebar-submenu" style={{ display: "flex", flexDirection: "column", gap: "2px", padding: "4px 0" }}>
+                        <button
+                          className={`submenu-item ${isOverviewActive ? "active" : ""}`}
+                          onClick={() => navigate("/superadmin/emr/overview")}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            padding: "10px 28px 10px 48px",
+                            background: "none",
+                            border: "none",
+                            color: isOverviewActive ? "var(--accent)" : "var(--text-2)",
+                            fontFamily: "'Inter', sans-serif",
+                            fontSize: "0.9rem",
+                            fontWeight: isOverviewActive ? "600" : "500",
+                            cursor: "pointer",
+                            textAlign: "left",
+                            width: "100%",
+                            position: "relative",
+                            transition: "var(--transition)"
+                          }}
+                        >
+                          <Icon name="overview" />
+                          <span>Overview</span>
+                          {isOverviewActive && <div className="nav-indicator" />}
+                        </button>
+                        <button
+                          className={`submenu-item ${isPatientRecordsActive ? "active" : ""}`}
+                          onClick={() => navigate("/superadmin/emr")}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            padding: "10px 28px 10px 48px",
+                            background: "none",
+                            border: "none",
+                            color: isPatientRecordsActive ? "var(--accent)" : "var(--text-2)",
+                            fontFamily: "'Inter', sans-serif",
+                            fontSize: "0.9rem",
+                            fontWeight: isPatientRecordsActive ? "600" : "500",
+                            cursor: "pointer",
+                            textAlign: "left",
+                            width: "100%",
+                            position: "relative",
+                            transition: "var(--transition)"
+                          }}
+                        >
+                          <Icon name="patients" />
+                          <span>Patient records</span>
+                          {isPatientRecordsActive && <div className="nav-indicator" />}
+                        </button>
+                        <button
+                          className={`submenu-item ${isManagementActive ? "active" : ""}`}
+                          onClick={() => navigate("/superadmin/emr/management")}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            padding: "10px 28px 10px 48px",
+                            background: "none",
+                            border: "none",
+                            color: isManagementActive ? "var(--accent)" : "var(--text-2)",
+                            fontFamily: "'Inter', sans-serif",
+                            fontSize: "0.9rem",
+                            fontWeight: isManagementActive ? "600" : "500",
+                            cursor: "pointer",
+                            textAlign: "left",
+                            width: "100%",
+                            position: "relative",
+                            transition: "var(--transition)"
+                          }}
+                        >
+                          <Icon name="record_management" />
+                          <span>Record management</span>
+                          {isManagementActive && <div className="nav-indicator" />}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              return (
+                <button
+                  key={item.id}
+                  className={`nav-item ${active ? "active":""}`}
+                  onClick={()=>navigate(item.path)}
+                >
+                  <div className="icon"><Icon name={item.icon}/></div>
+                  <span>{item.label}</span>
+                  {active && <div className="nav-indicator" />}
+                </button>
+              );
+            })}
+          </nav>
 
          <div className="sidebar-footer">
            <div className="organization-info" onClick={() => setProfileOpen(!profileOpen)}>

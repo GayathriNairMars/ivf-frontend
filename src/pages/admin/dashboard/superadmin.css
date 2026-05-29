@@ -667,3 +667,8 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+
+.submenu-item:hover {
+  background: rgba(68, 116, 246, 0.04) !important;
+  color: var(--text) !important;
+}
