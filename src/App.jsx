@@ -76,6 +76,8 @@ export default function App(){
           <Route path="patients/:id" element={<PatientProfile/>} />
           <Route path="emr" element={<EMRSection />} />
           <Route path="emr/:patientId" element={<EMRSection />} />
+          <Route path="emr/overview" element={<Placeholder title="EMR Overview" />} />
+          <Route path="emr/management" element={<Placeholder title="EMR Record Management" />} />
         </Route>
 
         {/* Receptionist */}

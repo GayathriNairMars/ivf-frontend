@@ -7,8 +7,8 @@ import "../staff/staff.css";
 //---Staff Table---
 function StaffTable({staff,loading,emptyMessage}) {
 	const [search,setSearch] = useState("");
-	const [roleFilter,setRole] = useState("");
-	const [statusFilter,setStatus] = useState("");
+	const [roleFilter,setRoleFilter] = useState("");
+	const [statusFilter,setStatusFilter] = useState("");
 	const [page,setPage] = useState(1);
 	const PER_PAGE = 8;
 
@@ -55,7 +55,7 @@ function StaffTable({staff,loading,emptyMessage}) {
         	  </select>
         	  
 
-        	{hasFilters && (<button className="btn-clear" onClick={resetFilters}>Clear</button>)}
+        	{hasFilters && (<button className="btn-clear" onClick={reset}>Clear</button>)}
         	<span className="result-count">{filtered.length} staff</span>
           </div>
 
@@ -71,6 +71,7 @@ function StaffTable({staff,loading,emptyMessage}) {
 			  <table className="staff-table">
 				<thead>
 				 <tr>
+					<th>Staff ID</th>
 				  <th>Staff Member</th>
 				  <th>Role</th>
 				  <th>Email</th>
@@ -82,6 +83,7 @@ function StaffTable({staff,loading,emptyMessage}) {
 				<tbody>
 				 {paginated.map(s =>(
 				   <tr key={s.id} className={!s.is_active?"row-inactive" : ""}>
+					<td className="staff-name">{s.employee_id}</td>
 					<td>
 					 <div className="staff-name-cell">
 					  <div className="staff-avatar" style={{ background:ROLE_COLORS[s.role] || "#64748b" }}>
@@ -116,7 +118,9 @@ function StaffTable({staff,loading,emptyMessage}) {
 					{Array.from({length : totalPages},(_,i) => i+1).map(p => ( 
 						<button key={p} className={`page-btn ${p === page ? "page-active" : ""}`} onClick={() => setPage(p)}>{p}</button>
 					))}
-					<button key={p} className="page-btn" onClick={()=> setPage(p =>Math.min(ttotalPages, p + 1))} disabled={page === totalPages}>Next</button>
+					<button className="page-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+  					Next 
+					</button>
 				</div>
 			 )}
 			</>
@@ -339,7 +343,7 @@ export default function DepartmentSection(){
 		setView("detail");
 	};
 
-	const handleBlack = () => {
+	const handleBack = () => {
 		setSelected(null);
 		setView("list");
 		fetchDepts();
@@ -358,7 +362,7 @@ export default function DepartmentSection(){
 	});
 
 	if (view === "detail" && selected) {
-		return <DeptDetail dept ={selected} onBack={handleBlack} />
+		return <DeptDetail dept ={selected} onBack={handleBack} />
 	}
 
 	return(

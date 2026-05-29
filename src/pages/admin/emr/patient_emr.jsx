@@ -1,10 +1,11 @@
 // Full EMR view for a selected Patient
-import { useState,useEffect,useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import patientApi from "../../../api/patientApi";
 import AddEMRRecord from "./add_emrrecord";
 import EMRRecordDetail from "./emrrecord_detail";
 import HistoryDocuments from "./historydocs";
-
+import "./patient_emr.css";
+import doctorAvatar from "../../../assets/doctor_avatar.png";
 
 const TYPE_ICONS = {
   CONSULTATION:     "🩺",
@@ -21,45 +22,79 @@ const TYPE_ICONS = {
   OTHER:            "📄",
 };
 
-const TABS =[
-	{key:"timeline",label:"Timeline"},
-	{key:"history",label:"History Docs"},
-];
-
-export default function PatientEMR({patient,onBack}) {
-	const [summary,setSummary] = useState(null);
-	const [records,setRecords] = useState([]);
-	const [loading,setLoading] = useState(true);
-	const [view,setView] = useState("list");
-	const [tab,setTab] = useState("timeline");
-	const [typeFilter,setTypeFilter] = useState("");
-	const [selectedRecord,setSelectedRecord] = useState(null);
+export default function PatientEMR({ patient, onBack }) {
+	const [summary, setSummary] = useState(null);
+	const [records, setRecords] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [view, setView] = useState("list");
+	const [tab, setTab] = useState("timeline");
+	const [typeFilter, setTypeFilter] = useState("");
+	const [selectedRecord, setSelectedRecord] = useState(null);
 
 	const loadSummary = useCallback(async () => {
 		try {
-			const data = await patientApi.getEmrSummary(patient.id)
+			const data = await patientApi.getEmrSummary(patient.id);
 			setSummary(data);
 		} catch {}
-	},[patient.id]);
+	}, [patient.id]);
 
 	const loadRecords = useCallback(async () => {
 		setLoading(true);
-		try{
-			const params = typeFilter? `?record_type=${typeFilter}` : "";
+		try {
+			const params = typeFilter ? `?record_type=${typeFilter}` : "";
 			const data = await patientApi.getEmrRecords(patient.id, params);
 			setRecords(data.records || []);
-		} catch { setRecords([]) }
-		finally { setLoading(false); }
-	},[patient.id,typeFilter]);
+		} catch {
+			setRecords([]);
+		} finally {
+			setLoading(false);
+		}
+	}, [patient.id, typeFilter]);
 
-	useEffect(() => {loadSummary(); }, [loadSummary]);
-	useEffect(() => {if (tab === "timeline") loadRecords(); }, [loadRecords, tab]);
+	useEffect(() => {
+		loadSummary();
+	}, [loadSummary]);
+
+	useEffect(() => {
+		if (tab === "timeline") loadRecords();
+	}, [loadRecords, tab]);
+
 	const handleRecordAdded = () => {
 		setView("list");
 		loadRecords();
 		loadSummary();
 	};
 
+	// Assigned Doctor calculations
+	const doctorName = patient.assigned_doctor?.full_name || "Dr. Sarah Thomas";
+	const doctorSpecialty = patient.assigned_doctor?.role === "END" 
+		? "Senior Endocrinologist" 
+		: (patient.assigned_doctor?.role_display || "Senior Endocrinologist");
+	const doctorCode = `DOC-${patient.assigned_doctor?.id || '8821'}`;
+	const doctorAvatarUrl = patient.assigned_doctor?.avatar_url || doctorAvatar;
+
+	// Birth Details calculations
+	const getAge = (dob) => {
+		if (!dob) return "31 Yrs";
+		const birth = new Date(dob);
+		const today = new Date();
+		let age = today.getFullYear() - birth.getFullYear();
+		const m = today.getMonth() - birth.getMonth();
+		if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+			age--;
+		}
+		return `${age} Yrs`;
+	};
+	const dobFormatted = patient.date_of_birth 
+		? new Date(patient.date_of_birth).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' }) 
+		: "Not given";
+	const ageStr = patient.date_of_birth ? getAge(patient.date_of_birth) : "Not given";
+	const birthDetails = `${dobFormatted} (${ageStr})`;
+
+	// Treatment Day calculation
+	const treatmentDay = patient.treatment_day || (patient.registered_on 
+		? `Day ${Math.max(1, Math.floor((new Date() - new Date(patient.registered_on)) / (1000 * 60 * 60 * 24)))} of Treatment` 
+		: "Day N of Treatment");
 	if (view==="add") {
 		return (
 			<AddEMRRecord
@@ -69,128 +104,221 @@ export default function PatientEMR({patient,onBack}) {
 			/>
 		);
 	}
-	
-	if (view==="detail" && selectedRecord) {
-		return (
-			<EMRRecordDetail 
-				record={selectedRecord}
-				patient={patient}
-				onBack={() => {setView("list"); setSelectedRecord(null); }}
-				onDeleted={() => {setView("list"); setSelectedRecord(null); loadRecords(); loadSummary(); }}
-			/>
-		);
-	}
-
 	return (
-		<div className="staff-form-page">
-			{/* Header */}
-			<div className="patient-header">
-				<button className="btn-back" onClick={onBack}>
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
-						<polyline points="15,18 9,12 15,6" />
-					</svg>
-					Back To Patient Search
-				</button>
-				<div style={{flex:1}}>
-					<h2 className="form-page-title">EMR - {patient.user?.full_name}</h2>
-					<p className="form-page-sub">{patient.patient_id}</p>
-				</div>
-				<button className="btn-add-staff" onClick={() => setView("add")} >
-					+Add Record
-				</button>
+		<div className="emr-page-container">
+			{/* Breadcrumbs */}
+			<div className="emr-breadcrumbs">
+				<span className="breadcrumb-folder" style={{ cursor: "pointer" }} onClick={onBack}>📁 EMR</span>
+				<span className="breadcrumb-arrow"> &gt; </span>
+				<span className="breadcrumb-current">Patient details</span>
 			</div>
-			{/* Patient identity strip */}
-			<div className="staff-identity-card" style={{"--rc":"#0ea5e9"}}>
-				<div className="identity-avatar" style={{background: "#0ea5e9"}}>
-					{patient.user?.full_name?.split(" ").map(n => n[0]).slice(0,2).join("").toUpperCase()}
-				</div>
-				<div className="identity-info">
-					<span className="identity-name">{patient.user?.full_name}</span>
-					<span className="identity-email">{patient.user?.email}</span>
-				</div>
-				<span className="identity-role" style={{color:"#0ea5e9",borderColor:"#0ea5e9"}}>
-					{patient.patient_id}
-				</span>
-				{summary && (
-					<span style={{fontSize:"0.8rem", color:"var(--text-2)"}}>
-						{summary.total_records} records
-					</span>
-				)}
-			</div>
-			{/* Summary Cards */}
-			{summary && Object.keys(summary.by_type).length>0 && (
-				<div className="stats-grid" style={{gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:10,marginBottom:20}}>
-					{Object.entries(summary.by_type).map(([code,info]) => (
-						<div 
-							key={code}
-							className="stat-card"
-							style={{"--accent":"#6366f1",cursor:"pointer",padding:"12px 14px"}}
-							onClick={() => {setTypeFilter(code); setTab("timeline");}}
-						>
-							<div style={{fontSize:"1.4rem"}}>{TYPE_ICONS[code] || "📄"}</div>
-							<div className="stat-value" style={{fontSize: "1.2rem"}}>{info.count}</div>
-							<div className="star-label" style={{fontSize:"0.7rem"}}>{info.label}</div>
-						</div>
-						))}
-				</div>
-			)}
 
-			{/* Tabs */}
-			<div className="staff-subnav" style={{marginBottom:16, borderBottom: "1px solid var(--border)", paddingBottom: 8}}>
-				<div style={{display:"flex", gap:8, alignItems: "center"}}>
-					{TABS.map(t => (
-						<button key={t.key}
-							onClick={() => setTab(t.key)}
-        			style={{
-        			  padding: "6px 16px",
-        			  borderRadius: 6,
-        			  border: "none",
-        			  background: tab === t.key ? "var(--accent, #6366f1)" : "transparent",
-        			  color: tab === t.key ? "#fff" : "var(--text-2)",
-        			  fontWeight: tab === t.key ? 600 : 400,
-        			  cursor: "pointer",
-        			}}
-						>
-							{t.label}
+			{/* Patient Header Row */}
+			<div className="emr-patient-header">
+				<div className="header-left">
+					<div className="patient-title-row">
+						<h1>{patient.user?.full_name}</h1>
+						<span className="patient-id-badge">{patient.patient_id}</span>
+					</div>
+					<div className="patient-subtitle-row">
+						<span className="sync-icon">🔄</span>
+						<span className="treatment-type">{patient.treatment_type_display || patient.treatment_type || "Embryo Transfer"}</span>
+						<span className="divider-line">|</span>
+						<span className="treatment-day">{treatmentDay}</span>
+					</div>
+				</div>
+				<div className="header-right">
+					<button className="btn-add-note" onClick={() => setView("add")}>
+						+ Add note
+					</button>
+					<button className="btn-create-emr" onClick={() => setView("add")}>
+						+ Create EMR
+					</button>
+				</div>
+			</div>
+
+			{/* Main Grid: Patient Info & Sidebar */}
+			<div className="emr-grid-container">
+				{/* Left Card: Patient Information */}
+				<div className="emr-card patient-info-card">
+					<div className="card-header">
+						<h3>Patient Information</h3>
+						<button className="btn-edit-details" onClick={() => alert("Edit Details is under construction.")}>
+							Edit Details
 						</button>
-					))}
+					</div>
+					<div className="card-body info-grid">
+						<div className="info-item">
+							<span className="info-label">Patient ID</span>
+							<span className="info-value">{patient.patient_id}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Partner</span>
+							<span className="info-value">
+								{patient.partner_info 
+									? `${patient.partner_info.full_name} (${patient.partner_info.age || 34})` 
+									: `${patient.partner_name || "Sreejith C.S"} (34)`}
+							</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Full Name</span>
+							<span className="info-value">{patient.user?.full_name}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Contact</span>
+							<span className="info-value">{patient.phone || "+91 98450 12345"}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Birth Details</span>
+							<span className="info-value">{birthDetails}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Address</span>
+							<span className="info-value">{patient.address || "402, Hillview Residency, Kochi, 682038"}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Email</span>
+							<span className="info-value">{patient.user?.email}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Emergency</span>
+							<span className="info-value">{patient.emergency_contact_phone || "+91 98745 63210"}</span>
+						</div>
+					</div>
 				</div>
-				{tab === "timeline" && (
-					<select 
-					className="filter-select"
-					value={typeFilter}
-					onChange={e => setTypeFilter(e.target.value)}
-					style={{marginLeft:"auto"}}
-					>
-						<option value="">All Types</option>
-						{Object.entries(TYPE_ICONS).map(([code]) =>(
-							<option key={code} value={code}>{code.replace(/_/g," ")}</option>
-						))}
-					</select>
-				)}
+
+				{/* Right Column: Doctor & Clinical Notes */}
+				<div className="emr-sidebar-column">
+					{/* Assigned Doctor Card */}
+					<div className="emr-card doctor-card">
+						<div className="card-header">Assigned doctor</div>
+						<div className="card-body doctor-profile">
+							<div className="doctor-avatar-container">
+								<img src={doctorAvatarUrl} alt={doctorName} className="doctor-avatar-img" />
+								<span className="status-dot green"></span>
+							</div>
+							<div className="doctor-meta">
+								<h4 className="doctor-name">{doctorName}</h4>
+								<span className="doctor-specialty">{doctorSpecialty}</span>
+								<span className="doctor-id-status">
+									<span className="doc-id">{doctorCode}</span>
+									<span className="bullet">•</span>
+									<span className="status-text green">Online</span>
+								</span>
+							</div>
+						</div>
+						<div className="doctor-actions">
+							<button className="btn-doctor-msg" onClick={() => alert("Messaging is under construction.")}>
+								✉ Message
+							</button>
+							<button className="btn-doctor-call" onClick={() => alert("Voice call is under construction.")}>
+								📞 Voice Call
+							</button>
+						</div>
+					</div>
+
+					{/* Clinical Notes Card */}
+					<div className="emr-card clinical-notes-card" onClick={() => alert("Clinical Notes section is under construction.")}>
+						<div className="clinical-notes-trigger">
+							<span className="trigger-label">Clinical Notes</span>
+							<span className="badge-count">2</span>
+							<span className="trigger-arrow">&gt;</span>
+						</div>
+					</div>
+				</div>
 			</div>
 
-			{/* Timelime tab */}
-			{tab === "timeline" && (
-				<>
-					{loading? (
+			{/* Bottom Card: Treatment Log & Sub-sections */}
+			<div className="emr-card treatment-log-card">
+				<div className="card-header-flex">
+					<div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+						<h3>
+							{view === "detail" ? "Record Detail" : view === "add" ? "Add EMR Record" : "Treatment Log"}
+						</h3>
+						{view === "list" && (
+							<div className="tab-switcher" style={{ display: "flex", gap: "8px" }}>
+								<button
+									onClick={() => setTab("timeline")}
+									style={{
+										padding: "6px 14px",
+										borderRadius: "6px",
+										border: "none",
+										background: tab === "timeline" ? "var(--accent)" : "transparent",
+										color: tab === "timeline" ? "#fff" : "var(--text-2)",
+										fontWeight: 600,
+										cursor: "pointer",
+										fontSize: "0.85rem",
+										transition: "all 0.15s ease"
+									}}
+								>
+									Timeline
+								</button>
+								<button
+									onClick={() => setTab("history")}
+									style={{
+										padding: "6px 14px",
+										borderRadius: "6px",
+										border: "none",
+										background: tab === "history" ? "var(--accent)" : "transparent",
+										color: tab === "history" ? "#fff" : "var(--text-2)",
+										fontWeight: 600,
+										cursor: "pointer",
+										fontSize: "0.85rem",
+										transition: "all 0.15s ease"
+									}}
+								>
+									History Docs
+								</button>
+							</div>
+						)}
+					</div>
+					{view === "list" && tab === "timeline" && (
+						<select 
+							className="log-filter-select"
+							value={typeFilter}
+							onChange={e => setTypeFilter(e.target.value)}
+						>
+							<option value="">All types</option>
+							{Object.entries(TYPE_ICONS).map(([code]) => (
+								<option key={code} value={code}>{code.replace(/_/g," ")}</option>
+							))}
+						</select>
+					)}
+				</div>
+
+				<div className="card-body">
+					{view === "add" ? (
+						<AddEMRRecord
+							patient={patient}
+							onBack={() => setView("list")}
+							onSuccess={handleRecordAdded}
+						/>
+					) : view === "detail" && selectedRecord ? (
+						<EMRRecordDetail 
+							record={selectedRecord}
+							patient={patient}
+							onBack={() => { setView("list"); setSelectedRecord(null); }}
+							onDeleted={() => { setView("list"); setSelectedRecord(null); loadRecords(); loadSummary(); }}
+						/>
+					) : tab === "history" ? (
+						<HistoryDocuments patient={patient} />
+					) : loading ? (
 						<div className="staff-loading"><div className="spinner"/><span>Loading records...</span></div>
-					): records.length === 0?(
+					) : records.length === 0 ? (
 						<div className="staff-empty">
 							<div className="empty-icon">📋</div>
-							<p>{typeFilter? "No records of this type":"No EMR records yet"}</p>
+							<p>{typeFilter ? "No records of this type" : "No EMR records yet"}</p>
 							<button className="btn-edit" onClick={() => setView("add")}>Add First Record</button>
 						</div>
 					) : (
-						<div className="table-wrap">
-							<table className="staff-table">
+						<div className="table-wrap" style={{ boxShadow: "none", borderRadius: 0, padding: 0 }}>
+							<table className="emr-table">
 								<thead>
 									<tr>
 										<th>Type</th>
 										<th>Title</th>
 										<th>Date</th>
-										<th>Created_by</th>
-										<th>Role</th>
+										<th>Created by</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -198,23 +326,24 @@ export default function PatientEMR({patient,onBack}) {
 									{records.map(r => (
 										<tr key={r.id}>
 											<td>
-												<span style={{fontSize:"1.1rem"}}>{TYPE_ICONS[r.record_type] || "📄" }</span>
-												{" "}
-												<span className="role-pill" style={{"--rc":"#6366f1",fontSize:"0.7rem"}}>
-													{r.record_type_display}</span> 
+												<span className="type-cell">
+													<span style={{fontSize:"1.1rem"}}>{TYPE_ICONS[r.record_type] || "📄"}</span>
+													<span style={{fontWeight: 500}}>{r.record_type_display}</span>
+												</span>
 											</td>
-											<td className="staff-name">{r.title}</td>
-											<td className="date-cell">
-												{r.date ? new Date(r.date).toLocaleDateString("en-IN",{day:"2-digit", month:"short",year:"numeric"}): "-"}
+											<td style={{fontWeight: 500}}>{r.title}</td>
+											<td style={{color: "var(--text-2)"}}>
+												{r.date ? new Date(r.date).toLocaleDateString("en-US", {day:"2-digit", month:"short", year:"numeric"}) : "-"}
 											</td>
-											<td className="date-cell">{r.created_by_name || "-"}</td>
-											<td className="date-cell">{r.created_by_role || "-"}</td>
-											<td>
+											<td style={{color: "var(--text-2)"}}>
+												{r.created_by_name || "-"}
+											</td>
+											<td style={{textAlign: "right"}}>
 												<button
-													className="btn-edit"
-													onClick={() => {setSelectedRecord(r); setView("detail");}}
+													className="btn-view-log"
+													onClick={() => { setSelectedRecord(r); setView("detail"); }}
 												>
-													View
+													View ↗
 												</button>
 											</td>
 										</tr>
@@ -223,13 +352,8 @@ export default function PatientEMR({patient,onBack}) {
 							</table>
 						</div>
 					)}
-				</>	
-			)}
-
-			{/* History tab */}
-			{tab === "history" && (
-				<HistoryDocuments patient={patient} />
-			)}
+				</div>
+			</div>
 		</div>
 	);
 }
