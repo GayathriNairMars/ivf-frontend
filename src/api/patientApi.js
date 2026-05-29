@@ -20,6 +20,7 @@ export const patientApi = {
   getEmrRecordDetail: (patientId, recordId) => api.get(`/emr/patient/${patientId}/records/${recordId}/`).then(res => res.data),
   addEmrRecord: (patientId, payload, config = {}) => api.post(`/emr/patient/${patientId}/records/add/`, payload, config).then(res => res.data),
   deleteEmrRecord: (patientId, recordId) => api.delete(`/emr/patient/${patientId}/records/${recordId}/delete/`).then(res => res.data),
+  updateEmrRecord: (patientId, recordId, payload) => api.patch(`/emr/patient/${patientId}/records/${recordId}/update/`, payload).then(res => res.data),
   
   getHistoryDocs: (patientId) => api.get(`/emr/patient/${patientId}/history/`).then(res => res.data),
   addHistoryDoc: (patientId, payload, config = {}) => api.post(`/emr/patient/${patientId}/history/add`, payload, config).then(res => res.data),

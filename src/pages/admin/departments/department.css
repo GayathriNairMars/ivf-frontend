@@ -683,7 +683,7 @@
 .dept-card-new {
   background: var(--surface);
   border-radius: 16px;
-  border: 1.5px solid var(--border);
+  border: 1.5px solid transparent;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
   display: flex;
@@ -696,7 +696,7 @@
 .dept-card-new:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 24px rgba(16, 24, 40, 0.08);
-  border-color: rgba(68, 116, 246, 0.3);
+  border-color: var(--accent);
 }
 
 .dept-card-inactive {
@@ -721,7 +721,7 @@
 }
 
 .dept-card-title {
-  font-size: 1.2rem;
+  font-size: 1.0rem;
   font-weight: 700;
   color: var(--text);
   margin: 0;
@@ -737,7 +737,7 @@
 .status-dot-text {
   display: inline-flex;
   align-items: center;
-  font-size: 0.8rem;
+  font-size: 12px;
   font-weight: 600;
   color: #16a34a; /* Nice clean green */
 }
@@ -896,9 +896,10 @@
 }
 
 .arrow-icon {
-  transition: transform var(--transition);
+  transition: transform 0.2s ease-in-out;
+  transform: rotate(0deg);
 }
 
 .btn-manage-card:hover .arrow-icon {
-  transform: translate(1px, -1px);
+  transform: rotate(60deg);
 }

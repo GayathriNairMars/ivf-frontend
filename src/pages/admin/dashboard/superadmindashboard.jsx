@@ -6,6 +6,7 @@ import "./superadmin.css"
 import Icon from "../../../components/Icons";
 import { ROLE_LABELS } from "../../../constants/constants";
 import arathyAvatar from "../../../assets/arathy_avatar.png";
+import { IoNotificationsOutline } from "react-icons/io5";
 
 const NAV=[
   {id:"dashboard",label:"Dashboard",icon:"dashboard", path:"/superadmin/"},
@@ -35,7 +36,7 @@ export default function SuperAdminDashboard() {
    const handleLogout = async()=>{
       await logout();
       setTimeout(()=>{
-      window.location.href="/login";
+      window.location.href="login";
    },100);
    };
 
