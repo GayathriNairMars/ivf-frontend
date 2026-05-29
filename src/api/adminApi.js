@@ -15,6 +15,8 @@ export const adminApi = {
 
   // Departments
   getDepartments: () => api.get("/departments/").then(res => res.data),
+  addDepartment: (payload) => api.post("/departments/", payload).then(res => res.data),
+  updateDepartment: (id, payload) => api.patch(`/departments/${id}/`, payload).then(res => res.data),
   seedDepartments: () => api.post("/departments/seed/").then(res => res.data),
   getDepartmentStaff: (deptId) => api.get(`/departments/${deptId}/staff/`).then(res => res.data)
 };

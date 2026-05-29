@@ -15,7 +15,7 @@ export default function EMRSection() {
     if (!patientId) { setPatient(null); return; }
     patientApi.getPatientDetails(patientId)
       .then((data) => setPatient(data))
-      .catch(() => navigate("/superadmin/emr"));
+      .catch(() => navigate("/superadmin/emr/patients"));
   }, [patientId]);
 
 	const searchPatients = useCallback(async () => {
@@ -33,7 +33,7 @@ export default function EMRSection() {
 		return () => clearTimeout(t);
 	}, [searchPatients]);
 	if (patientId && patient) {
-		return <PatientEMR patient={patient} onBack={() => navigate("/superadmin/emr")} />;
+		return <PatientEMR patient={patient} onBack={() => navigate("/superadmin/emr/patients")} />;
 	}
 
 	return (
@@ -84,7 +84,7 @@ export default function EMRSection() {
 									<td><span className="status-pill status-active">{p.status}</span></td>
 
 									<td>
-										<button className="btn-edit" onClick={() => navigate(`/superadmin/emr/${p.id}`)}>
+										<button className="btn-edit" onClick={() => navigate(`/superadmin/emr/patients/${p.id}`)}>
 											Open EMR
 										</button>
 									</td>
