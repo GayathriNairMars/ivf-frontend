@@ -122,55 +122,6 @@ function StaffTable({staff,loading,emptyMessage}) {
   					Next 
 					</button>
 				</div>
-			) : (
-				<>
-					<div className="table-wrap-new">
-						<table className="staff-table-new">
-							<thead>
-								<tr>
-									<th>Staff Id</th>
-									<th>Name</th>
-									<th>Email</th>
-									<th>Role</th>
-									<th>Status</th>
-									<th>Date joined</th>
-								</tr>
-							</thead>
-							<tbody>
-								{paginated.map(s => (
-									<tr key={s.id}>
-										<td className="staff-id-cell">{s.staff_id || s.id || "CD-2024-001"}</td>
-										<td>
-											<span className="staff-name-bold">{s.full_name}</span>
-										</td>
-										<td className="email-cell">{s.email}</td>
-										<td className="role-cell-new">{s.role_display || s.role}</td>
-										<td>
-											<span className={`status-badge-new ${s.is_active ? "active" : "inactive"}`}>
-												<span className="status-dot"></span>
-												{s.is_active ? "Active" : "Inactive"}
-											</span>
-										</td>
-										<td className="date-cell">
-											{s.date_joined ? new Date(s.date_joined).toLocaleDateString("en-GB",{day:"2-digit", month:"short", year:"numeric"}).replace(/ /g, ' ') : "14 Jan 2025"}
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-					<div className="pagination-footer">
-						<span className="showing-text">Showing <strong style={{color:"#3b82f6"}}>{paginated.length}</strong> of <strong style={{color:"#3b82f6"}}>{filtered.length}</strong> staff members</span>
-						<div className="pagination-arrows">
-							<button className="page-arrow-btn" onClick={() => setPage(p => Math.max(1, p-1))} disabled={page === 1}>
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><polyline points="15 18 9 12 15 6"></polyline></svg>
-							</button>
-							<button className="page-arrow-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages || totalPages === 0}>
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><polyline points="9 18 15 12 9 6"></polyline></svg>
-							</button>
-						</div>
-					</div>
-				</>
 			)}
 		</div>
 	);
