@@ -14,6 +14,7 @@ export const patientApi = {
   unlinkPartner: (id) => api.post(`/patients/${id}/unlink-partner/`).then(res => res.data),
 
   // --- EMR (Electronic Medical Records) ---
+  getEmrDashboardStats: () => api.get("/emr/dashboard-stats/").then(res => res.data),
   getEmrSummary: (patientId) => api.get(`/emr/patient/${patientId}/`).then(res => res.data),
   getEmrRecords: (patientId, params = "") => api.get(`/emr/patient/${patientId}/records/${params}`).then(res => res.data),
   getEmrRecordDetail: (patientId, recordId) => api.get(`/emr/patient/${patientId}/records/${recordId}/`).then(res => res.data),
