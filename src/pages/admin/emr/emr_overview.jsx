@@ -126,7 +126,7 @@ export default function EMROverview() {
                                         
                                         <div className="emr-patient-physician">
                                             <span className="emr-physician-label">Physician</span>
-                                            <span className="emr-physician-name">Dr. Sarah Thomas</span>
+                                            <span className="emr-physician-name"> {patient.doctor_name}</span>
                                         </div>
 
                                         <div className="emr-patient-progress">

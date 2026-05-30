@@ -150,23 +150,39 @@ export default function PatientEMR({ patient, onBack }) {
 					<div className="card-body info-grid">
 						<div className="info-item">
 							<span className="info-label">Patient ID</span>
-							<span className="info-value">{patient.patient_id}</span>
+							<span className="info-value">{patient.patient_id || "-"}</span>
 						</div>
 						<div className="info-item">
 							<span className="info-label">Partner</span>
 							<span className="info-value">
 								{patient.partner_info 
-									? `${patient.partner_info.full_name} (${patient.partner_info.age || 34})` 
-									: `${patient.partner_name || "Sreejith C.S"} (34)`}
+									? `${patient.partner_info.full_name} (${patient.partner_info.age || "N/A"})` 
+									: (patient.partner_name ? `${patient.partner_name} (34)` : "-")}
 							</span>
 						</div>
 						<div className="info-item">
 							<span className="info-label">Full Name</span>
-							<span className="info-value">{patient.user?.full_name}</span>
+							<span className="info-value">{patient.user?.full_name || "-"}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Gender</span>
+							<span className="info-value">{patient.gender_display || patient.gender || "-"}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Age</span>
+							<span className="info-value">{patient.age !== undefined && patient.age !== null ? `${patient.age} Yrs` : ageStr}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Blood Group</span>
+							<span className="info-value">{patient.blood_group || "-"}</span>
 						</div>
 						<div className="info-item">
 							<span className="info-label">Contact</span>
-							<span className="info-value">{patient.phone || "+91 98450 12345"}</span>
+							<span className="info-value">{patient.phone || patient.user?.phone || "-"}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Email</span>
+							<span className="info-value">{patient.user?.email || "-"}</span>
 						</div>
 						<div className="info-item">
 							<span className="info-label">Birth Details</span>
@@ -174,15 +190,26 @@ export default function PatientEMR({ patient, onBack }) {
 						</div>
 						<div className="info-item">
 							<span className="info-label">Address</span>
-							<span className="info-value">{patient.address || "402, Hillview Residency, Kochi, 682038"}</span>
+							<span className="info-value">{patient.address || "-"}</span>
 						</div>
 						<div className="info-item">
-							<span className="info-label">Email</span>
-							<span className="info-value">{patient.user?.email}</span>
+							<span className="info-label">Emergency Contact</span>
+							<span className="info-value">
+								{patient.emergency_contact_name ? `${patient.emergency_contact_name} ` : ""}
+								{patient.emergency_contact_phone ? `(${patient.emergency_contact_phone})` : "-"}
+							</span>
 						</div>
 						<div className="info-item">
-							<span className="info-label">Emergency</span>
-							<span className="info-value">{patient.emergency_contact_phone || "+91 98745 63210"}</span>
+							<span className="info-label">Insurance Policy</span>
+							<span className="info-value">{patient.insurance_policy_number || "-"}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Insurance Details</span>
+							<span className="info-value">{patient.insurance_details || "-"}</span>
+						</div>
+						<div className="info-item">
+							<span className="info-label">Treatment Type</span>
+							<span className="info-value">{patient.treatment_type_display || patient.treatment_type || "-"}</span>
 						</div>
 					</div>
 				</div>
