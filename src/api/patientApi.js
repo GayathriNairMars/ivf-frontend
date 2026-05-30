@@ -12,6 +12,9 @@ export const patientApi = {
   updatePatientStatus: (id, status) => api.post(`/patients/${id}/update-status/`, { status }).then(res => res.data),
   linkPartner: (id, partnerId) => api.post(`/patients/${id}/link-partner/`, { partner_id: partnerId }).then(res => res.data),
   unlinkPartner: (id) => api.post(`/patients/${id}/unlink-partner/`).then(res => res.data),
+  getPatientsByStatus(status = "all") {
+    return api.get(`/emr/patients/?status=${status}`).then(res => res.data);
+  },
 
   // --- EMR (Electronic Medical Records) ---
   getEmrDashboardStats: () => api.get("/emr/dashboard-stats/").then(res => res.data),

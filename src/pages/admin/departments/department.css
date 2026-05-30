@@ -407,7 +407,7 @@
 
 .staff-table-new th {
   padding: 12px 20px;
-  text-align: left;
+  text-align: center;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-2);
@@ -902,4 +902,104 @@
 
 .btn-manage-card:hover .arrow-icon {
   transform: rotate(60deg);
+}
+
+/* ── Staff Cards Grid ─────────────────────────────────────────── */
+.staff-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.staff-card-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.staff-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.staff-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.staff-card-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.staff-card-role {
+    display: flex;
+    align-items: center;
+}
+
+/* ── Fix role badge — was rendering as blob with no text ──────── */
+.role-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.staff-card-email {
+    font-size: 0.8rem;
+    color: var(--text-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.staff-card-unit {
+    font-size: 0.78rem;
+    color: var(--text-3);
+    font-style: italic;
+}
+
+/* ── Status dot at end of card ────────────────────────────────── */
+.staff-card-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-3);
+    flex-shrink: 0;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-dot.active {
+    background-color: #16a34a;
+}
+
+.status-dot.inactive {
+    background-color: #cbd5e1;
 }
