@@ -6,6 +6,7 @@ import EMRRecordDetail from "./emrrecord_detail";
 import HistoryDocuments from "./historydocs";
 import "./patient_emr.css";
 import doctorAvatar from "../../../assets/doctor_avatar.png";
+import { FolderOpen } from "lucide-react";
 
 const TYPE_ICONS = {
   CONSULTATION:     "🩺",
@@ -108,7 +109,9 @@ export default function PatientEMR({ patient, onBack }) {
 		<div className="emr-page-container">
 			{/* Breadcrumbs */}
 			<div className="emr-breadcrumbs">
-				<span className="breadcrumb-folder" style={{ cursor: "pointer" }} onClick={onBack}>📁 EMR</span>
+				<span className="breadcrumb-folder" style={{ cursor: "pointer" }} onClick={onBack}>
+          <FolderOpen size={20} strokeWidth={2} />
+					 EMR</span>
 				<span className="breadcrumb-arrow"> &gt; </span>
 				<span className="breadcrumb-current">Patient details</span>
 			</div>
