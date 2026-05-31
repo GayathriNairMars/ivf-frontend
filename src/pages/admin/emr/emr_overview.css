@@ -1,9 +1,12 @@
+/* Make the page itself not scroll due to the list */
 .emr-overview-container {
     padding: 24px;
     background-color: #ffffff;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;             /* ← changed from min-height + no overflow */
+    display: flex;
+    flex-direction: column;
 }
-
 .emr-overview-header {
     display: flex;
     justify-content: space-between;
@@ -94,12 +97,19 @@
     color: #0f172a;
 }
 
-.emr-streams-section h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 16px 0;
+/* Box that contains everything below the stats cards */
+.emr-streams-section {
+    flex: 1;                      /* ← takes remaining height */
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;             /* ← clips children */
+    min-height: 0;                /* ← required for flex children to shrink */
 }
+
 
 .emr-search-bar {
     position: relative;
@@ -179,10 +189,15 @@
     cursor: pointer;
 }
 
+/* Only the patient list scrolls, not the tabs/search above it */
 .emr-patient-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    overflow-y: auto;             /* ← scroll happens here */
+    flex: 1;
+    min-height: 0;                /* ← required */
+    padding-right: 4px;           /* ← prevents scrollbar overlapping cards */
 }
 
 .emr-patient-row {

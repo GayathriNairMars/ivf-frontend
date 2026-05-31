@@ -2,22 +2,31 @@ import { Outlet,useNavigate,useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { useState,useEffect } from "react";
 import adminApi from "../../../api/adminApi";
-import "./superadmin.css"
-import Icon from "../../../components/Icons";
+import "./superadmin.css";
 import { ROLE_LABELS } from "../../../constants/constants";
 import arathyAvatar from "../../../assets/arathy_avatar.png";
 import { IoNotificationsOutline } from "react-icons/io5";
+import {
+  LayoutGrid,
+  Building2,
+  FolderOpen,
+  FileSearch,
+  UserRound,
+  ClipboardList,
+  BriefcaseMedical,
+  User
+} from "lucide-react";
 
 const NAV=[
-  {id:"dashboard",label:"Dashboard",icon:"dashboard", path:"/superadmin/"},
-  {id:"department",label:"Departments",icon:"department",path:"/superadmin/department/"},
-  {id:"emr",label:"EMR",icon:"emr",path:"/superadmin/emr/", subItems: [
-    {id: "emr-overview", label: "Overview", path: "/superadmin/emr/"},
-    {id: "emr-patients", label: "Patient records", path: "/superadmin/emr/patients"},
-    {id: "emr-records", label: "Record management", path: "/superadmin/emr/records"}
+  {id:"dashboard",label:"Dashboard",icon:LayoutGrid, path:"/superadmin/"},
+  {id:"department",label:"Departments",icon:Building2,path:"/superadmin/department/"},
+  {id:"emr",label:"EMR",icon:FolderOpen,path:"/superadmin/emr/", subItems: [
+    {id: "emr-overview", label: "Overview", icon:FileSearch, path: "/superadmin/emr/"},
+    {id: "emr-patients", label: "Patient records", icon:UserRound, path: "/superadmin/emr/patients"},
+    {id: "emr-records", label: "Record management", icon:ClipboardList, path: "/superadmin/emr/records"}
   ]},
-  {id:"staff",label:"Staff Management",icon:"staff",path:"/superadmin/staff/"},
-  {id:"patients",label:"Patient Directory",icon:"patients",path:"/superadmin/patients/"},
+  {id:"staff",label:"Staff Management",icon: BriefcaseMedical ,path:"/superadmin/staff/"},
+  {id:"patients",label:"Patient Directory",icon:User,path:"/superadmin/patients/"},
 ]
 
 export default function SuperAdminDashboard() {
@@ -62,37 +71,45 @@ export default function SuperAdminDashboard() {
          </div>
          
          <nav className="sidebar-nav">
-           {NAV.map(item=>(
-             <div key={item.id}>
-               <button
-                 className={`nav-item ${isActive(item.path) ? "active":""}`}
-                 onClick={()=>navigate(item.path)}
-               >
-                 <div className="icon"><Icon name={item.icon}/></div>
-                 <span>{item.label}</span>
-                 {isActive(item.path) && <div className="nav-indicator" />}
-               </button>
-               {item.subItems && isActive(item.path) && (
-                  <div className="sub-nav" style={{ paddingLeft: "48px", display: "flex", flexDirection: "column", gap: "12px", marginTop: "8px", marginBottom: "12px" }}>
-                    {item.subItems.map(sub => {
-                       // Custom active logic for exact matching
-                       const isSubActive = location.pathname === sub.path || location.pathname === sub.path + "/";
-                       return (
-                       <button
-                         key={sub.id}
-                         style={{ background: "none", border: "none", color: isSubActive ? "#3b82f6" : "#64748b", textAlign: "left", cursor: "pointer", fontSize: "14px", fontWeight: isSubActive ? 600 : 400, display: "flex", alignItems: "center", gap: "8px", padding: 0 }}
-                         onClick={() => navigate(sub.path)}
-                       >
-                         {isSubActive && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="14" height="14"><polyline points="20 6 9 17 4 12"></polyline></svg>}
-                         {!isSubActive && <span style={{width: 14}}></span>}
-                         {sub.label}
-                       </button>
-                       );
+          {NAV.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.id}>
+                <button
+                  className={`nav-item ${isActive(item.path) ? "active" : ""}`}
+                  onClick={() => navigate(item.path)}
+                >
+                  <div className="icon">
+                    <Icon size={20} strokeWidth={2} />
+                  </div>
+                  <span>{item.label}</span>
+                  {isActive(item.path) && <div className="nav-indicator" />}
+                </button>
+            
+                {item.subItems && isActive(item.path) && (
+                  <div className="sub-nav">
+                    {item.subItems.map((sub) => {
+                      const SubIcon = sub.icon;
+                      const isSubActive =
+                        location.pathname === sub.path ||
+                        location.pathname === `${sub.path}/`;
+                      return (
+                        <button
+                          key={sub.id}
+                          onClick={() => navigate(sub.path)}
+                          className={`sub-nav-item ${isSubActive ? "active" : ""}`}
+                        >
+                          {isSubActive && <span className="sub-nav-indicator" />}
+                          <SubIcon size={15} />
+                          <span>{sub.label}</span>
+                        </button>
+                      );
                     })}
                   </div>
-               )}
-             </div>
-           ))}
+                )}
+              </div>
+            );
+          })}
          </nav>
 
          <div className="sidebar-footer">
