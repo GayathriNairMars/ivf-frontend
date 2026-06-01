@@ -15,6 +15,7 @@ export const patientApi = {
 
   // --- EMR (Electronic Medical Records) ---
   getEmrDashboardStats: () => api.get("/emr/dashboard-stats/").then(res => res.data),
+  getAllRecords: (params = "") => api.get(`/emr/all-records/?${params}`).then(res => res.data),
   getEmrRecordsStatistics: () => api.get("/emr/records/statistics/").then(res => res.data),
   getEmrSummary: (patientId) => api.get(`/emr/patient/${patientId}/`).then(res => res.data),
   getEmrRecords: (patientId, params = "") => api.get(`/emr/patient/${patientId}/records/${params}`).then(res => res.data),

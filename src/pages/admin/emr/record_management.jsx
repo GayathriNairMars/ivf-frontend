@@ -6,6 +6,16 @@ import doctorAvatar from "../../../assets/doctor_avatar.png";
 
 export default function RecordManagement() {
 	const [activeFilter, setActiveFilter] = useState("All Records");
+	const [records, setRecords] = useState([]);
+	const [loadingRecords, setLoadingRecords] = useState(false);
+	const [page, setPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [totalCount, setTotalCount] = useState(0);
+	
+	const [searchTerm, setSearchTerm] = useState("");
+	const [debouncedSearch, setDebouncedSearch] = useState("");
+	const [selectedDate, setSelectedDate] = useState("");
+
 	const [stats, setStats] = useState({
 		today: 0,
 		this_week: 0,
@@ -25,50 +35,61 @@ export default function RecordManagement() {
 		});
 	}, []);
 
-	const filters = ["All Records", "Today", "My Records", "Pending", "Finalized"];
+	useEffect(() => {
+		const timer = setTimeout(() => setDebouncedSearch(searchTerm), 500);
+		return () => clearTimeout(timer);
+	}, [searchTerm]);
 
-	const tableData = [
-		{
-			id: "PAT-20255",
-			patientName: "Aswathy",
-			phone: "+91 98450 12345",
-			doctor: "Dr. Sarah Thomas",
-			type: "Lab result",
-			createdDate: "May 1, 2026",
-			status: "Active",
-			lastUpdated: "2 hours ago"
-		},
-		{
-			id: "PAT-20255",
-			patientName: "Kiran",
-			phone: "+91 98450 12345",
-			doctor: "Dr. Sarah Thomas",
-			type: "Lab result",
-			createdDate: "May 15, 2026",
-			status: "Active",
-			lastUpdated: "3 hours ago"
-		},
-		{
-			id: "PAT-20255",
-			patientName: "Sangeetha",
-			phone: "+91 98450 12345",
-			doctor: "Dr. Sarah Thomas",
-			type: "Nursing note",
-			createdDate: "May 22, 2026",
-			status: "Active",
-			lastUpdated: "1 day ago"
-		},
-		{
-			id: "PAT-20255",
-			patientName: "Shwetha",
-			phone: "+91 98450 12345",
-			doctor: "Dr. Sarah Thomas",
-			type: "Lab result",
-			createdDate: "May 30, 2026",
-			status: "Active",
-			lastUpdated: "2 hours ago"
+	useEffect(() => {
+		setPage(1);
+	}, [activeFilter, debouncedSearch, selectedDate]);
+
+	useEffect(() => {
+		setLoadingRecords(true);
+		
+		const params = new URLSearchParams();
+		params.append("page", page);
+		
+		if (debouncedSearch) {
+			params.append("search", debouncedSearch);
 		}
-	];
+		
+		if (selectedDate) {
+			params.append("date_range_from", selectedDate);
+			params.append("date_range_to", selectedDate);
+			// Also pass created_from just in case the API uses that for filtering
+			params.append("created_from", selectedDate);
+			params.append("created_to", selectedDate);
+		}
+		
+		if (activeFilter === "Today") {
+			const today = new Date().toISOString().split('T')[0];
+			params.append("created_range_from", today);
+			params.append("created_range_to", today);
+			params.append("created_from", today);
+			params.append("created_to", today);
+		} else if (activeFilter === "Pending") {
+			params.append("status", "Pending");
+		} else if (activeFilter === "Finalized") {
+			params.append("status", "Completed");
+		} else if (activeFilter === "My Records") {
+			params.append("my_records", "true");
+		}
+
+		patientApi.getAllRecords(params.toString())
+			.then(data => {
+				setRecords(data.records || []);
+				setTotalPages(data.total_pages || 1);
+				setTotalCount(data.count || 0);
+				setLoadingRecords(false);
+			})
+			.catch(err => {
+				console.error("Error fetching records:", err);
+				setLoadingRecords(false);
+			});
+	}, [page, activeFilter]);
+
+	const filters = ["All Records", "Today", "My Records", "Pending", "Finalized"];
 
 	return (
 		<div className="section-content" style={{ padding: "32px", background: "#f8fafc", minHeight: "100vh" }}>
@@ -164,7 +185,7 @@ export default function RecordManagement() {
 			</div>
 
 			{/* Filters */}
-			<div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
+			<div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
 				<span style={{ fontSize: "14px", color: "#64748b", fontWeight: "500" }}>Filters :</span>
 				<div style={{ display: "flex", gap: "12px" }}>
 					{filters.map((f) => (
@@ -192,6 +213,36 @@ export default function RecordManagement() {
 				</div>
 			</div>
 
+			{/* Search and Date Controls */}
+			<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", gap: "16px" }}>
+				<div style={{ flex: 1, position: "relative" }}>
+					<span style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }}>🔍</span>
+					<input 
+						type="text" 
+						placeholder="Search by Patient ID, Name, Doctor, Type..."
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+						style={{ width: "100%", padding: "10px 10px 10px 36px", border: "1px solid #e2e8f0", borderRadius: "8px", outline: "none", fontSize: "14px", color: "#1e293b" }}
+					/>
+				</div>
+				<div style={{ display: "flex", alignItems: "center" }}>
+					<input 
+						type="date" 
+						value={selectedDate}
+						onChange={(e) => setSelectedDate(e.target.value)}
+						style={{ padding: "9px 12px", border: "1px solid #e2e8f0", borderRadius: "8px", outline: "none", fontSize: "14px", color: "#64748b" }}
+					/>
+					{selectedDate && (
+						<button 
+							onClick={() => setSelectedDate("")}
+							style={{ marginLeft: "8px", padding: "9px 12px", border: "1px solid #e2e8f0", borderRadius: "8px", background: "white", cursor: "pointer", color: "#ef4444", fontSize: "13px", fontWeight: "500" }}
+						>
+							Clear
+						</button>
+					)}
+				</div>
+			</div>
+
 			{/* Table */}
 			<div style={{ background: "white", border: "1px solid #e2e8f0", borderRadius: "12px", overflow: "hidden" }}>
 				<table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "14px" }}>
@@ -208,39 +259,60 @@ export default function RecordManagement() {
 						</tr>
 					</thead>
 					<tbody>
-						{tableData.map((row, i) => (
-							<tr key={i} style={{ borderBottom: "1px solid #e2e8f0", color: "#334155" }}>
-								<td style={{ padding: "16px 24px", color: "#64748b" }}>{row.id}</td>
-								<td style={{ padding: "16px 24px" }}>
-									<div style={{ fontWeight: "600", color: "#0f172a" }}>{row.patientName}</div>
-									<div style={{ color: "#64748b", fontSize: "12px", marginTop: "2px" }}>{row.phone}</div>
-								</td>
-								<td style={{ padding: "16px 24px", fontWeight: "600", color: "#0f172a" }}>{row.doctor}</td>
-								<td style={{ padding: "16px 24px", color: "#3b82f6", fontWeight: "500", cursor: "pointer" }}>
-									{row.type} <FiArrowUpRight style={{ display: "inline", verticalAlign: "middle" }}/>
-								</td>
-								<td style={{ padding: "16px 24px", color: "#64748b" }}>{row.createdDate}</td>
-								<td style={{ padding: "16px 24px" }}>
-									<span style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#16a34a", fontSize: "12px", fontWeight: "500" }}>
-										<span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#16a34a" }}></span> {row.status}
-									</span>
-								</td>
-								<td style={{ padding: "16px 24px", color: "#64748b" }}>{row.lastUpdated}</td>
-								<td style={{ padding: "16px 24px", textAlign: "right" }}>
-									<button style={{ padding: "6px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", background: "white", color: "#3b82f6", fontSize: "13px", fontWeight: "500", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-										View details <FiArrowUpRight />
-									</button>
-								</td>
+						{loadingRecords ? (
+							<tr>
+								<td colSpan="8" style={{ padding: "24px", textAlign: "center", color: "#64748b" }}>Loading records...</td>
 							</tr>
-						))}
+						) : records.length === 0 ? (
+							<tr>
+								<td colSpan="8" style={{ padding: "24px", textAlign: "center", color: "#64748b" }}>No records found.</td>
+							</tr>
+						) : (
+							records.map((row, i) => (
+								<tr key={row.id || i} style={{ borderBottom: "1px solid #e2e8f0", color: "#334155" }}>
+									<td style={{ padding: "16px 24px", color: "#64748b" }}>{row.patient_id}</td>
+									<td style={{ padding: "16px 24px" }}>
+										<div style={{ fontWeight: "600", color: "#0f172a" }}>{row.patient_name}</div>
+									</td>
+									<td style={{ padding: "16px 24px", fontWeight: "600", color: "#0f172a" }}>{row.doctor_name || "Not Assigned"}</td>
+									<td style={{ padding: "16px 24px", color: "#3b82f6", fontWeight: "500", cursor: "pointer" }}>
+										{row.record_type_display} <FiArrowUpRight style={{ display: "inline", verticalAlign: "middle" }}/>
+									</td>
+									<td style={{ padding: "16px 24px", color: "#64748b" }}>{row.date || row.created_date?.substring(0, 10)}</td>
+									<td style={{ padding: "16px 24px" }}>
+										<span style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: row.status?.toLowerCase() === "completed" ? "#16a34a" : "#f59e0b", fontSize: "12px", fontWeight: "500" }}>
+											<span style={{ width: "6px", height: "6px", borderRadius: "50%", background: row.status?.toLowerCase() === "completed" ? "#16a34a" : "#f59e0b" }}></span> {row.status}
+										</span>
+									</td>
+									<td style={{ padding: "16px 24px", color: "#64748b" }}>{row.last_updated?.substring(0, 16)}</td>
+									<td style={{ padding: "16px 24px", textAlign: "right" }}>
+										<button style={{ padding: "6px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", background: "white", color: "#3b82f6", fontSize: "13px", fontWeight: "500", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+											View details <FiArrowUpRight />
+										</button>
+									</td>
+								</tr>
+							))
+						)}
 					</tbody>
 				</table>
 				
 				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", color: "#64748b", fontSize: "14px", borderTop: "1px solid #e2e8f0" }}>
-					<div>Showing {tableData.length > 0 ? 1 : 0} of {tableData.length > 40 ? tableData.length : 42} Patients</div>
+					<div>Showing {records.length > 0 ? (page - 1) * 50 + 1 : 0} to {Math.min(page * 50, totalCount)} of {totalCount} Patients</div>
 					<div style={{ display: "flex", gap: "8px" }}>
-						<button style={{ width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #e2e8f0", borderRadius: "6px", background: "white", color: "#94a3b8", cursor: "pointer" }}>&lt;</button>
-						<button style={{ width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #cbd5e1", borderRadius: "6px", background: "white", color: "#3b82f6", cursor: "pointer" }}>&gt;</button>
+						<button 
+							onClick={() => setPage(p => Math.max(1, p - 1))}
+							disabled={page === 1}
+							style={{ width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #e2e8f0", borderRadius: "6px", background: "white", color: page === 1 ? "#cbd5e1" : "#64748b", cursor: page === 1 ? "not-allowed" : "pointer" }}
+						>
+							&lt;
+						</button>
+						<button 
+							onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+							disabled={page >= totalPages}
+							style={{ width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #cbd5e1", borderRadius: "6px", background: "white", color: page >= totalPages ? "#cbd5e1" : "#3b82f6", cursor: page >= totalPages ? "not-allowed" : "pointer" }}
+						>
+							&gt;
+						</button>
 					</div>
 				</div>
 			</div>
