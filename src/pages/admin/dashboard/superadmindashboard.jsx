@@ -14,7 +14,9 @@ import {
   UserRound,
   ClipboardList,
   BriefcaseMedical,
-  User
+  User,
+  Users,
+  UserPlus
 } from "lucide-react";
 
 const NAV=[
@@ -25,8 +27,14 @@ const NAV=[
     {id: "emr-patients", label: "Patient records", icon:UserRound, path: "/superadmin/emr/patients"},
     {id: "emr-records", label: "Record management", icon:ClipboardList, path: "/superadmin/emr/records"}
   ]},
-  {id:"staff",label:"Staff Management",icon: BriefcaseMedical ,path:"/superadmin/staff/"},
-  {id:"patients",label:"Patient Directory",icon:User,path:"/superadmin/patients/"},
+  {id:"staff",label:"Staff Management",icon: BriefcaseMedical, path:"/superadmin/staff/", subItems: [
+    {id: "staff-manage", label: "Manage staff", icon: Users, path: "/superadmin/staff/"},
+    {id: "staff-add", label: "Add staff", icon: UserPlus, path: "/superadmin/staff/add"}
+  ]},
+  {id:"patients",label:"Patient Directory",icon:User,path:"/superadmin/patients/", subItems: [
+    {id: "patients-manage", label: "Manage patient", icon: Users, path: "/superadmin/patients/"},
+    {id: "patients-add", label: "Register patient", icon: UserPlus, path: "/superadmin/patients/add"}
+  ]},
 ]
 
 export default function SuperAdminDashboard() {
