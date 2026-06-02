@@ -3,13 +3,17 @@ import { ROLES, DEPT_ICONS, ROLE_COLORS } from "../../../constants/constants";
 import adminApi from "../../../api/adminApi";
 import "./department.css";
 import "../staff/staff.css";
+import { Building2 } from "lucide-react";
 
-// Department Detail Component (simplified without StaffTable)
 function DeptDetail({ dept, onBack }) {
     const [activeTab, setActiveTab] = useState("primary");
     const [primaryStaff, setPrimary] = useState([]);
     const [secondaryStaff, setSecondary] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [page, setPage] = useState(1);
+    const PAGE_SIZE = 10;
 
     useEffect(() => {
         async function load() {
@@ -25,37 +29,51 @@ function DeptDetail({ dept, onBack }) {
                 setLoading(false);
             }
         }
-        load()
+        load();
     }, [dept.id]);
+
+    const currentStaff = activeTab === "primary" ? primaryStaff : secondaryStaff;
+
+    const filtered = currentStaff.filter(s => {
+        const q = searchQuery.toLowerCase();
+        const matchesSearch = !q ||
+            s.full_name?.toLowerCase().includes(q) ||
+            s.email?.toLowerCase().includes(q) ||
+            s.role_display?.toLowerCase().includes(q) ||
+            s.staff_id?.toLowerCase().includes(q);
+        const matchesStatus =
+            statusFilter === "all" ? true :
+            statusFilter === "active" ? s.is_active : !s.is_active;
+        return matchesSearch && matchesStatus;
+    });
+
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+    // reset page on tab/filter/search change
+    useEffect(() => setPage(1), [activeTab, searchQuery, statusFilter]);
 
     if (loading) {
         return (
             <div className="staff-loading">
-                <div className="spinner" />
-                <span>Loading...</span>
+                <div className="spinner" /><span>Loading...</span>
             </div>
         );
     }
 
-    const currentStaff = activeTab === "primary" ? primaryStaff : secondaryStaff;
-
     return (
         <div className="dept-detail-container">
-            {/* Breadcrumb Header */}
+            {/* Breadcrumb */}
             <div className="dept-breadcrumb">
                 <button className="breadcrumb-link" onClick={onBack}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
+                    <Building2 size={20} strokeWidth={2} />
                     Departments
                 </button>
                 <span className="breadcrumb-separator"> {'>'} </span>
                 <span className="breadcrumb-current">{dept.name}</span>
             </div>
 
+            {/* Title + Stats */}
             <div className="dept-detail-top">
                 <div className="dept-title-section">
                     <h2>{dept.name}</h2>
@@ -79,11 +97,14 @@ function DeptDetail({ dept, onBack }) {
                 </div>
             </div>
 
+            {/* HOD Card */}
             <div className="dept-head-info-card">
                 <div className="dept-head-left">
                     <div className="dept-head-profile">
-                        <div className="hod-avatar-lg" style={{ background: dept.code === 'ADM' ? '#e0f2fe' : dept.code === 'EMB' ? '#ffedd5' : '#f1f5f9' }}>
-                            {dept.head_name ? dept.head_name.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "H"}
+                        <div className="hod-avatar-lg">
+                            {dept.head_name
+                                ? dept.head_name.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase()
+                                : "H"}
                         </div>
                         <div className="hod-details">
                             <div className="dept-head-label">Department head</div>
@@ -109,43 +130,107 @@ function DeptDetail({ dept, onBack }) {
             </div>
             <div className="dept-tabs-line"></div>
 
-            {/* Simple Staff List without table and pagination */}
-            <div className="dept-staff-list">
-                {currentStaff.length === 0 ? (
-                    <div className="staff-empty">
-                        <div className="empty-icon">👥</div>
-                        <p>{activeTab === 'primary' ? 'No primary staff assigned to this department.' : 'No secondary staff assigned to this department.'}</p>
+            {/* Table Card */}
+            <div className="dept-staffs-card">
+                <div className="staffs-card-header">
+                    <h3>Department Staff</h3>
+                    <div className="staffs-header-actions">
+                        {/* Search */}
+                        <div className="search-wrap-new">
+                            <svg className="search-icon-new" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input
+                                type="text"
+                                className="search-input-new"
+                                placeholder="Search by Staff Id, Name, Role"
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                        {/* Status filter */}
+                        <select
+                            className="filter-select-new"
+                            value={statusFilter}
+                            onChange={e => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
                     </div>
-                ) : (
-                    <div className="staff-cards-grid">
-                        {currentStaff.map(staff => (
-                            <div key={staff.id} className="staff-card-item">
-                                <div className="staff-avatar" style={{ background: ROLE_COLORS[staff.role] || "#64748b" }}>
-                                    {staff.full_name?.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase()}
-                                </div>
-                                <div className="staff-card-info">
-                                    <div className="staff-card-name">{staff.full_name}</div>
-                                    <div className="staff-card-role">
-                                        <span className="role-badge" style={{ backgroundColor: ROLE_COLORS[staff.role] || "#64748b20", color: ROLE_COLORS[staff.role] || "#64748b" }}>
-                                            {staff.role_display || staff.role}
-                                        </span>
-                                    </div>
-                                    <div className="staff-card-email">{staff.email}</div>
-                                    <div className="staff-card-unit">{staff.unit || "No unit assigned"}</div>
-                                </div>
-                                <div className="staff-card-status">
-                                    <span className={`status-dot ${staff.is_active ? 'active' : 'inactive'}`}></span>
-                                    <span>{staff.is_active ? 'Active' : 'Inactive'}</span>
-                                </div>
-                            </div>
-                        ))}
+                </div>
+
+                {/* Table */}
+                <div className="table-wrap-new">
+                    <table className="staff-table-new">
+                        <thead>
+                            <tr>
+                                <th>Staff Id</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Date Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {paginated.length === 0 ? (
+                                <tr>
+                                    <td colSpan="6" style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>
+                                        {searchQuery ? "No staff matching your search." : "No staff assigned."}
+                                    </td>
+                                </tr>
+                            ) : (
+                                paginated.map(staff => (
+                                    <tr key={staff.id}>
+                                        <td style={{ color: "#94a3b8", fontWeight: 500 }}>
+                                            {staff.staff_id || `ID-${staff.id}`}
+                                        </td>
+                                        <td className="staff-name-bold">{staff.full_name}</td>
+                                        <td>{staff.email}</td>
+                                        <td className="role-cell-new">{staff.role_display || staff.role}</td>
+                                        <td>
+                                            <span className={`status-badge-new ${staff.is_active ? 'active' : 'inactive'}`}>
+                                                <span className="status-dot"></span>
+                                                {staff.is_active ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {staff.date_joined
+                                                ? new Date(staff.date_joined).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                                                : "—"}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="pagination-footer">
+                    <span className="showing-text">
+                        Showing <strong>{Math.min((page - 1) * PAGE_SIZE + 1, filtered.length)}</strong>–<strong>{Math.min(page * PAGE_SIZE, filtered.length)}</strong> of <strong>{filtered.length}</strong> staff members
+                    </span>
+                    <div className="pagination-arrows">
+                        <button className="page-arrow-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <button className="page-arrow-btn" onClick={() => setPage(p => p + 1)} disabled={page >= totalPages}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
 }
-
 // Department Card Component
 function DeptCard({ dept, onClick, onEdit }) {
     const getInitials = (name) => {
