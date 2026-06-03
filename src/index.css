@@ -150,7 +150,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background: #f0f4f8; c
 .submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
 .dashboard { min-height: 100vh; display: flex; flex-direction: column; }
-.dashboard-header { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 60px; background: #0f4c8a; color: #fff; }
+.dashboard-header { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 60px; background: #f2f4f8; color: #fff; }
 .header-brand { display: flex; align-items: center; gap: 10px; }
 .dashboard-header .logo-mark { background: rgba(255,255,255,0.2); }
 .dashboard-header .logo-text { color: #fff; }

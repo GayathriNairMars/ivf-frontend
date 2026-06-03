@@ -39,7 +39,6 @@ export default function DashboardHome() {
             </div>
             <div className="header-actions">
               <button className="btn-outline">Generate Report</button>
-              <button className="btn-primary" onClick={() => navigate("/superadmin/patients/add")}>New Registration</button>
             </div>
 		  </div>
 
@@ -57,7 +56,7 @@ export default function DashboardHome() {
                   </div>
                   <div className="stat-label">Total staff</div>
                 </div>
-                <div className="stat-value">{stats?.staff_count ?? "0"}</div>
+                <div className="stat-value">{stats?.summary?.total_staff ?? "0"}</div>
               </div>
 
               <div className="stat-card">
@@ -71,7 +70,7 @@ export default function DashboardHome() {
                   </div>
                   <div className="stat-label">Active users</div>
                 </div>
-                <div className="stat-value">{stats?.active_count ?? "0"}</div>
+                <div className="stat-value">{stats?.summary?.active_count ?? "0"}</div>
               </div>
 
               <div className="stat-card">
@@ -83,7 +82,7 @@ export default function DashboardHome() {
                   </div>
                   <div className="stat-label">Total Patients</div>
                 </div>
-                <div className="stat-value">{stats?.total_patients ?? "0"}</div>
+                <div className="stat-value">{stats?.summary?.total_patients ?? "0"}</div>
               </div>
             </div>
 
@@ -121,11 +120,11 @@ export default function DashboardHome() {
                         <tr key={i}>
                           <td>
                             <div className="table-user">
-                              <span className="table-user-name">{s.user__full_name || "Unknown"}</span>
-                              <span className="table-user-email">{s.user__email || "-"}</span>
+                              <span className="table-user-name">{s.full_name || "Unknown"}</span>
+                              <span className="table-user-email">{s.email || "-"}</span>
                             </div>
                           </td>
-                          <td>{ROLE_LABELS[s.user__role] || s.user__role || "Staff"}</td>
+                          <td>{ROLE_LABELS[s.role] || s.role || "Staff"}</td>
                           <td>{s.login_time ? new Date(s.login_time).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-"}</td>
                           <td>{s.login_time ? new Date(s.login_time).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "-"}</td>
                           <td><span className="status-badge">Active</span></td>
