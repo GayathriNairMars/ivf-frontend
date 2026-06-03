@@ -3,9 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import patientApi from "../../../api/patientApi";
 import PatientEMR from "./patient_emr";
 import { FiUpload, FiPlus, FiSearch, FiArrowUpRight } from "react-icons/fi";
+import AddEMRRecord from "./add_emrrecord";
+import { useLocation } from "react-router-dom";
 
 export default function EMRSection() {
 	const { patientId } = useParams(); 
+	const location = useLocation();
+	const isCreatePage = location.pathname.endsWith("/create");
 	const [search, setSearch] = useState("");
 	const [patients, setPatients] = useState([]);
 	const [loading, setLoading] = useState(false);
@@ -36,10 +40,32 @@ export default function EMRSection() {
 		return () => clearTimeout(t);
 	}, [searchPatients]);
 
-	if (patientId && patient) {
-		return <PatientEMR patient={patient} onBack={() => navigate("/superadmin/emr/patients")} />;
+	if ((patientId || isCreatePage) && !patient) {
+	    return <div>Loading patient...</div>;
 	}
 
+	if (isCreatePage && patient) {
+	    return (
+	        <AddEMRRecord
+	            patient={patient}
+	            onBack={() =>
+	                navigate(`/superadmin/emr/patients/${patient.id}`)
+	            }
+	            onSuccess={() =>
+	                navigate(`/superadmin/emr/patients/${patient.id}`)
+	            }
+	        />
+	    );
+	}
+
+	if (patientId && patient) {
+	    return (
+	        <PatientEMR
+	            patient={patient}
+	            onBack={() => navigate("/superadmin/emr/patients")}
+	        />
+	    );
+	}
 	return (
 		<div className="section-content patient-records-page" style={{ background: "#ffffff", borderRadius: "8px", padding: "24px" }}>
 			<div className="section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
@@ -127,6 +153,12 @@ export default function EMRSection() {
 										</span>
 									</td>
 									<td style={{ padding: "16px", color: "#64748b" }}>{p.registered_on || "2 hours ago"}</td>
+									<td style={{ padding: "16px", textAlign: "right" }}>
+										<button className="btn-create-emr"
+											onClick={() =>	navigate(`/superadmin/emr/patients/${p.id}/create`) }>
+										  + Create EMR
+										</button>
+									</td>
 									<td style={{ padding: "16px", textAlign: "right" }}>
 										<button 
 											onClick={() => navigate(`/superadmin/emr/patients/${p.id}`)} 

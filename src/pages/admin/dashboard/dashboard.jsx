@@ -39,7 +39,6 @@ export default function DashboardHome() {
             </div>
             <div className="header-actions">
               <button className="btn-outline">Generate Report</button>
-              <button className="btn-primary" onClick={() => navigate("/superadmin/patients/add")}>New Registration</button>
             </div>
 		  </div>
 
@@ -71,7 +70,7 @@ export default function DashboardHome() {
                   </div>
                   <div className="stat-label">Active users</div>
                 </div>
-                <div className="stat-value">{stats?.active_sessions ?.user_id ?? "0"}</div>
+                <div className="stat-value">{stats?.summary?.active_count ?? "0"}</div>
               </div>
 
               <div className="stat-card">

@@ -99,9 +99,6 @@ export default function RecordManagement() {
 					<button style={{ padding: "10px 20px", border: "1px solid #cbd5e1", borderRadius: "6px", background: "white", color: "#3b82f6", fontWeight: "500", cursor: "pointer", fontSize: "14px" }}>
 						Generate Report
 					</button>
-					<button style={{ padding: "10px 20px", border: "none", borderRadius: "6px", background: "#3b82f6", color: "white", fontWeight: "500", cursor: "pointer", fontSize: "14px" }}>
-						New Entry
-					</button>
 				</div>
 			</div>
 
