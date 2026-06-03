@@ -258,13 +258,13 @@ export default function AddEMRRecord({ patient, onBack, onSuccess }) {
 		setSubmitting(true);
 		try {
 			const section = SUB_SECTION_MAP[form.record_type];
-			const payload = new FormData();
-			payload.append("patient", patient.id);
-			payload.append("record_type", form.record_type);
+			const payload = {};
+			payload.patient = patient.id;
+			payload.record_type = form.record_type;
 			
 			const recordTitle = form.title || `${RECORD_TYPES_CONFIG[form.record_type]?.label || form.record_type} Record`;
-			payload.append("title", recordTitle);
-			payload.append("date", form.date);
+			payload.title = recordTitle;
+			payload.date = form.date;
 			
 			// Build comprehensive notes field
 			let finalNotes = form.notes;
@@ -275,10 +275,10 @@ export default function AddEMRRecord({ patient, onBack, onSuccess }) {
 				if (patientPortal) flags.push("[Patient Portal]");
 				finalNotes = `${flags.join(" ")}\n${finalNotes}`;
 			}
-			payload.append("notes", finalNotes);
+			payload.notes = finalNotes;
 
 			if (form.record_type === "PRESCRIPTION") {
-				payload.append("prescription_data", JSON.stringify(medications));
+				payload.prescription_data = medications;
 			} else if (section) {
 				let finalSubData = { ...subData };
 				if (form.record_type === "COUNSELLING_NOTE") {
@@ -287,21 +287,37 @@ export default function AddEMRRecord({ patient, onBack, onSuccess }) {
 				}
 
 				if (section.many) {
-					const arr = [finalSubData];
-					payload.append(section.key, JSON.stringify(arr));
+					payload[section.key] = [finalSubData];
 				} else {
-					Object.entries(finalSubData).forEach(([k, v]) => {
-						if (v !== undefined && v !== null && v !== "") {
-							// If value is a File, append it directly, otherwise string representation
-							payload.append(`${section.key}.${k}`, v);
-						}
-					});
+					// Check for files. If there are files, we must use FormData, 
+					// but since DRF doesn't parse nested objects in FormData well, 
+					// we do our best. For now, try sending as JSON (files will be dropped or invalid).
+					// If the backend doesn't support Base64, file uploads will fail via JSON.
+					// However, this fixes the "Create EMR" for Prescriptions and text notes.
+					const hasFiles = Object.values(finalSubData).some(v => v instanceof File);
+					if (hasFiles) {
+						const fd = new FormData();
+						Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
+						Object.entries(finalSubData).forEach(([k, v]) => {
+							if (v !== undefined && v !== null && v !== "") {
+								fd.append(`${section.key}.${k}`, v);
+							}
+						});
+						
+						await patientApi.addEmrRecord(patient.id, fd, {
+							headers: { "Content-Type": "multipart/form-data" },
+						});
+						setSuccess(true);
+						setTimeout(onSuccess, 1200);
+						setSubmitting(false);
+						return;
+					}
+					
+					payload[section.key] = finalSubData;
 				}
 			}
 
-			await patientApi.addEmrRecord(patient.id, payload, {
-				headers: { "Content-Type": "multipart/form-data" },
-			});
+			await patientApi.addEmrRecord(patient.id, payload);
 			setSuccess(true);
 			setTimeout(onSuccess, 1200);
 		} catch (err) {
