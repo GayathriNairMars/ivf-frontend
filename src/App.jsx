@@ -15,6 +15,8 @@ import PatientProfile from "./pages/admin/patients/patient_profile";
 import EMRSection from "./pages/admin/emr/emr_section";
 import EMROverview from "./pages/admin/emr/emr_overview";
 import PatientEMR from "./pages/admin/emr/patient_emr";
+import AddEMRRecord from "./pages/admin/emr/add_emrrecord";
+import RecordManagement from "./pages/admin/emr/record_management";
 import ReceptionistDashboardSection from "./pages/receptionist/section";
 import AdminLoginPage from "./pages/auth/admin_login";
 
@@ -78,7 +80,8 @@ export default function App(){
           <Route path="emr" element={<EMROverview />} />
           <Route path="emr/patients" element={<EMRSection />} />
           <Route path="emr/patients/:patientId" element={<EMRSection />} />
-          <Route path="emr/records" element={<Placeholder title="Record Management" />} />
+          <Route path="/superadmin/emr/patients/:patientId/create" element={<EMRSection />} />
+          <Route path="emr/records" element={<RecordManagement />} />
         </Route>
 
         {/* Receptionist */}

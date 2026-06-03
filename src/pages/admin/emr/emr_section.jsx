@@ -2,14 +2,19 @@ import { useState,useEffect,useCallback } from "react";
 import { useNavigate,useParams } from "react-router-dom";
 import patientApi from "../../../api/patientApi";
 import PatientEMR from "./patient_emr";
+import { FiUpload, FiPlus, FiSearch, FiArrowUpRight } from "react-icons/fi";
+import AddEMRRecord from "./add_emrrecord";
+import { useLocation } from "react-router-dom";
 
 export default function EMRSection() {
 	const { patientId } = useParams(); 
-	const [search,setSearch] = useState("");
-	const [patients,setPatients] = useState([]);
-	const [loading,setLoading] = useState(false);
-	const [patient, setPatient]   = useState(null);
-	const navigate= useNavigate();
+	const location = useLocation();
+	const isCreatePage = location.pathname.endsWith("/create");
+	const [search, setSearch] = useState("");
+	const [patients, setPatients] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [patient, setPatient] = useState(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
     if (!patientId) { setPatient(null); return; }
@@ -32,10 +37,33 @@ export default function EMRSection() {
 		const t =setTimeout(searchPatients,350);
 		return () => clearTimeout(t);
 	}, [searchPatients]);
-	if (patientId && patient) {
-		return <PatientEMR patient={patient} onBack={() => navigate("/superadmin/emr/patients")} />;
+
+	if ((patientId || isCreatePage) && !patient) {
+	    return <div>Loading patient...</div>;
 	}
 
+	if (isCreatePage && patient) {
+	    return (
+	        <AddEMRRecord
+	            patient={patient}
+	            onBack={() =>
+	                navigate(`/superadmin/emr/patients/${patient.id}`)
+	            }
+	            onSuccess={() =>
+	                navigate(`/superadmin/emr/patients/${patient.id}`)
+	            }
+	        />
+	    );
+	}
+
+	if (patientId && patient) {
+	    return (
+	        <PatientEMR
+	            patient={patient}
+	            onBack={() => navigate("/superadmin/emr/patients")}
+	        />
+	    );
+	}
 	return (
 		<div className="section-content">
 			<div className="section-header">
@@ -79,13 +107,27 @@ export default function EMRSection() {
 											</div>
 										</div>
 									</td>
-									<td><span className="patient-id-pill">{p.patient_id}</span></td>
-									<td className="date-cell">{p.treatment_type || "-"}</td>
-									<td><span className="status-pill status-active">{p.status}</span></td>
-
-									<td>
-										<button className="btn-edit" onClick={() => navigate(`/superadmin/emr/patients/${p.id}`)}>
-											Open EMR
+									<td style={{ padding: "16px" }}>{p.partner_info?.full_name || "N/A"}</td>
+									<td style={{ padding: "16px", fontWeight: "500" }}>{p.assigned_doctor?.full_name || "N/A"}</td>
+									<td style={{ padding: "16px", color: "#3b82f6", cursor: "pointer" }}>{p.treatment_type_display || "Lab result"} <FiArrowUpRight style={{ display: "inline", verticalAlign: "middle" }}/></td>
+									<td style={{ padding: "16px" }}>
+										<span style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: p.status?.toLowerCase() === 'active' ? "#16a34a" : "#64748b", fontSize: "12px", fontWeight: "500" }}>
+											<span style={{ width: "6px", height: "6px", borderRadius: "50%", background: p.status?.toLowerCase() === 'active' ? "#16a34a" : "#64748b" }}></span> {p.status || "Active"}
+										</span>
+									</td>
+									<td style={{ padding: "16px", color: "#64748b" }}>{p.registered_on || "2 hours ago"}</td>
+									<td style={{ padding: "16px", textAlign: "right" }}>
+										<button className="btn-create-emr"
+											onClick={() =>	navigate(`/superadmin/emr/patients/${p.id}/create`) }>
+										  + Create EMR
+										</button>
+									</td>
+									<td style={{ padding: "16px", textAlign: "right" }}>
+										<button 
+											onClick={() => navigate(`/superadmin/emr/patients/${p.id}`)} 
+											style={{ padding: "6px 12px", border: "1px solid #cbd5e1", borderRadius: "6px", background: "white", color: "#3b82f6", fontSize: "13px", fontWeight: "500", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px" }}
+										>
+											View details <FiArrowUpRight />
 										</button>
 									</td>
 								</tr>
