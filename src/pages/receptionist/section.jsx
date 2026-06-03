@@ -6,7 +6,7 @@ import RecDashboardHome from "./dashboard";
 import OPQueue from "./opqueue";
 import PatientSearch from "./patient_list";
 import NewTicket from "./new_ticket";
-import AddPatient from "../admin/patients/add_patient";
+import PatientDirectory from "./patient_directory";
 import Icon from "../../components/Icons";
 import PatientHistory from "./patient_op_history";
 
@@ -15,7 +15,7 @@ const NAV=[
 	{key:"queue",label:"Today's Queue",icon:"activity"},
 	{key:"patients",label:"Patients",icon:"patients"},
 	{key:"ticket",label:"New Ticket",icon:"emr"},
-	{key:"addpatient",label:"Add Patient",icon:"staff"},
+	{key:"directory",label:"Patient Directory",icon:"staff"},
 ];
 
 export default function ReceptionistDashboardSection() {
@@ -42,11 +42,10 @@ export default function ReceptionistDashboardSection() {
               onViewHistory={(p) => setViewPatientId(p.id)}
             />;
       case "ticket": return <NewTicket onSuccess={() => setActive("queue")} onCancel={() => setActive("queue")} />;
-      case "addpatient": return <AddPatient />;
+      case "directory": return <PatientDirectory />;
       default: return <RecDashboardHome />;
     }
-  }, [active, viewPatientId]); // ← add viewPatientId
-  // Reset viewPatientId when switching away from patients
+  }, [active, viewPatientId]);
   const handleNavClick = (key) => {
       if (key !== "patients") setViewPatientId(null);
       setActive(key);
@@ -57,8 +56,8 @@ export default function ReceptionistDashboardSection() {
 		dashboard:"Dashboard",
 		queue:"Today's Queue",
 		patients:"Patients",
-		ticket:"Ticket",
-		addpatient:"Register Patient",
+		ticket:"New Ticket",
+		directory:"Patient Directory",
 	};
 	return(
 		<div className={`sad-root ${sidebarOpen ? "sidebar-open":"sidebar-collapsed"}`}>

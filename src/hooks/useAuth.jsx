@@ -31,7 +31,7 @@ export function AuthProvider({children}){
    const logout = useCallback(async () => {
         try {
             await api.get("/csrf/");
-            const res = await api.post("logout/");
+            const res = await api.post("/logout/");
             console.log("Logout response:", res.status, res.data);
         } catch (err) {
             console.log("Logout failed:", err.response?.status, err.response?.data);
