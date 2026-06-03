@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
-import patientApi from "../../../api/patientApi";
-import { TREATMENT_TYPES } from "../../../constants/constants";
+import patientApi from "../../api/patientApi";
+import { TREATMENT_TYPES } from "../../constants/constants";
 import { User, ClipboardList, BriefcaseMedical, Eye, EyeOff, Calendar, Search } from "lucide-react";
-import "../staff/staff.css"; // Reuse staff styles for layout consistency
+import "../admin/staff/staff.css"; // Reuse staff styles for layout consistency
 
 function FormField({ label, error, hint, children }) {
   return (
@@ -30,8 +28,7 @@ function SectionHeader({ icon: Icon, title }) {
   );
 }
 
-export default function AddPatient() {
-  const navigate = useNavigate();
+export default function AddPatient({ onBack }) {
   const [form, setForm] = useState({
     full_name: "", email: "", password: "", phone: "", date_of_birth: "", gender: "", blood_group: "", partner_name: "", insurance_policy_number: "", contact_number: "", address: "", emergency_contact_name: "", emergency_contact_phone: "", treatment_type: "", status: "PEN", assigned_doctor_id: "", notes: "",
   });
@@ -40,8 +37,6 @@ export default function AddPatient() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { user } = useAuth();
-  const destination = user?.role === 'REC' ? '/receptionist' : '/superadmin/patients';
 
   useEffect(() => {
     patientApi.getDoctors()
@@ -77,7 +72,7 @@ export default function AddPatient() {
 
       const data = await patientApi.createPatient(payload);
       setSuccess(true);
-      setTimeout(() => navigate(destination), 1500);
+      setTimeout(onBack, 1500);
     } catch (err) {
       const data = err.response?.data;
       if (data && typeof data === "object") {
@@ -98,7 +93,7 @@ export default function AddPatient() {
   const phoneInputStyle = { ...inputStyle, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 };
 
   return (
-    <div className="add-patient-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100vh" }}>
+    <div className="add-patient-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100%" }}>
       <div style={{ marginBottom: "32px" }}>
         <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#0f172a", margin: "0 0 8px 0" }}>Register patient</h1>
         <p style={{ color: "#64748b", margin: 0, fontSize: "14px" }}>Register a new patient and create a treatment-ready profile.</p>
@@ -249,7 +244,7 @@ export default function AddPatient() {
         <div style={{ position: "fixed", bottom: 0, left: "260px", right: 0, background: "white", borderTop: "1px solid #e2e8f0", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 10 }}>
           <button 
             type="button" 
-            onClick={() => navigate(destination)}
+            onClick={onBack}
             style={{ display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none", color: "#64748b", fontSize: "14px", fontWeight: "500", cursor: "pointer" }}
           >
             ✕ Discard Entry

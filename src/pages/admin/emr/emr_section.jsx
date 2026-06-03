@@ -1,5 +1,5 @@
-import { useState,useEffect,useCallback } from "react";
-import { useNavigate,useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import patientApi from "../../../api/patientApi";
 import PatientEMR from "./patient_emr";
 import { FiUpload, FiPlus, FiSearch, FiArrowUpRight } from "react-icons/fi";
@@ -24,17 +24,19 @@ export default function EMRSection() {
   }, [patientId]);
 
 	const searchPatients = useCallback(async () => {
-		if (!search.trim()) {setPatients([]); return; }
 		setLoading(true);
 		try {
 			const data = await patientApi.getPatientsList(`search=${search}`);
-			setPatients(Array.isArray(data) ? data: (data.results || []));
-		} catch {setPatients([]);}
-		 finally { setLoading(false); }
+			setPatients(Array.isArray(data) ? data : (data.results || []));
+		} catch {
+			setPatients([]);
+		} finally { 
+			setLoading(false); 
+		}
 	}, [search]);
 
 	useEffect(() => {
-		const t =setTimeout(searchPatients,350);
+		const t = setTimeout(searchPatients, 350);
 		return () => clearTimeout(t);
 	}, [searchPatients]);
 
@@ -65,47 +67,82 @@ export default function EMRSection() {
 	    );
 	}
 	return (
-		<div className="section-content">
-			<div className="section-header">
-				<h2>EMR - Select Patient</h2>
-				<p style={{color: "var(--text-2)", fontSize:"0.875rem"}}>
-					Search for a patient to view or add EMR records.
-				</p>
-			</div>
-			<div className="search-wrap" style={{maxWidth:480,marginBottom:24}}>
-				<svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-					<circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-				</svg>
-				<input className="search-input" type="text" placeholder="Search by name, email or patient ID..." value={search} onChange={e => setSearch(e.target.value)} autoFocus />
+		<div className="section-content patient-records-page" style={{ background: "#ffffff", borderRadius: "8px", padding: "24px" }}>
+			<div className="section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+				<div>
+					<h2 style={{ fontSize: "24px", fontWeight: "600", color: "#1e293b", margin: "0 0 8px 0" }}>Patient records</h2>
+					<p style={{ color: "#64748b", fontSize: "14px", margin: "0" }}>
+						View, search, and manage patient medical records.
+					</p>
 				</div>
+				<div style={{ display: "flex", gap: "12px" }}>
+					<button style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", border: "1px solid #cbd5e1", borderRadius: "6px", background: "white", color: "#334155", fontWeight: "500", cursor: "pointer" }}>
+						<FiUpload /> Upload Report
+					</button>
+					<button 
+						style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", border: "none", borderRadius: "6px", background: "#3b82f6", color: "white", fontWeight: "500", cursor: "pointer" }} 
+						onClick={() => navigate("/superadmin/patients/add")}
+					>
+						<FiPlus /> Add patient
+					</button>
+				</div>
+			</div>
 
-			{loading && <div className="staff-loading"><div className="spinner" /><span>Searching...</span></div>}
-			
-			{!loading && patients.length>0 &&(
-				<div className="table-wrap">
-					<table className="staff-table">
-						<thead>
+			<div className="filters-row" style={{ display: "flex", gap: "16px", marginBottom: "24px", alignItems: "center" }}>
+				<div className="search-wrap" style={{ flex: 1, position: "relative" }}>
+					<FiSearch style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+					<input 
+						className="search-input" 
+						type="text" 
+						placeholder="Search by name, MRN, or diagnosis code..." 
+						value={search} 
+						onChange={e => setSearch(e.target.value)} 
+						autoFocus 
+						style={{ width: "100%", padding: "10px 10px 10px 36px", border: "1px solid #e2e8f0", borderRadius: "6px", fontSize: "14px", outline: "none" }} 
+					/>
+				</div>
+				<div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+					<select style={{ padding: "10px 32px 10px 12px", border: "1px solid #e2e8f0", borderRadius: "6px", appearance: "none", background: "url('data:image/svg+xml;utf8,<svg fill=\"none\" height=\"20\" stroke=\"%2394a3b8\" stroke-width=\"2\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\"><polyline points=\"6 9 12 15 18 9\"/></svg>') no-repeat right 8px center/16px", fontSize: "14px", color: "#334155", outline: "none" }}>
+						<option>Active</option>
+					</select>
+					<select style={{ padding: "10px 32px 10px 12px", border: "1px solid #e2e8f0", borderRadius: "6px", appearance: "none", background: "url('data:image/svg+xml;utf8,<svg fill=\"none\" height=\"20\" stroke=\"%2394a3b8\" stroke-width=\"2\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\"><polyline points=\"6 9 12 15 18 9\"/></svg>') no-repeat right 8px center/16px", fontSize: "14px", color: "#334155", outline: "none" }}>
+						<option>Assigned doctor</option>
+					</select>
+					<select style={{ padding: "10px 32px 10px 12px", border: "1px solid #e2e8f0", borderRadius: "6px", appearance: "none", background: "url('data:image/svg+xml;utf8,<svg fill=\"none\" height=\"20\" stroke=\"%2394a3b8\" stroke-width=\"2\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\"><polyline points=\"6 9 12 15 18 9\"/></svg>') no-repeat right 8px center/16px", fontSize: "14px", color: "#334155", outline: "none" }}>
+						<option>Type</option>
+					</select>
+					<button style={{ color: "#3b82f6", background: "none", border: "none", fontSize: "14px", fontWeight: "500", cursor: "pointer", padding: "0 8px" }}>More filters</button>
+				</div>
+			</div>
+
+			<div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", overflow: "hidden" }}>
+				<table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "14px" }}>
+					<thead style={{ background: "#f8fafc", color: "#64748b", borderBottom: "1px solid #e2e8f0" }}>
+						<tr>
+							<th style={{ padding: "16px", fontWeight: "500" }}>Patient ID</th>
+							<th style={{ padding: "16px", fontWeight: "500" }}>Patient name</th>
+							<th style={{ padding: "16px", fontWeight: "500" }}>Partner name</th>
+							<th style={{ padding: "16px", fontWeight: "500" }}>Doctor</th>
+							<th style={{ padding: "16px", fontWeight: "500" }}>Type</th>
+							<th style={{ padding: "16px", fontWeight: "500" }}>Status</th>
+							<th style={{ padding: "16px", fontWeight: "500" }}>registered_on</th>
+							<th style={{ padding: "16px", fontWeight: "500" }}></th>
+						</tr>
+					</thead>
+					<tbody>
+						{loading ? (
 							<tr>
-								<th>Patient</th>
-								<th>Patient ID</th>
-								<th>Treatment</th>
-								<th>Status</th>
-								<th></th>
+								<td colSpan="8" style={{ padding: "32px", textAlign: "center", color: "#64748b" }}>
+									<div className="spinner" style={{ display: "inline-block", marginRight: "8px" }} /> Loading patients...
+								</td>
 							</tr>
-						</thead>
-						<tbody>
-							{patients.map(p => (
-								<tr key={p.id}>
-									<td>
-										<div className="staff-name-cell">
-											<div className="staff-avatar" style={{background:"#0ea5e9"}}>
-												{p.user?.full_name?.split(" ").map(n => n[0]).slice(0,2).join("").toUpperCase()}
-											</div>
-											<div>
-												<div className="staff-name">{p.user?.full_name}</div>
-												<div className="email-cell">{p.user?.email}</div>
-											</div>
-										</div>
+						) : patients.length > 0 ? (
+							patients.map(p => (
+								<tr key={p.id} style={{ borderBottom: "1px solid #e2e8f0", color: "#334155" }}>
+									<td style={{ padding: "16px" }}>{p.patient_id}</td>
+									<td style={{ padding: "16px" }}>
+										<div style={{ fontWeight: "500", color: "#0f172a" }}>{p.user?.full_name || "Unknown"}</div>
+										<div style={{ color: "#64748b", fontSize: "12px", marginTop: "4px" }}>{p.phone || p.user?.phone || "+91 98450 12345"}</div>
 									</td>
 									<td style={{ padding: "16px" }}>{p.partner_info?.full_name || "N/A"}</td>
 									<td style={{ padding: "16px", fontWeight: "500" }}>{p.assigned_doctor?.full_name || "N/A"}</td>
@@ -131,18 +168,26 @@ export default function EMRSection() {
 										</button>
 									</td>
 								</tr>
-							))}
-						</tbody>
-					</table>
+							))
+						) : (
+							<tr>
+								<td colSpan="8" style={{ padding: "32px", textAlign: "center", color: "#64748b" }}>
+									No patients found.
+								</td>
+							</tr>
+						)}
+					</tbody>
+				</table>
+				
+				<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", borderTop: "1px solid #e2e8f0", color: "#64748b", fontSize: "14px" }}>
+					<div>Showing {patients.length > 0 ? 1 : 0} to {patients.length} of {patients.length} Patients</div>
+					<div style={{ display: "flex", gap: "8px" }}>
+						<button style={{ width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #e2e8f0", borderRadius: "6px", background: "white", color: "#94a3b8", cursor: "pointer" }}>&lt;</button>
+						<button style={{ width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #cbd5e1", borderRadius: "6px", background: "white", color: "#3b82f6", cursor: "pointer" }}>&gt;</button>
+					</div>
 				</div>
-			)}
-
-			{!loading && search && patients.length === 0 && (
-				<div className="staff-empty">
-					<div className="empty-icon">🏥</div>
-					<p>Start typing to search for a patient</p>
-				</div>
-			)}
+			</div>
 		</div>
 	);
 }
+

@@ -1,104 +1,82 @@
 import { useState, useEffect, useCallback } from "react";
-import adminApi from "../../../api/adminApi";
-import { ROLE_COLORS, ROLES } from "../../../constants/constants";
 import { useNavigate } from "react-router-dom";
-import { Search, Edit, Eye, Ban, Calendar, Filter } from "lucide-react";
-import "./staff.css";
+import patientApi from "../../api/patientApi";
+import { STATUS_COLORS, TREATMENT_LABELS, PATIENT_STATUSES, TREATMENT_TYPES } from "../../constants/constants";
+import { Search, Edit, Eye, Filter } from "lucide-react";
+import "../admin/patients/patient.css";
+import "../admin/staff/staff.css";
 
-export default function StaffList() {
-  const [staff, setStaff] = useState([]);
-  const [dashboardStats, setDashboardStats] = useState(null);
+export default function ManagePatients({ onAddPatient }) {
+  const navigate = useNavigate();
+  const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [stats, setStats] = useState(null);
 
-  // Filters
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [status, setStatus] = useState("");
+  const [treatment, setTreatment] = useState("");
   const [dateFilter, setDateFilter] = useState("");
-
-  // Pagination
   const [page, setPage] = useState(1);
   const PER_PAGE = 10;
 
-  const navigate = useNavigate();
-
-  const fetchData = useCallback(async () => {
+  const fetchPatients = useCallback(async () => {
     setLoading(true);
     try {
-      const [staffData, statsData] = await Promise.all([
-        adminApi.getStaffList(),
-        adminApi.getDashboardStats()
+      const params = new URLSearchParams();
+      if (search) params.append("search", search);
+      if (status) params.append("status", status);
+      if (treatment) params.append("treatment_type", treatment);
+      
+      const [pRes, sRes] = await Promise.all([
+        patientApi.getPatientsList(params.toString()),
+        patientApi.getPatientStats(),
       ]);
-      setStaff(staffData);
-      setDashboardStats(statsData);
+      setPatients(Array.isArray(pRes) ? pRes : (pRes.results || []));
+      setStats(sRes);
     } catch {
-      setError("Failed to load staff data.");
+      setPatients([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [search, status, treatment]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchPatients();
+  }, [fetchPatients]);
 
-  const handleToggleStatus = async (staffMember) => {
-    try {
-      await adminApi.toggleStaffStatus(staffMember.id);
-      fetchData();
-    } catch {
-      alert("Failed to update status.");
-    }
-  };
-
-  const isHod = (staffId) => {
-    if (!dashboardStats?.department_heads) return false;
-    return dashboardStats.department_heads.some(h => h.head_id === staffId);
-  };
-
-  // Filter logic
-  const filtered = staff.filter((s) => {
-    const matchSearch =
-      !search ||
-      s.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      s.email?.toLowerCase().includes(search.toLowerCase());
-    const matchRole = !roleFilter || s.role === roleFilter;
-    const matchStatus =
-      statusFilter === "" ? true :
-      statusFilter === "active" ? s.is_active :
-      !s.is_active;
-    const matchDate = !dateFilter || s.date_joined?.startsWith(dateFilter);
-    return matchSearch && matchRole && matchStatus && matchDate;
+  // Apply date filter locally as the backend may not support it yet
+  const filteredByDate = patients.filter(p => {
+    if (!dateFilter) return true;
+    return p.registered_on?.startsWith(dateFilter);
   });
 
-  const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const totalPages = Math.ceil(filteredByDate.length / PER_PAGE);
+  const paginated = filteredByDate.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
-    <div className="manage-staff-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100vh" }}>
+    <div className="manage-patient-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100%" }}>
       
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px" }}>
         <div>
-          <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#0f172a", margin: "0 0 8px 0" }}>Manage staff</h1>
-          <p style={{ color: "#64748b", margin: 0, fontSize: "14px" }}>Manage staff accounts, roles, permissions, and workforce records.</p>
+          <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#0f172a", margin: "0 0 8px 0" }}>Manage patient details</h1>
+          <p style={{ color: "#64748b", margin: 0, fontSize: "14px" }}>Manage and register patient details.</p>
         </div>
         <button 
-          onClick={() => navigate("/superadmin/staff/add")}
+          onClick={onAddPatient}
           style={{ background: "#3b82f6", color: "white", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "14px", fontWeight: "500", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
         >
-          <span>+</span> Add staff
+          <span>+</span> Register patient
         </button>
       </div>
 
       {/* Stats Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "32px" }}>
         {[
-          { label: "Total staff", value: dashboardStats?.summary?.total_staff || 0 },
-          { label: "Active staff", value: dashboardStats?.summary?.active_staff || 0 },
-          { label: "New joiners", value: 18 }, // Placeholder as requested, or mock
-          { label: "Department heads", value: dashboardStats?.summary?.total_hods || 0 },
+          { label: "Total patients", value: stats?.total || 0 },
+          { label: "Active treatments", value: stats?.by_status?.ACT || 0 },
+          { label: "Pending treatments", value: stats?.by_status?.PEN || 0 },
+          { label: "Completed", value: stats?.by_status?.COM || 0 },
         ].map((stat, idx) => (
           <div key={idx} style={{ background: "white", padding: "24px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
             <div style={{ color: "#64748b", fontSize: "14px", fontWeight: "500", marginBottom: "12px" }}>{stat.label}</div>
@@ -113,7 +91,7 @@ export default function StaffList() {
           <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
           <input
             type="text"
-            placeholder="Search by name, role, or email..."
+            placeholder="Search by name, MRN, or diagnosis code..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             style={{ width: "100%", padding: "10px 12px 10px 36px", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
@@ -121,29 +99,30 @@ export default function StaffList() {
         </div>
 
         <select 
-          value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+          value={treatment}
+          onChange={(e) => { setTreatment(e.target.value); setPage(1); }}
           style={{ padding: "10px 32px 10px 16px", background: "white", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", color: "#334155", appearance: "none", outline: "none", cursor: "pointer" }}
         >
-          <option value="">Status (All)</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
+          <option value="">Treatment (All)</option>
+          {TREATMENT_TYPES.map(t => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
         </select>
 
         <select 
-          value={roleFilter}
-          onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
+          value={status}
+          onChange={(e) => { setStatus(e.target.value); setPage(1); }}
           style={{ padding: "10px 32px 10px 16px", background: "white", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", color: "#334155", appearance: "none", outline: "none", cursor: "pointer" }}
         >
-          <option value="">Role (All)</option>
-          {ROLES.filter(r => r.value !== "").map(r => (
-            <option key={r.value} value={r.value}>{r.label}</option>
+          <option value="">Status (All)</option>
+          {PATIENT_STATUSES.map(s => (
+            <option key={s.value} value={s.value}>{s.label}</option>
           ))}
         </select>
 
         <div style={{ position: "relative" }}>
           <input
-            type="month"
+            type="date"
             value={dateFilter}
             onChange={(e) => { setDateFilter(e.target.value); setPage(1); }}
             style={{ padding: "10px 12px", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", outline: "none", color: dateFilter ? "#0f172a" : "#94a3b8", background: "white" }}
@@ -160,68 +139,72 @@ export default function StaffList() {
       {/* Table */}
       <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
         {loading ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "#64748b" }}>Loading staff...</div>
-        ) : error ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "#ef4444" }}>{error}</div>
+          <div style={{ padding: "40px", textAlign: "center", color: "#64748b" }}>Loading patients...</div>
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Staff ID</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Staff name</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Role</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Email</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Joined date</th>
+                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Patient ID</th>
+                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Patient name</th>
+                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Doctor</th>
+                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Treatment</th>
+                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Registered date</th>
                   <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Status</th>
                   <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {paginated.length > 0 ? paginated.map((s) => {
-                  const roleLabel = ROLES.find(r => r.value === s.role)?.label || s.role;
+                {paginated.length > 0 ? paginated.map((p) => {
+                  const sc = STATUS_COLORS[p.status] || STATUS_COLORS.PEN;
+                  
+                  // Extract color for the dot badge based on the UI screenshot styling
+                  // Green for Active, Blue for Completed, Yellow/Orange for Pending/On Hold
+                  let dotColor = "#10b981"; // default green
+                  let textColor = "#10b981";
+                  let bgColor = "#ecfdf5"; // default light green
+                  
+                  if (p.status === "ACT") {
+                    dotColor = "#10b981"; textColor = "#10b981"; bgColor = "#ecfdf5";
+                  } else if (p.status === "COM") {
+                    dotColor = "#3b82f6"; textColor = "#3b82f6"; bgColor = "#eff6ff";
+                  } else if (p.status === "PEN" || p.status === "HOL") {
+                    dotColor = "#f59e0b"; textColor = "#f59e0b"; bgColor = "#fffbeb";
+                  } else if (p.status === "CAN") {
+                    dotColor = "#ef4444"; textColor = "#ef4444"; bgColor = "#fef2f2";
+                  }
+
                   return (
-                    <tr key={s.id} style={{ borderBottom: "1px solid #e2e8f0", background: !s.is_active ? "#f8fafc" : "white" }}>
+                    <tr key={p.id} style={{ borderBottom: "1px solid #e2e8f0", background: "white" }}>
                       <td style={{ padding: "16px 24px", fontSize: "14px", color: "#475569" }}>
-                        STAFF-{String(s.id).padStart(5, '0')}
-                      </td>
-                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#0f172a", fontWeight: "500" }}>
-                        {s.full_name}
-                      </td>
-                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#475569" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          {roleLabel}
-                          {isHod(s.id) && (
-                            <span style={{ fontSize: "11px", background: "#e0e7ff", color: "#4338ca", padding: "2px 8px", borderRadius: "12px", fontWeight: "500", border: "1px solid #c7d2fe" }}>head</span>
-                          )}
-                        </div>
-                      </td>
-                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#3b82f6" }}>
-                        {s.email}
-                      </td>
-                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#475569" }}>
-                        {s.date_joined ? new Date(s.date_joined).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-"}
+                        {p.patient_id || `PAT-${String(p.id).padStart(5, '0')}`}
                       </td>
                       <td style={{ padding: "16px 24px" }}>
-                        <label className="toggle-switch" style={{ width: "36px", height: "20px" }}>
-                          <input 
-                            type="checkbox" 
-                            checked={s.is_active} 
-                            onChange={() => handleToggleStatus(s)} 
-                          />
-                          <span className="toggle-slider" style={{ borderRadius: "20px" }}></span>
-                        </label>
+                        <div style={{ color: "#0f172a", fontSize: "14px", fontWeight: "500" }}>{p.user?.full_name}</div>
+                        <div style={{ color: "#94a3b8", fontSize: "12px", marginTop: "2px" }}>{p.user?.phone || "+91 98450 12345"}</div>
+                      </td>
+                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#0f172a", fontWeight: "500" }}>
+                        {p.assigned_doctor?.full_name || "-"}
+                      </td>
+                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#475569" }}>
+                        {TREATMENT_LABELS[p.treatment_type] || "-"}
+                      </td>
+                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#475569" }}>
+                        {p.registered_on ? new Date(p.registered_on).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-"}
+                      </td>
+                      <td style={{ padding: "16px 24px" }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: bgColor, color: textColor, padding: "4px 10px", borderRadius: "16px", fontSize: "12px", fontWeight: "500" }}>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: dotColor }}></span>
+                          {sc.label}
+                        </span>
                       </td>
                       <td style={{ padding: "16px 24px" }}>
                         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                          <button onClick={() => navigate(`/superadmin/staff/edit/${s.id}`)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="Edit">
+                          <button onClick={() => navigate(`/superadmin/patients/${p.id}/edit`)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="Edit">
                             <Edit size={18} />
                           </button>
-                          <button style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="View">
+                          <button onClick={() => navigate(`/superadmin/patients/${p.id}`)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="View">
                             <Eye size={18} />
-                          </button>
-                          <button onClick={() => handleToggleStatus(s)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: 0 }} title={s.is_active ? "Deactivate" : "Activate"}>
-                            <Ban size={18} />
                           </button>
                         </div>
                       </td>
@@ -230,7 +213,7 @@ export default function StaffList() {
                 }) : (
                   <tr>
                     <td colSpan="7" style={{ padding: "40px", textAlign: "center", color: "#64748b" }}>
-                      No staff members found matching your filters.
+                      No patients found matching your criteria.
                     </td>
                   </tr>
                 )}
@@ -240,10 +223,10 @@ export default function StaffList() {
         )}
 
         {/* Footer / Pagination */}
-        {!loading && filtered.length > 0 && (
+        {!loading && filteredByDate.length > 0 && (
           <div style={{ padding: "16px 24px", borderTop: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", background: "white" }}>
             <div style={{ fontSize: "13px", color: "#64748b" }}>
-              Showing {Math.min((page - 1) * PER_PAGE + 1, filtered.length)} to {Math.min(page * PER_PAGE, filtered.length)} of {filtered.length} Staffs
+              Showing {Math.min((page - 1) * PER_PAGE + 1, filteredByDate.length)} to {Math.min(page * PER_PAGE, filteredByDate.length)} of {filteredByDate.length} Patients
             </div>
             <div style={{ display: "flex", gap: "8px" }}>
               <button 
