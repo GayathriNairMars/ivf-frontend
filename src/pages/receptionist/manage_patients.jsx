@@ -26,7 +26,7 @@ export default function ManagePatients({ onAddPatient }) {
       if (search) params.append("search", search);
       if (status) params.append("status", status);
       if (treatment) params.append("treatment_type", treatment);
-      
+
       const [pRes, sRes] = await Promise.all([
         patientApi.getPatientsList(params.toString()),
         patientApi.getPatientStats(),
@@ -55,14 +55,14 @@ export default function ManagePatients({ onAddPatient }) {
 
   return (
     <div className="manage-patient-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100%" }}>
-      
+
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px" }}>
         <div>
           <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#0f172a", margin: "0 0 8px 0" }}>Manage patient details</h1>
           <p style={{ color: "#64748b", margin: 0, fontSize: "14px" }}>Manage and register patient details.</p>
         </div>
-        <button 
+        <button
           onClick={onAddPatient}
           style={{ background: "#3b82f6", color: "white", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "14px", fontWeight: "500", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
         >
@@ -98,7 +98,7 @@ export default function ManagePatients({ onAddPatient }) {
           />
         </div>
 
-        <select 
+        <select
           value={treatment}
           onChange={(e) => { setTreatment(e.target.value); setPage(1); }}
           style={{ padding: "10px 32px 10px 16px", background: "white", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", color: "#334155", appearance: "none", outline: "none", cursor: "pointer" }}
@@ -109,7 +109,7 @@ export default function ManagePatients({ onAddPatient }) {
           ))}
         </select>
 
-        <select 
+        <select
           value={status}
           onChange={(e) => { setStatus(e.target.value); setPage(1); }}
           style={{ padding: "10px 32px 10px 16px", background: "white", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", color: "#334155", appearance: "none", outline: "none", cursor: "pointer" }}
@@ -129,7 +129,7 @@ export default function ManagePatients({ onAddPatient }) {
           />
         </div>
 
-        <button 
+        <button
           style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", color: "#3b82f6", fontSize: "14px", fontWeight: "500", cursor: "pointer" }}
         >
           More filters
@@ -157,13 +157,13 @@ export default function ManagePatients({ onAddPatient }) {
               <tbody>
                 {paginated.length > 0 ? paginated.map((p) => {
                   const sc = STATUS_COLORS[p.status] || STATUS_COLORS.PEN;
-                  
+
                   // Extract color for the dot badge based on the UI screenshot styling
                   // Green for Active, Blue for Completed, Yellow/Orange for Pending/On Hold
                   let dotColor = "#10b981"; // default green
                   let textColor = "#10b981";
                   let bgColor = "#ecfdf5"; // default light green
-                  
+
                   if (p.status === "ACT") {
                     dotColor = "#10b981"; textColor = "#10b981"; bgColor = "#ecfdf5";
                   } else if (p.status === "COM") {
@@ -229,14 +229,14 @@ export default function ManagePatients({ onAddPatient }) {
               Showing {Math.min((page - 1) * PER_PAGE + 1, filteredByDate.length)} to {Math.min(page * PER_PAGE, filteredByDate.length)} of {filteredByDate.length} Patients
             </div>
             <div style={{ display: "flex", gap: "8px" }}>
-              <button 
+              <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 style={{ width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #e2e8f0", borderRadius: "6px", background: "white", color: page === 1 ? "#cbd5e1" : "#64748b", cursor: page === 1 ? "not-allowed" : "pointer" }}
               >
                 &lt;
               </button>
-              <button 
+              <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 style={{ width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #3b82f6", borderRadius: "6px", background: "white", color: "#3b82f6", cursor: page === totalPages ? "not-allowed" : "pointer" }}
