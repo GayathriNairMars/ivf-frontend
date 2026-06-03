@@ -44,22 +44,22 @@ export default function EMROverview() {
 
     const getStatusBadge = (status) => {
         switch (status) {
-            case "active":      return { label: "Active",       className: "success" };
-            case "pending":     return { label: "Pending",      className: "warning" };
-            case "on_hold":     return { label: "On Hold",      className: "warning" };
-            case "completed":   return { label: "Completed",    className: "success" };
-            case "cancelled":   return { label: "Cancelled",    className: "danger"  };
-            default:            return { label: "Unknown",      className: ""        };
+            case "active": return { label: "Active", className: "success" };
+            case "pending": return { label: "Pending", className: "warning" };
+            case "on_hold": return { label: "On Hold", className: "warning" };
+            case "completed": return { label: "Completed", className: "success" };
+            case "cancelled": return { label: "Cancelled", className: "danger" };
+            default: return { label: "Unknown", className: "" };
         }
     };
 
     const tabs = [
-        { id: "all",       label: "All",              count: stats?.clinic_stats?.total_patients    || 0 }, // FIX 5: removed trailing space
-        { id: "pending",   label: "Pending",          count: stats?.clinic_stats?.pending           || 0 },
-        { id: "active",    label: "Active Treatment", count: stats?.clinic_stats?.active_treatments || 0 },
-        { id: "on_hold",   label: "On Hold",          count: stats?.clinic_stats?.on_hold           || 0 },
-        { id: "completed", label: "Completed",        count: stats?.clinic_stats?.completed         || 0 },
-        { id: "cancelled", label: "Cancelled",        count: stats?.clinic_stats?.cancelled         || 0 },
+        { id: "all", label: "All", count: stats?.clinic_stats?.total_patients || 0 }, // FIX 5: removed trailing space
+        { id: "pending", label: "Pending", count: stats?.clinic_stats?.pending || 0 },
+        { id: "active", label: "Active Treatment", count: stats?.clinic_stats?.active_treatments || 0 },
+        { id: "on_hold", label: "On Hold", count: stats?.clinic_stats?.on_hold || 0 },
+        { id: "completed", label: "Completed", count: stats?.clinic_stats?.completed || 0 },
+        { id: "cancelled", label: "Cancelled", count: stats?.clinic_stats?.cancelled || 0 },
     ];
 
     const loading = statsLoading || patientsLoading;
@@ -158,37 +158,83 @@ export default function EMROverview() {
                                         <div key={patient.id} className="emr-patient-row">
                                             <div className="emr-patient-identity">
                                                 <div className="emr-patient-avatar">
-                                                    {patient.full_name?.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() || "PT"}
+                                                    {patient.full_name
+                                                        ?.split(" ")
+                                                        .map(n => n[0])
+                                                        .slice(0, 2)
+                                                        .join("")
+                                                        .toUpperCase() || "PT"}
                                                 </div>
+
                                                 <div className="emr-patient-info">
-                                                    <span className="emr-patient-name">{patient.full_name}</span>
-                                                    <span className="emr-patient-id">{patient.patient_id}</span>
+                                                    <span className="emr-patient-name">
+                                                        {patient.full_name}
+                                                    </span>
+                                                    <span className="emr-patient-id">
+                                                        {patient.patient_id}
+                                                    </span>
                                                 </div>
                                             </div>
 
                                             <div className="emr-patient-physician">
-                                                <span className="emr-physician-label">{patient.doctor_role}</span>
-                                                <span className="emr-physician-name">{patient.assigned_doctor}</span>
+                                                <span className="emr-physician-label">
+                                                    Physician
+                                                </span>
+                                                <span className="emr-physician-name">
+                                                    {patient.doctor_name}
+                                                </span>
+                                            </div>
+
+                                            <div className="emr-patient-physician">
+                                                <span className="emr-physician-label">
+                                                    {patient.doctor_role}
+                                                </span>
+                                                <span className="emr-physician-name">
+                                                    {patient.assigned_doctor}
+                                                </span>
                                             </div>
 
                                             <div className="emr-patient-progress">
                                                 <div className="progress-text">
                                                     <span>{patient.status_display}</span>
-                                                    <span className="progress-percent" style={{ color: "#3b82f6" }}>{progress}%</span>
+                                                    <span
+                                                        className="progress-percent"
+                                                        style={{ color: "#3b82f6" }}
+                                                    >
+                                                        {progress}%
+                                                    </span>
                                                 </div>
+
                                                 <div className="progress-bar-container">
-                                                    <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
+                                                    <div
+                                                        className="progress-bar-fill"
+                                                        style={{ width: `${progress}%` }}
+                                                    />
                                                 </div>
                                             </div>
 
                                             <div className="emr-patient-status">
-                                                <span className={`emr-status-badge ${badge.className}`}>{badge.label}</span>
+                                                <span className={`emr-status-badge ${badge.className}`}>
+                                                    {badge.label}
+                                                </span>
                                             </div>
 
                                             <div className="emr-patient-actions">
-                                                <button className="btn-view-record" onClick={() => navigate(`/superadmin/emr/patients/${patient.id}`)}>
+                                                <button
+                                                    className="btn-view-record"
+                                                    onClick={() =>
+                                                        navigate(`/superadmin/emr/patients/${patient.id}`)
+                                                    }
+                                                >
                                                     View record
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                                    <svg
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        width="14"
+                                                        height="14"
+                                                    >
                                                         <line x1="7" y1="17" x2="17" y2="7"></line>
                                                         <polyline points="7 7 17 7 17 17"></polyline>
                                                     </svg>

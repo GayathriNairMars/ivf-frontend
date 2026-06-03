@@ -14,7 +14,9 @@ import {
   UserRound,
   ClipboardList,
   BriefcaseMedical,
-  User
+  User,
+  Users,
+  UserPlus
 } from "lucide-react";
 
 const NAV=[
@@ -25,8 +27,14 @@ const NAV=[
     {id: "emr-patients", label: "Patient records", icon:UserRound, path: "/superadmin/emr/patients"},
     {id: "emr-records", label: "Record management", icon:ClipboardList, path: "/superadmin/emr/records"}
   ]},
-  {id:"staff",label:"Staff Management",icon: BriefcaseMedical ,path:"/superadmin/staff/"},
-  {id:"patients",label:"Patient Directory",icon:User,path:"/superadmin/patients/"},
+  {id:"staff",label:"Staff Management",icon: BriefcaseMedical, path:"/superadmin/staff/", subItems: [
+    {id: "staff-manage", label: "Manage staff", icon: Users, path: "/superadmin/staff/"},
+    {id: "staff-add", label: "Add staff", icon: UserPlus, path: "/superadmin/staff/add"}
+  ]},
+  {id:"patients",label:"Patient Directory",icon:User,path:"/superadmin/patients/", subItems: [
+    {id: "patients-manage", label: "Manage patient", icon: Users, path: "/superadmin/patients/"},
+    {id: "patients-add", label: "Register patient", icon: UserPlus, path: "/superadmin/patients/add"}
+  ]},
 ]
 
 export default function SuperAdminDashboard() {
@@ -34,7 +42,7 @@ export default function SuperAdminDashboard() {
    const navigate = useNavigate();
    const location = useLocation();
    const [profileOpen, setProfileOpen] = useState(false);
-   
+  
    const isActive = (path) =>{
     if (path === "/superadmin/") {
       return location.pathname ==="/superadmin/" || location.pathname==="/superadmin";
@@ -113,7 +121,7 @@ export default function SuperAdminDashboard() {
          </nav>
 
          <div className="sidebar-footer">
-           <div className="organization-info" onClick={() => setProfileOpen(!profileOpen)}>
+           <div className="organization-info" >
              <div className="org-avatar-container">
                <div className="org-avatar">
                  <div className="org-icon">
@@ -126,24 +134,6 @@ export default function SuperAdminDashboard() {
                <span className="org-district">Central District</span>
              </div>
            </div>
-           
-           {profileOpen && (
-             <div className="profile-dropdown-sidebar">
-               <div className="dropdown-user-info">
-                  <span className="user-name">{user?.full_name || "Arathy Sreekumar"}</span>
-                  <span className="user-role">{ROLE_LABELS[user?.role] || user?.role || "System Administrator"}</span>
-               </div>
-               <hr className="dropdown-divider" />
-               <button className="dropdown-item text-danger" onClick={handleLogout}>
-                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                   <polyline points="16 17 21 12 16 7"></polyline>
-                   <line x1="21" y1="12" x2="9" y2="12"></line>
-                 </svg>
-                 Sign out
-               </button>
-             </div>
-           )}
          </div>
        </aside>
 
@@ -161,21 +151,48 @@ export default function SuperAdminDashboard() {
             </div>
 
             <div className="user-area">
-              <div className="topbar-profile">
-              <button className="notification-btn-square">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2">
-                  <rect x="4" y="4" width="16" height="16" rx="3" />
-                  <path d="M9 12h6" />
-                  <path d="M12 9v6" />
-                </svg>
-                <span className="dot-red"></span>
-              </button>
+              <div className="topbar-profile-container">
+                <div
+                  className="topbar-profile"
+                  onClick={() => setProfileOpen(!profileOpen)}
+                >
+                  <div className="profile-details">
+                    <span className="profile-name">
+                      {user?.full_name || "Arathy Sreekumar"}
+                    </span>
+                    <span className="profile-role">
+                      {ROLE_LABELS[user?.role] || user?.role || "System Administrator"}
+                    </span>
+                  </div>
 
-                <div className="profile-details">
-                  <span className="profile-name">{user?.full_name || "Arathy Sreekumar"}</span>
-                  <span className="profile-role">{ROLE_LABELS[user?.role] || user?.role || "System Administrator"}</span>
+                  <img
+                    src={arathyAvatar}
+                    alt="Profile"
+                    className="profile-img"
+                  />
                 </div>
-                <img src={arathyAvatar} alt="Arathy Sreekumar" className="profile-img" />
+
+                {profileOpen && (
+                  <div className="topbar-dropdown">
+                    <div className="dropdown-user-info">
+                      <img
+                        src={arathyAvatar}
+                        alt="Profile"
+                        className="dropdown-avatar"
+                      />
+
+                      <h4>{user?.full_name}</h4>
+                      <p>{ROLE_LABELS[user?.role] || user?.role}</p>
+                    </div>
+                
+                    <button
+                      className="dropdown-item logout-btn"
+                      onClick={handleLogout}
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </header>
