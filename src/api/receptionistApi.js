@@ -21,6 +21,7 @@ export const receptionistApi = {
   getDailyAppointments: (params) => api.get("/receptionist/appointments/daily/", { params }).then(res => res.data), 
   getDepartments: () => api.get("/departments/").then(res => res.data),
   getDoctors: () => api.get("/patients/doctors/").then(res => res.data),
+  deleteAppointment: (id,data) => api.patch(`/receptionist/appointments/cancel/${id}/`, data).then(res => res.data),
 
 };
 

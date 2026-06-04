@@ -569,7 +569,7 @@ export default function NewTicket({ onSuccess, onCancel }) {
       });
       setTicket(data);
       // Automatically pop up print dialog
-      handlePrint(data);
+      // handlePrint(data);
     } catch (err) {
       const d = err.response?.data;
       if (d && typeof d === "object") {
