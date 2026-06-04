@@ -1,0 +1,454 @@
+/* ============================================
+   Appointments Page Styles
+   ============================================ */
+
+.appt-page {
+  text-align: left;
+}
+
+/* Header */
+.appt-header {
+  margin-bottom: 20px;
+}
+
+.appt-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.3px;
+}
+
+.appt-subtitle {
+  font-size: 0.82rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* Quick Action Cards */
+.appt-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.appt-action-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--action-bg);
+  border: 1.5px solid var(--action-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.appt-action-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.appt-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--action-bg);
+  flex-shrink: 0;
+}
+
+.appt-action-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1a202c;
+  white-space: pre-line;
+  line-height: 1.35;
+}
+
+.appt-action-arrow {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+/* Stats Row */
+.appt-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.appt-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  transition: box-shadow 0.2s ease;
+}
+
+.appt-stat-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.appt-stat-label {
+  font-size: 0.78rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.appt-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  letter-spacing: -0.5px;
+}
+
+/* Filter Bar */
+.appt-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.appt-today-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #1a202c;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.appt-today-btn:hover {
+  border-color: #cbd5e0;
+  background: #f7fafc;
+}
+
+.appt-filter-select-wrapper {
+  position: relative;
+}
+
+.appt-filter-select {
+  appearance: none;
+  padding: 9px 34px 9px 14px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #1a202c;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23718096' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.appt-filter-select:hover {
+  border-color: #cbd5e0;
+}
+
+.appt-filter-select:focus {
+  border-color: #4474f6;
+  box-shadow: 0 0 0 3px rgba(68, 116, 246, 0.1);
+}
+
+/* Error Banner */
+.appt-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: #fff5f5;
+  border-bottom: 1px solid #fc8181;
+  color: #c53030;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.appt-retry-btn {
+  padding: 5px 14px;
+  background: #c53030;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.appt-retry-btn:hover {
+  background: #9b2c2c;
+}
+
+/* Table */
+.appt-table-container {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.appt-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.appt-table thead {
+  background: #f8fafc;
+}
+
+.appt-table thead th {
+  padding: 14px 18px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #718096;
+  text-align: left;
+  text-transform: none;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.appt-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.appt-table tbody tr:hover {
+  background: #f7fafc;
+}
+
+.appt-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid #edf2f7;
+}
+
+.appt-table tbody td {
+  padding: 16px 18px;
+  font-size: 0.82rem;
+  color: #4a5568;
+  vertical-align: middle;
+}
+
+.appt-id-cell {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.appt-patient-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.appt-patient-name {
+  font-weight: 600;
+  color: #1a202c;
+  font-size: 0.84rem;
+}
+
+.appt-patient-phone {
+  font-size: 0.72rem;
+  color: #a0aec0;
+}
+
+.appt-doctor-cell {
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.appt-time-cell {
+  color: #4a5568;
+}
+
+.appt-type-cell {
+  color: #4a5568;
+}
+
+/* Status Badge */
+.appt-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.appt-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.appt-status-badge.completed {
+  color: #22c55e;
+  background: transparent;
+}
+
+.appt-status-badge.completed .appt-status-dot {
+  background: #22c55e;
+}
+
+.appt-status-badge.scheduled {
+  color: #4474f6;
+  background: transparent;
+}
+
+.appt-status-badge.scheduled .appt-status-dot {
+  background: #4474f6;
+}
+
+.appt-status-badge.cancelled {
+  color: #ef4444;
+  background: transparent;
+}
+
+.appt-status-badge.cancelled .appt-status-dot {
+  background: #ef4444;
+}
+
+/* Action Buttons */
+.appt-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.appt-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #a0aec0;
+  transition: all 0.15s ease;
+}
+
+.appt-action-btn:hover {
+  background: #edf2f7;
+  color: #4a5568;
+}
+
+/* Pagination */
+.appt-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.appt-pagination-info {
+  font-size: 0.78rem;
+  color: #718096;
+}
+
+.appt-pagination-info strong {
+  color: #4474f6;
+  font-weight: 600;
+}
+
+.appt-pagination-total {
+  color: #4474f6;
+}
+
+.appt-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.appt-page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #718096;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.appt-page-btn:hover:not(:disabled) {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.appt-page-btn.active {
+  background: #4474f6;
+  border-color: #4474f6;
+  color: #fff;
+}
+
+.appt-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .appt-quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .appt-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .appt-filter-bar {
+    gap: 8px;
+  }
+
+  .appt-table-container {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .appt-quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .appt-stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
