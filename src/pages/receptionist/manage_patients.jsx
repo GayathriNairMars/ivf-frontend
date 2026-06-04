@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import patientApi from "../../api/patientApi";
 import { STATUS_COLORS, TREATMENT_LABELS, PATIENT_STATUSES, TREATMENT_TYPES } from "../../constants/constants";
-import { Search, Edit, Eye, Filter } from "lucide-react";
+import { Search, Edit, Eye, Filter, Trash2 } from "lucide-react";
+import PatientEditModal from "./patient_edit";
+import PatientView from "./patient_view";
 import "../admin/patients/patient.css";
 import "../admin/staff/staff.css";
 
@@ -11,6 +13,8 @@ export default function ManagePatients({ onAddPatient }) {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
+  const [editingPatient, setEditingPatient] = useState(null);
+  const [viewingPatient, setViewingPatient] = useState(null);
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -52,6 +56,16 @@ export default function ManagePatients({ onAddPatient }) {
 
   const totalPages = Math.ceil(filteredByDate.length / PER_PAGE);
   const paginated = filteredByDate.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
+  if (viewingPatient) {
+    return (
+      <PatientView 
+        patient={viewingPatient} 
+        onBack={() => setViewingPatient(null)} 
+        onEditDetails={() => setEditingPatient(viewingPatient)}
+      />
+    );
+  }
 
   return (
     <div className="manage-patient-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100%" }}>
@@ -200,10 +214,13 @@ export default function ManagePatients({ onAddPatient }) {
                       </td>
                       <td style={{ padding: "16px 24px" }}>
                         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                          <button onClick={() => navigate(`/superadmin/patients/${p.id}/edit`)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="Edit">
+                          <button onClick={() => setEditingPatient(p)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="Edit">
                             <Edit size={18} />
                           </button>
-                          <button onClick={() => navigate(`/superadmin/patients/${p.id}`)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="View">
+                          <button onClick={() => alert("Delete API will be integrated later")} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: 0 }} title="Delete">
+                            <Trash2 size={18} />
+                          </button>
+                          <button onClick={() => setViewingPatient(p)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="View">
                             <Eye size={18} />
                           </button>
                         </div>
@@ -247,6 +264,16 @@ export default function ManagePatients({ onAddPatient }) {
           </div>
         )}
       </div>
+      {editingPatient && (
+        <PatientEditModal
+          patient={editingPatient}
+          onClose={() => setEditingPatient(null)}
+          onSaved={() => {
+            setEditingPatient(null);
+            fetchPatients();
+          }}
+        />
+      )}
     </div>
   );
 }
