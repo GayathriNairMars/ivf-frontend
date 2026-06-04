@@ -5,16 +5,9 @@ import receptionistApi from "../../api/receptionistApi";
 import RecDashboardHome from "./dashboard";
 import OPQueue from "./opqueue";
 import NewTicket from "./new_ticket";
-<<<<<<< HEAD
-import PatientDirectory from "./patient_directory";
-=======
-<<<<<<< HEAD
 import AddPatient from "../admin/patients/add_patient";
-=======
 import PatientDirectory from "./patient_directory";
 import Appointments from "./appointments";
->>>>>>> 39da530 (Update dashboard and receptionist UI)
->>>>>>> 3eb9a18 (Update dashboard and receptionist UI)
 import Icon from "../../components/Icons";
 import PatientHistory from "./patient_op_history";
 import doctorAvatar from "../../assets/doctor_avatar.png";
@@ -53,16 +46,8 @@ export default function ReceptionistDashboardSection() {
       case "dashboard": return <RecDashboardHome />;
       case "queue": return <OPQueue onNewTicket={() => setActive("ticket")} />;
       case "ticket": return <NewTicket onSuccess={() => setActive("queue")} onCancel={() => setActive("queue")} />;
-<<<<<<< HEAD
-      case "directory": return <PatientDirectory />;
-=======
-<<<<<<< HEAD
-      case "addpatient": return <AddPatient />;
-=======
       case "directory": return <PatientDirectory />;
       case "appointments": return <Appointments />;
->>>>>>> 39da530 (Update dashboard and receptionist UI)
->>>>>>> 3eb9a18 (Update dashboard and receptionist UI)
       default: return <RecDashboardHome />;
     }
   }, [active, viewPatientId]);
@@ -74,22 +59,10 @@ export default function ReceptionistDashboardSection() {
 	//Title map
 	const titles = {
 		dashboard:"Dashboard",
-<<<<<<< HEAD
-		queue:"Today's Queue",
-		patients:"Patients",
-<<<<<<< HEAD
-		ticket:"New Ticket",
-		directory:"Patient Directory",
-=======
-		ticket:"Ticket",
-		addpatient:"Register Patient",
-=======
 		queue:"OP queue",
 		ticket:"OP tickets",
 		directory:"Patient Directory",
 		appointments:"Appointments",
->>>>>>> 39da530 (Update dashboard and receptionist UI)
->>>>>>> 3eb9a18 (Update dashboard and receptionist UI)
 	};
 	return(
 		<div className={`sad-root ${sidebarOpen ? "sidebar-open":"sidebar-collapsed"}`}>
