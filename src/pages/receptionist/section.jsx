@@ -67,10 +67,6 @@ function SubIcon({ iconKey }) {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function ReceptionistDashboardSection() {
-      case "directory": return <PatientDirectory />;
-      case "appointments": return <Appointments />;
-      default: return <RecDashboardHome />;
-
   const { user, logout } = useAuth();
   const [active,        setActive]        = useState("dashboard");
   const [sidebarOpen,   setSidebarOpen]   = useState(true);
