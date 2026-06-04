@@ -115,13 +115,7 @@ export default function ReceptionistDashboardSection() {
     setActive(key);
   };
 
-		ticket:"Ticket",
-		addpatient:"Register Patient",
-		queue:"OP queue",
-		ticket:"OP tickets",
-		directory:"Patient Directory",
-		appointments:"Appointments",
-	};
+
 	return(
 		<div className={`sad-root ${sidebarOpen ? "sidebar-open":"sidebar-collapsed"}`}>
 			{/* Sidebar */}
