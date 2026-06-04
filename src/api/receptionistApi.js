@@ -16,6 +16,12 @@ export const receptionistApi = {
   getDepartments: () => api.get("/receptionist/tickets/departments/").then(res => res.data),
   createTicket: (payload) => api.post("/receptionist/tickets/", payload).then(res => res.data),
   updateTicketStatus: (ticketId, status) => api.patch(`/receptionist/tickets/${ticketId}/status/`, { status }).then(res => res.data),
+
+  //Appointments
+  getDailyAppointments: (params) => api.get("/receptionist/appointments/daily/", { params }).then(res => res.data), 
+  getDepartments: () => api.get("/departments/").then(res => res.data),
+  getDoctors: () => api.get("/patients/doctors/").then(res => res.data),
+
 };
 
 export default receptionistApi;

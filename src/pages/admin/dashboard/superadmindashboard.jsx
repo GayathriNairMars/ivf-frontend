@@ -151,6 +151,10 @@ export default function SuperAdminDashboard() {
             </div>
 
             <div className="user-area">
+              <button className="notification-btn-square">
+							  <IoNotificationsOutline size={17} />
+							  <span className="dot-red" />
+						  </button>
               <div className="topbar-profile-container">
                 <div
                   className="topbar-profile"
