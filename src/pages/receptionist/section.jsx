@@ -15,12 +15,12 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import "./receptionist.css";
 
 // ── Navigation config ─────────────────────────────────────────────────────────
-// FIXED: Removed duplicate "appointments" entry
 const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "appointments", label: "Appointments", icon: "appointments" },
   { key: "patients", label: "Patients", icon: "patients" },
   { key: "directory", label: "Patient Directory", icon: "staff" },
+  { key: "appointments", label: "Appointments", icon: "staff" },
 ];
 
 const TICKETS_CHILDREN = [
@@ -34,7 +34,7 @@ const TITLES = {
   directory: "Patient Directory",
   ticket: "Add Ticket",
   queue: "Today's Queue",
-  appointments: "Appointments",
+  appointments:"Appointments",
 };
 
 const ROLE_LABELS = {
@@ -187,10 +187,12 @@ export default function ReceptionistDashboardSection() {
         );
       case "directory":
         return <PatientDirectory />;
+      case "appointments":
+        return <Appointments />;
       default:
         return <RecDashboardHome />;
     }
-  }, [active, viewPatientId, rescheduleId]);
+  }, [active, viewPatientId]);
 
   const handleNavClick = (key) => {
     if (key !== "patients") setViewPatientId(null);
@@ -425,3 +427,4 @@ export default function ReceptionistDashboardSection() {
     </div>
   );
 }
+   two appoints ments are showing in the side bar is thet the probem of this file if it is that opplease correct the code anf give me te fully wotrking code
