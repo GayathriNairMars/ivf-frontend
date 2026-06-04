@@ -171,7 +171,7 @@ export default function EMROverview() {
                                                         {patient.full_name}
                                                     </span>
                                                     <span className="emr-patient-id">
-                                                        {patient.patient_id} • C-9032
+                                                        {patient.patient_id}
                                                     </span>
                                                 </div>
                                             </div>

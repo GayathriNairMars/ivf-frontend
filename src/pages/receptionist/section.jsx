@@ -2,15 +2,10 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import RecDashboardHome from "./dashboard";
-import Appointments from "./appointments";
-import BookAppointment from "./book_appointment";
-import RescheduleAppointment from "./reschedule_appointment";
 import OPQueue from "./opqueue";
 import NewTicket from "./new_ticket";
-import AddPatient from "../admin/patients/add_patient";
 import PatientDirectory from "./patient_directory";
 import Appointments from "./appointments";
-import PhysicianCalendar from "./PhysicianCalendar";
 import Icon from "../../components/Icons";
 import PatientHistory from "./patient_op_history";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -19,10 +14,10 @@ import "./receptionist.css";
 // ── Navigation config ─────────────────────────────────────────────────────────
 const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
-  { key: "appointments", label: "Appointments", icon: "appointments" },
   { key: "patients", label: "Patients", icon: "patients" },
   { key: "directory", label: "Patient Directory", icon: "staff" },
   { key: "appointments", label: "Appointments", icon: "staff" },
+
 ];
 
 const TICKETS_CHILDREN = [
@@ -36,7 +31,7 @@ const TITLES = {
   directory: "Patient Directory",
   ticket: "Add Ticket",
   queue: "Today's Queue",
-  appointments:"Appointments",
+	appointments:"Appointments",
 };
 
 const ROLE_LABELS = {
@@ -131,7 +126,6 @@ export default function ReceptionistDashboardSection() {
   const [ticketsOpen, setTicketsOpen] = useState(true);
   const [viewPatientId, setViewPatientId] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [rescheduleId, setRescheduleId] = useState(null);
 
   const handleLogout = async () => {
     await logout();
@@ -146,21 +140,6 @@ export default function ReceptionistDashboardSection() {
     switch (active) {
       case "dashboard":
         return <RecDashboardHome />;
-      case "appointments":
-        return <Appointments 
-                 onBook={() => setActive("book_appointment")} 
-                 onReschedule={(id) => { setRescheduleId(id); setActive("reschedule_appointment"); }}
-                 onCalendar={() => setActive("physician_calendar")}
-               />;
-      case "physician_calendar":
-        return <PhysicianCalendar onBack={() => setActive("appointments")} />;
-      case "book_appointment":
-        return <BookAppointment onCancel={() => setActive("appointments")} />;
-      case "reschedule_appointment":
-        return <RescheduleAppointment 
-                 appointmentId={rescheduleId} 
-                 onCancel={() => setActive("appointments")} 
-               />;
       case "queue":
         return (
           <OPQueue
@@ -189,8 +168,8 @@ export default function ReceptionistDashboardSection() {
         );
       case "directory":
         return <PatientDirectory />;
-      case "appointments":
-        return <Appointments />;
+			case "appointments":
+				return <Appointments />;
       default:
         return <RecDashboardHome />;
     }
@@ -429,4 +408,3 @@ export default function ReceptionistDashboardSection() {
     </div>
   );
 }
-   
