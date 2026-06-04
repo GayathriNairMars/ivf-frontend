@@ -100,7 +100,7 @@ function ArrowLinkIcon({ color }) {
 
 const ITEMS_PER_PAGE = 10;
 
-export default function Appointments() {
+export default function Appointments({ onBook, onReschedule, onCalendar, isEmbedded = false }) {
   const [appointments, setAppointments] = useState([]);
   const [stats, setStats] = useState({ today: 0, upcoming: 0, rescheduled: 0, cancelled: 0 });
   const [totalCount, setTotalCount] = useState(0);
@@ -114,21 +114,30 @@ export default function Appointments() {
   const [departments, setDepartments] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [dateFilter, setDateFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
   // Fetch appointments from API
   const fetchAppointments = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const params = {};
-      if (departmentFilter !== "all") params.department = departmentFilter;
-      if (doctorFilter !== "all") params.doctor = doctorFilter;
-      if (dateFilter) params.date = dateFilter;
-      const data = await receptionistApi.getDailyAppointments(params);
+      
+      let data;
+      if (searchQuery.trim()) {
+        data = await receptionistApi.searchAppointments(searchQuery.trim());
+      } else {
+        const params = {};
+        if (departmentFilter !== "all") params.department = departmentFilter;
+        if (doctorFilter !== "all") params.doctor = doctorFilter;
+        if (dateFilter) params.date = dateFilter;
+        data = await receptionistApi.getDailyAppointments(params);
+      }
+      
       const apptList = Array.isArray(data) ? data : (data.appointments || data.results || []);
       setAppointments(apptList);
       setTotalCount(data.total_count || data.count || apptList.length);
-      if (data.summary) {
+      if (data.summary && !searchQuery.trim()) {
         const s = data.summary;
         setStats({
           today: s.total ?? apptList.length,
@@ -150,7 +159,7 @@ export default function Appointments() {
     } finally {
       setLoading(false);
     }
-  }, [departmentFilter, doctorFilter, dateFilter]);
+  }, [departmentFilter, doctorFilter, dateFilter, searchQuery]);
 
   useEffect(() => {
     fetchAppointments();
@@ -159,7 +168,7 @@ export default function Appointments() {
   // Fetch departments
   const fetchDepartments = useCallback(async () => {
     try {
-      const data = await receptionistApi.getDepartments();
+      const data = await receptionistApi.getDepartmentList();
       const list = Array.isArray(data) ? data : (data.departments || data.results || []);
       setDepartments(list);
     } catch (err) {
@@ -219,14 +228,16 @@ export default function Appointments() {
 
   return (
     <div className="appt-page">
-      {/* Header */}
-      <div className="appt-header">
-        <h2 className="appt-title">Appointment management</h2>
-        <p className="appt-subtitle">Manage patient appointments, schedules, and consultation bookings.</p>
-      </div>
+      {!isEmbedded && (
+        <>
+          {/* Header */}
+          <div className="appt-header">
+            <h2 className="appt-title">Appointment management</h2>
+            <p className="appt-subtitle">Manage patient appointments, schedules, and consultation bookings.</p>
+          </div>
 
-      {/* Quick Action Cards */}
-      <div className="appt-quick-actions">
+          {/* Quick Action Cards */}
+          <div className="appt-quick-actions">
         {QUICK_ACTIONS.map((action, idx) => (
           <button
             key={idx}
@@ -235,6 +246,15 @@ export default function Appointments() {
               "--action-color": action.color,
               "--action-bg": action.bgColor,
               "--action-border": action.borderColor,
+            }}
+            onClick={() => {
+              if (action.icon === "book" && onBook) {
+                onBook();
+              } else if (action.icon === "reschedule" && onReschedule) {
+                onReschedule(null);
+              } else if (action.icon === "calendar" && onCalendar) {
+                onCalendar();
+              }
             }}
           >
             <div className="appt-action-icon">
@@ -246,25 +266,50 @@ export default function Appointments() {
             </div>
           </button>
         ))}
-      </div>
-
-      {/* Stats Row */}
-      <div className="appt-stats-row">
-        {STATS_DISPLAY.map((stat, idx) => (
-          <div key={idx} className="appt-stat-card">
-            <span className="appt-stat-label">{stat.label}</span>
-            <span className="appt-stat-value">{loading ? "-" : stat.value}</span>
           </div>
-        ))}
-      </div>
+        </>
+      )}
 
       {/* Filter Bar */}
       <div className="appt-filter-bar">
+        <div style={{ position: "relative", flex: 1, minWidth: "200px" }}>
+          <input
+            id="apptSearchInput"
+            type="text"
+            placeholder="Search appointments..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setSearchQuery(searchInput);
+                setCurrentPage(1);
+              }
+            }}
+            style={{
+              padding: "10px 12px",
+              border: "1px solid #cbd5e1",
+              borderRadius: "8px",
+              fontSize: "14px",
+              outline: "none",
+              width: "100%",
+              background: "white",
+            }}
+          />
+          <button 
+            onClick={() => { setSearchQuery(searchInput); setCurrentPage(1); }}
+            style={{
+              position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)",
+              background: "none", border: "none", cursor: "pointer", color: "#64748b"
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+        </div>
         <div style={{ position: "relative" }}>
           <input
             type="date"
             value={dateFilter}
-            onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
+            onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); setSearchQuery(""); }}
             style={{
               padding: "10px 12px",
               border: "1px solid #cbd5e1",
@@ -403,7 +448,15 @@ export default function Appointments() {
                         <button className="appt-action-btn" title="View">
                           <ViewIcon />
                         </button>
-                        <button className="appt-action-btn" title="Reschedule">
+                        <button 
+                          className="appt-action-btn" 
+                          title="Reschedule"
+                          onClick={() => {
+                            if (onReschedule && appt.id) {
+                              onReschedule(appt.id);
+                            }
+                          }}
+                        >
                           <RescheduleIcon />
                         </button>
                       </div>
