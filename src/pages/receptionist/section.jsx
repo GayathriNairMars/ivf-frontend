@@ -5,6 +5,7 @@ import RecDashboardHome from "./dashboard";
 import OPQueue from "./opqueue";
 import NewTicket from "./new_ticket";
 import PatientDirectory from "./patient_directory";
+import Appointments from "./appointments";
 import Icon from "../../components/Icons";
 import PatientHistory from "./patient_op_history";
 import { IoNotificationsOutline } from "react-icons/io5";
