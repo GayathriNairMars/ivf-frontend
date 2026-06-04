@@ -19,9 +19,16 @@ export const receptionistApi = {
 
   //Appointments
   getDailyAppointments: (params) => api.get("/receptionist/appointments/daily/", { params }).then(res => res.data), 
-  getDepartments: () => api.get("/departments/").then(res => res.data),
-  getDoctors: () => api.get("/patients/doctors/").then(res => res.data),
-
+  getDepartmentList: () => api.get("/departments/").then(res => res.data),
+  getDoctorList: () => api.get("/patients/doctors/").then(res => res.data),
+  getPatients: () => api.get("/patients/").then(res => res.data),
+  bookAppointment: (payload) => api.post("/receptionist/appointments/book/", payload).then(res => res.data),
+  getAppointment: (id) => api.get(`/receptionist/appointments/${id}/detail/`).then(res => res.data),
+  rescheduleAppointment: (id, payload) => api.patch(`/receptionist/appointments/reschedule/${id}/`, payload).then(res => res.data),
+  searchAppointments: (query) => api.get('/receptionist/appointments/search/', { params: { q: query } }).then(res => res.data),
+  getAvailableSlots: (doctorId, date) => api.get('/receptionist/appointments/available-slots/', { params: { doctor_id: doctorId, date: date } }).then(res => res.data),
+  getCalendar: (id, start, end) => api.get(`/receptionist/appointments/calendar/${id}/`, { params: { start_date: start, end_date: end } }).then(res => res.data),
+  cancelAppointment: (id, payload) => api.patch(`/receptionist/appointments/cancel/${id}/`, payload).then(res => res.data),
 };
 
 export default receptionistApi;

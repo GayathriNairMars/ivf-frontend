@@ -16,7 +16,7 @@ function Field({label,error,children}) {
 
 export default function PatientEditModal({patient,onClose,onSaved}) {
 	const [form,setForm] = useState({
-		phone: patient.phone || "",
+		phone: patient.user?.phone || patient.phone || "",
 		date_of_birth: patient.date_of_birth || "",
 		gender: patient.gender || "",
 		blood_group: patient.blood_group || "",
@@ -60,7 +60,7 @@ export default function PatientEditModal({patient,onClose,onSaved}) {
 				<div>
 					<h3 style={{margin:0}}>Edit Patient Info</h3>
 					<p style={{margin:"4px 0 0", fontSize:"0.8rem",color:"var(--text-2)"}}>
-						{patient.full_name} - {patient.patient_id}
+						{patient.user?.full_name || patient.full_name} - {patient.patient_id}
 					</p>
 				</div>
 				<button className="btn-secondary" onClick={onClose} style={{fontSize:"0.8rem"}}>Close</button>

@@ -1,25 +1,545 @@
-.payment-toggle-wrapper{
-  margin-top:16px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+/* ── Payment toggle ───────────────────────────────────────────── */
+.payment-toggle-wrapper {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.payment-toggle-btn{
-  border:none;
-  border-radius:10px;
-  padding:12px 16px;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.2s ease;
+.payment-toggle-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.payment-toggle-btn.unpaid{
-  background:#ffe5e5;
-  color:#c62828;
+.payment-toggle-btn.unpaid { background: #ffe5e5; color: #c62828; }
+.payment-toggle-btn.paid   { background: #e6f7ed; color: #1b5e20; }
+
+/* ════════════════════════════════════════════════════════════════
+   OP QUEUE  –  redesigned table UI
+   ════════════════════════════════════════════════════════════════ */
+
+.opq-root {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.payment-toggle-btn.paid{
-  background:#e6f7ed;
-  color:#1b5e20;
+/* ── Page header ─────────────────────────────────────────────── */
+.opq-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.opq-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text, #1a202c);
+  margin: 0 0 4px;
+}
+
+.opq-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-3, #64748b);
+  margin: 0;
+}
+
+.opq-btn-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+  font-family: inherit;
+}
+
+.opq-btn-generate:hover {
+  background: #6d28d9;
+  transform: translateY(-1px);
+}
+
+/* ── Stats row ───────────────────────────────────────────────── */
+.opq-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 700px) {
+  .opq-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.opq-stat-card {
+  background: #fff;
+  border: 1px solid #e8e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.opq-stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a202c;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.opq-stat-label {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ── Queue panel ─────────────────────────────────────────────── */
+.opq-panel {
+  background: #fff;
+  border: 1px solid #e8e8f0;
+  border-radius: 14px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* Panel header */
+.opq-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid #f0f0f6;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.opq-queue-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.opq-queue-date {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #7c3aed;
+}
+
+.opq-queue-sub {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 3px;
+}
+
+.opq-panel-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.opq-icon-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e8e8f0;
+  border-radius: 8px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.opq-icon-btn:hover {
+  background: #f8f8ff;
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+/* Summary strip */
+.opq-summary-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 22px;
+  background: #f8f8ff;
+  border-bottom: 1px solid #f0f0f6;
+  flex-wrap: wrap;
+}
+
+.opq-summary-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Filter row */
+.opq-filter-row {
+  display: flex;
+  gap: 10px;
+  padding: 12px 22px;
+  border-bottom: 1px solid #f0f0f6;
+  flex-wrap: wrap;
+}
+
+.opq-select {
+  padding: 7px 28px 7px 10px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 8px center;
+  appearance: none;
+  color: #374151;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.opq-select:focus { border-color: #7c3aed; }
+.opq-select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Table */
+.opq-table-wrap {
+  overflow-x: auto;
+}
+
+.opq-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.opq-table thead tr {
+  border-bottom: 2px solid #f0f0f6;
+}
+
+.opq-table th {
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  background: #fafafa;
+}
+
+.opq-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #f4f4f8;
+  vertical-align: middle;
+}
+
+.opq-table tbody tr:last-child td { border-bottom: none; }
+
+.opq-table tbody tr {
+  transition: background 0.1s;
+}
+
+.opq-table tbody tr:hover { background: #faf8ff; }
+
+.opq-td-id {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.opq-patient-name {
+  font-weight: 600;
+  color: #1a202c;
+  font-size: 0.88rem;
+}
+
+.opq-patient-phone {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+.opq-td-doctor {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.85rem;
+}
+
+/* Action column */
+.opq-action-btns {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.opq-action-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.opq-action-btn:hover {
+  background: #f0f4ff;
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+/* ── Status flow action buttons ──────────────────────────────── */
+.opq-flow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1.5px solid;
+  transition: background 0.12s, opacity 0.12s;
+  white-space: nowrap;
+}
+
+.opq-flow-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* WAITING → IN_CONSULT  (blue) */
+.opq-flow-consult {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.opq-flow-consult:hover:not(:disabled) {
+  background: #dbeafe;
+}
+
+/* IN_CONSULT → DONE  (green) */
+.opq-flow-done {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+.opq-flow-done:hover:not(:disabled) {
+  background: #dcfce7;
+}
+
+/* IN_CONSULT → back to WAITING  (amber) */
+.opq-flow-wait {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+.opq-flow-wait:hover:not(:disabled) {
+  background: #fef3c7;
+}
+
+/* DONE / CANCELLED → Reopen  (slate) */
+.opq-flow-reopen {
+  background: #f8fafc;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+.opq-flow-reopen:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+
+/* Status dropdown on hover */
+.opq-status-menu-wrap {
+  position: relative;
+}
+
+.opq-status-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  min-width: 150px;
+  z-index: 100;
+}
+
+.opq-status-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 7px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.1s;
+}
+
+.opq-status-dropdown button:hover { background: #f8f8ff; }
+
+.opq-status-menu-wrap:hover .opq-status-dropdown,
+.opq-status-menu-wrap:focus-within .opq-status-dropdown {
+  display: block;
+}
+
+/* Loading / Empty states */
+.opq-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.opq-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid #e2e8f0;
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: opq-spin 0.7s linear infinite;
+}
+
+@keyframes opq-spin { to { transform: rotate(360deg); } }
+
+.opq-empty {
+  padding: 64px 24px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+/* Pagination */
+.opq-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  border-top: 1px solid #f0f0f6;
+  background: #fafafa;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.opq-pag-info {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.opq-pag-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.opq-pag-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+
+.opq-pag-btn:hover:not(:disabled) {
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+.opq-pag-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SIDEBAR  –  group / sub-menu styles
+   ════════════════════════════════════════════════════════════════ */
+
+.nav-group {
+  width: 100%;
+}
+
+.nav-group-header {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+/* Sub-items indented block */
+.nav-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 14px;
+  margin-top: 2px;
+  border-left: 2px solid rgba(124, 58, 237, 0.2);
+  margin-left: 14px;
+  animation: fadeSlide 0.18s ease;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.nav-sub-item {
+  padding-left: 10px !important;
+  font-size: 0.83rem !important;
+  opacity: 0.88;
+}
+
+.nav-sub-item.active { opacity: 1; }
+
+/* Collapsed sidebar – extra sub icons */
+.nav-collapsed-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
