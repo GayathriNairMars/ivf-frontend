@@ -151,10 +151,19 @@ export default function NewTicket({ onSuccess, onCancel }) {
   };
 
   // Load doctors and departments on mount
-  useEffect(() => {
-    receptionistApi.getDoctors().then((data) => setDoctors(data)).catch(() => {});
-    receptionistApi.getDepartments().then((data) => setDepartments(data)).catch(() => {});
-  }, []);
+useEffect(() => {
+  receptionistApi.getDoctors()
+    .then((data) => setDoctors(data))
+    .catch(() => {});
+    
+  // ✅ This will now call: /api/receptionist/tickets/departments/?type=consultation
+  receptionistApi.getDepartments('consultation')
+    .then((data) => {
+      console.log('Consultation departments:', data);
+      setDepartments(data);
+    })
+    .catch(() => {});
+}, []);
 
   // Debounced search for patients
   useEffect(() => {

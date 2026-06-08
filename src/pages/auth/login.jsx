@@ -595,9 +595,14 @@ export default function LoginPage() {
                 </p>
               </>
             )}
-            <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
-              Not a staff member? <a href="/admin-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>Sign in as Admin →</a>
-            </p>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "12px" }}>
+              <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                Are you an Admin? <a href="/admin-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>Admin login →</a>
+              </p>
+              <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                Are you a Doctor? <a href="/doctor-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>Doctor login →</a>
+              </p>
+            </div>
           </div>
 
         </div>
