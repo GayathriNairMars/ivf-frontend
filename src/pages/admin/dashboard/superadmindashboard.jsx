@@ -29,7 +29,7 @@ const NAV=[
   ]},
   {id:"staff",label:"Staff Management",icon: BriefcaseMedical, path:"/superadmin/staff/", subItems: [
     {id: "staff-manage", label: "Manage staff", icon: Users, path: "/superadmin/staff/"},
-    {id: "staff-add", label: "Add staff", icon: UserPlus, path: "/superadmin/staff/add"}
+    {id: "staff-add", label: "Add staff/Doctors", icon: UserPlus, path: "/superadmin/staff/add"}
   ]},
   {id:"patients",label:"Patient Directory",icon:User,path:"/superadmin/patients/", subItems: [
     {id: "patients-manage", label: "Manage patient", icon: Users, path: "/superadmin/patients/"},

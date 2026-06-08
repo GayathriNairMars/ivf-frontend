@@ -10,15 +10,13 @@ import NewTicket from "./new_ticket";
 import PatientDirectory from "./patient_directory";
 import PhysicianCalendar from "./PhysicianCalendar";
 import Icon from "../../components/Icons";
-import PatientHistory from "./patient_op_history";
 import { IoNotificationsOutline } from "react-icons/io5";
 import "./receptionist.css";
 
-// ── Navigation config ─────────────────────────────────────────────────────────
+// ── Navigation config (Patients page removed) ─────────────────────────────────────────
 const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "appointments", label: "Appointments", icon: "appointments" },
-  { key: "patients", label: "Patients", icon: "patients" },
   { key: "directory", label: "Patient Directory", icon: "staff" },
   { key: "appointments", label: "Appointments", icon: "staff" },
 ];
@@ -30,7 +28,6 @@ const TICKETS_CHILDREN = [
 
 const TITLES = {
   dashboard: "Dashboard",
-  patients: "Patients",
   directory: "Patient Directory",
   ticket: "Add Ticket",
   queue: "Today's Queue",
@@ -42,49 +39,6 @@ const ROLE_LABELS = {
   doctor: "Doctor",
   admin: "Administrator"
 };
-
-// ── Patient Search Component ─────────────────────────────────────────────────
-function PatientSearch({ onViewHistory }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  
-  // Mock patient data - replace with actual API call
-  const mockPatients = [
-    { id: 1, name: "John Doe", age: 45, phone: "123-456-7890" },
-    { id: 2, name: "Jane Smith", age: 32, phone: "098-765-4321" },
-    { id: 3, name: "Bob Johnson", age: 58, phone: "555-123-4567" },
-  ];
-  
-  const filteredPatients = mockPatients.filter(patient =>
-    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  return (
-    <div className="patient-search">
-      <h2>Patient Search</h2>
-      <div className="search-input">
-        <input
-          type="text"
-          placeholder="Search patients by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      <div className="patient-list">
-        {filteredPatients.map(patient => (
-          <div key={patient.id} className="patient-card">
-            <div className="patient-info">
-              <h4>{patient.name}</h4>
-              <p>Age: {patient.age} | Phone: {patient.phone}</p>
-            </div>
-            <button onClick={() => onViewHistory(patient)} className="view-btn">
-              View History
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ── Inline icons for sub-items ─────────────────────────────────────────────────
 function AddTicketIcon() {
@@ -127,7 +81,6 @@ export default function ReceptionistDashboardSection() {
   const [active, setActive] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [ticketsOpen, setTicketsOpen] = useState(true);
-  const [viewPatientId, setViewPatientId] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [rescheduleId, setRescheduleId] = useState(null);
 
@@ -139,11 +92,11 @@ export default function ReceptionistDashboardSection() {
   // Whether the "Tickets" group is active
   const ticketsGroupActive = active === "ticket" || active === "queue";
 
-  // ── Content router ─────────────────────────────────────────────────────────
+  // ── Content router (Patients page removed) ─────────────────────────────────────────
   const content = useMemo(() => {
     switch (active) {
       case "dashboard":
-        return <RecDashboardHome />;
+        return <RecDashboardHome onNavigate={setActive} />;
       case "appointments":
         return <Appointments 
                  onBook={() => setActive("book_appointment")} 
@@ -168,10 +121,6 @@ export default function ReceptionistDashboardSection() {
             }}
           />
         );
-      case "patients":
-        return viewPatientId
-          ? <PatientHistory patientId={viewPatientId} onBack={() => setViewPatientId(null)} />
-          : <PatientSearch onViewHistory={(p) => setViewPatientId(p.id)} />;
       case "ticket":
         return (
           <NewTicket
@@ -190,12 +139,11 @@ export default function ReceptionistDashboardSection() {
       case "appointments":
         return <Appointments />;
       default:
-        return <RecDashboardHome />;
+        return <RecDashboardHome onNavigate={setActive} />;
     }
-  }, [active, viewPatientId]);
+  }, [active, rescheduleId]);
 
   const handleNavClick = (key) => {
-    if (key !== "patients") setViewPatientId(null);
     setActive(key);
   };
 
@@ -222,7 +170,7 @@ export default function ReceptionistDashboardSection() {
         {/* Nav */}
         <nav className="sidebar-nav">
 
-          {/* ── Top-level items ──────────────────────────────────────── */}
+          {/* ── Top-level items (Patients removed) ──────────────────────────────────────── */}
           {NAV_TOP.map(item => (
             <button
               key={item.key}
@@ -427,4 +375,3 @@ export default function ReceptionistDashboardSection() {
     </div>
   );
 }
-   two appoints ments are showing in the side bar is thet the probem of this file if it is that opplease correct the code anf give me te fully wotrking code

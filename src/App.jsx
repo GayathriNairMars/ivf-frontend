@@ -19,6 +19,7 @@ import AddEMRRecord from "./pages/admin/emr/add_emrrecord";
 import RecordManagement from "./pages/admin/emr/record_management";
 import ReceptionistDashboardSection from "./pages/receptionist/section";
 import AdminLoginPage from "./pages/auth/admin_login";
+import DoctorLoginPage from "./pages/doctor/auth/login";
 import CreateEMRWrapper from "./pages/admin/emr/create_emr";
 
 
@@ -61,6 +62,7 @@ export default function App() {
         {/*Public*/}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin-login" element={<AdminLoginPage />} />
+        <Route path="/doctor-login" element={<DoctorLoginPage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/*Super Admin*/}

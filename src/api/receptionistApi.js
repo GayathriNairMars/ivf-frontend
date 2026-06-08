@@ -2,7 +2,7 @@ import api from "./axios";
 
 export const receptionistApi = {
   // Dashboard & Queues
-  getDashboardStats: () => api.get("/receptionist/dashboard/").then(res => res.data),
+  getDashboardStats: (params) => api.get("/receptionist/dashboard/", { params }).then(res => res.data),
   getTodayTickets: () => api.get("/receptionist/tickets/today/").then(res => res.data),
   getTicketsToday: () => api.get("/receptionist/tickets/today").then(res => res.data), // duplicate path for exact match
 
@@ -13,7 +13,10 @@ export const receptionistApi = {
   
   // Tickets & Scheduling
   getDoctors: () => api.get("/receptionist/tickets/doctors/").then(res => res.data),
-  getDepartments: () => api.get("/receptionist/tickets/departments/").then(res => res.data),
+  getDepartments: (type = null) => {
+    const params = type ? { type: type } : {};
+    return api.get("/receptionist/tickets/departments/", { params }).then(res => res.data);
+  },
   createTicket: (payload) => api.post("/receptionist/tickets/", payload).then(res => res.data),
   updateTicketStatus: (ticketId, status) => api.patch(`/receptionist/tickets/${ticketId}/status/`, { status }).then(res => res.data),
 
