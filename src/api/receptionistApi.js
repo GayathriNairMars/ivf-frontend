@@ -1,16 +1,14 @@
 import api from "./axios";
-
+ 
 export const receptionistApi = {
   // Dashboard & Queues
   getDashboardStats: (params) => api.get("/receptionist/dashboard/", { params }).then(res => res.data),
   getTodayTickets: () => api.get("/receptionist/tickets/today/").then(res => res.data),
-  getTicketsToday: () => api.get("/receptionist/tickets/today").then(res => res.data), // duplicate path for exact match
-
+  
   // Patients (Receptionist context)
   searchPatients: (searchParams) => api.get(`/receptionist/patients/${searchParams}`).then(res => res.data),
   getPatientTickets: (patientId) => api.get(`/receptionist/patients/${patientId}/tickets/`).then(res => res.data),
   getPatientHistory: (patientId) => api.get(`/receptionist/patients/${patientId}/history/`).then(res => res.data),
-  
   // Tickets & Scheduling
   getDoctors: () => api.get("/receptionist/tickets/doctors/").then(res => res.data),
   getDepartments: (type = null) => {
@@ -19,9 +17,9 @@ export const receptionistApi = {
   },
   createTicket: (payload) => api.post("/receptionist/tickets/", payload).then(res => res.data),
   updateTicketStatus: (ticketId, status) => api.patch(`/receptionist/tickets/${ticketId}/status/`, { status }).then(res => res.data),
-
+  
   //Appointments
-  getDailyAppointments: (params) => api.get("/receptionist/appointments/daily/", { params }).then(res => res.data), 
+  getDailyAppointments: (params) => api.get("/receptionist/appointments/daily/", { params }).then(res => res.data),
   getDepartmentList: () => api.get("/departments/").then(res => res.data),
   getDoctorList: () => api.get("/patients/doctors/").then(res => res.data),
   getPatients: () => api.get("/patients/").then(res => res.data),
@@ -33,5 +31,5 @@ export const receptionistApi = {
   getCalendar: (id, start, end) => api.get(`/receptionist/appointments/calendar/${id}/`, { params: { start_date: start, end_date: end } }).then(res => res.data),
   cancelAppointment: (id, payload) => api.patch(`/receptionist/appointments/cancel/${id}/`, payload).then(res => res.data),
 };
-
+ 
 export default receptionistApi;

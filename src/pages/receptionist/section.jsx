@@ -18,7 +18,6 @@ const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "appointments", label: "Appointments", icon: "appointments" },
   { key: "directory", label: "Patient Directory", icon: "staff" },
-  { key: "appointments", label: "Appointments", icon: "staff" },
 ];
 
 const TICKETS_CHILDREN = [
@@ -31,7 +30,6 @@ const TITLES = {
   directory: "Patient Directory",
   ticket: "Add Ticket",
   queue: "Today's Queue",
-  appointments:"Appointments",
 };
 
 const ROLE_LABELS = {
@@ -136,8 +134,6 @@ export default function ReceptionistDashboardSection() {
         );
       case "directory":
         return <PatientDirectory />;
-      case "appointments":
-        return <Appointments />;
       default:
         return <RecDashboardHome onNavigate={setActive} />;
     }

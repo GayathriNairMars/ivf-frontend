@@ -1,72 +1,33 @@
 // Appointment Management page for Receptionist
 import { useState, useMemo, useEffect, useCallback } from "react";
 import receptionistApi from "../../api/receptionistApi";
+import { CalendarPlus, CalendarClock, CalendarX2, BriefcaseMedical, Trash2, X } from "lucide-react";
 import "./appointments.css";
 
 const QUICK_ACTIONS = [
-  { label: "Book\nAppointment", color: "#4474f6", bgColor: "rgba(68, 116, 246, 0.08)", borderColor: "rgba(68, 116, 246, 0.25)", icon: "book" },
-  { label: "Reschedule\nAppointment", color: "#6366f1", bgColor: "rgba(99, 102, 241, 0.08)", borderColor: "rgba(99, 102, 241, 0.25)", icon: "reschedule" },
-  { label: "Cancel\nAppointment", color: "#ef4444", bgColor: "rgba(239, 68, 68, 0.08)", borderColor: "rgba(239, 68, 68, 0.25)", icon: "cancel" },
-  { label: "Physician\nCalendar", color: "#4474f6", bgColor: "rgba(68, 116, 246, 0.08)", borderColor: "rgba(68, 116, 246, 0.25)", icon: "calendar" },
+  { label: "Book\nAppointment",      color: "#4474f6", bgColor: "rgba(68, 116, 246, 0.08)",  borderColor: "rgba(68, 116, 246, 0.25)",  icon: "book"      },
+  { label: "Reschedule\nAppointment",color: "#6366f1", bgColor: "rgba(99, 102, 241, 0.08)",  borderColor: "rgba(99, 102, 241, 0.25)",  icon: "reschedule" },
+  { label: "Cancel\nAppointment",    color: "#ef4444", bgColor: "rgba(239, 68, 68, 0.08)",   borderColor: "rgba(239, 68, 68, 0.25)",   icon: "cancel"    },
+  { label: "Physician\nCalendar",    color: "#4474f6", bgColor: "rgba(68, 116, 246, 0.08)",  borderColor: "rgba(68, 116, 246, 0.25)",  icon: "calendar"  },
+];
+
+const CANCEL_REASONS = [
+  { value: "patient_request",    label: "Patient Request"    },
+  { value: "doctor_unavailable", label: "Doctor Unavailable" },
+  { value: "emergency",          label: "Emergency"          },
+  { value: "scheduling_conflict",label: "Scheduling Conflict"},
+  { value: "other",              label: "Other"              },
 ];
 
 function QuickActionIcon({ type, color }) {
+  const props = { size: 22, color, strokeWidth: 2 };
   switch (type) {
-    case "book":
-      return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" />
-          <line x1="3" y1="10" x2="21" y2="10" />
-          <line x1="12" y1="14" x2="12" y2="18" />
-          <line x1="10" y1="16" x2="14" y2="16" />
-        </svg>
-      );
-    case "reschedule":
-      return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" />
-          <line x1="3" y1="10" x2="21" y2="10" />
-          <path d="M14 14l2 2-2 2" />
-          <path d="M10 18l-2-2 2-2" />
-        </svg>
-      );
-    case "cancel":
-      return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" />
-          <line x1="3" y1="10" x2="21" y2="10" />
-          <line x1="10" y1="14" x2="14" y2="18" />
-          <line x1="14" y1="14" x2="10" y2="18" />
-        </svg>
-      );
-    case "calendar":
-      return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" />
-          <line x1="3" y1="10" x2="21" y2="10" />
-          <circle cx="12" cy="15" r="2" />
-        </svg>
-      );
-    default:
-      return null;
+    case "book":       return <CalendarPlus     {...props} />;
+    case "reschedule": return <CalendarClock    {...props} />;
+    case "cancel":     return <CalendarX2       {...props} />;
+    case "calendar":   return <BriefcaseMedical {...props} />;
+    default:           return null;
   }
-}
-
-function EditIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-    </svg>
-  );
 }
 
 function ViewIcon() {
@@ -98,59 +59,132 @@ function ArrowLinkIcon({ color }) {
   );
 }
 
+// ── Cancel Appointment Modal ──────────────────────────────────────────────────
+function CancelModal({ appointment, onClose, onSuccess }) {
+  const [reason, setReason]   = useState("patient_request");
+  const [notes, setNotes]     = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
+
+  const appointmentId = appointment.id;
+  const patientName   = appointment.patient_name || appointment.name || "-";
+
+  const handleConfirm = async () => {
+    if (!notes.trim()) {
+      setError("Please add a note before confirming.");
+      return;
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      await receptionistApi.cancelAppointment(appointmentId, { reason, notes: notes.trim() });
+      onSuccess();
+    } catch (err) {
+      console.error("Cancel failed:", err);
+      setError("Failed to cancel appointment. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBackdrop = (e) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  return (
+    <div className="cancel-modal-backdrop" onClick={handleBackdrop}>
+      <div className="cancel-modal">
+        <div className="cancel-modal-header">
+          <div className="cancel-modal-title-row">
+            <div className="cancel-modal-icon-wrap">
+              <Trash2 size={18} color="#ef4444" strokeWidth={2} />
+            </div>
+            <div>
+              <h3 className="cancel-modal-title">Cancel Appointment</h3>
+              <p className="cancel-modal-sub">This will cancel the appointment for <strong>{patientName}</strong></p>
+            </div>
+          </div>
+          <button className="cancel-modal-close" onClick={onClose} disabled={loading}>
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="cancel-modal-body">
+          {error && <div className="cancel-modal-error">{error}</div>}
+          <div className="cancel-modal-field">
+            <label className="cancel-modal-label">Reason <span className="cancel-required">*</span></label>
+            <select className="cancel-modal-select" value={reason} onChange={(e) => setReason(e.target.value)} disabled={loading}>
+              {CANCEL_REASONS.map((r) => (
+                <option key={r.value} value={r.value}>{r.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="cancel-modal-field">
+            <label className="cancel-modal-label">Notes <span className="cancel-required">*</span></label>
+            <textarea
+              className="cancel-modal-textarea"
+              placeholder="e.g. Patient called to cancel"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              disabled={loading}
+            />
+          </div>
+        </div>
+
+        <div className="cancel-modal-footer">
+          <button className="cancel-modal-btn-secondary" onClick={onClose} disabled={loading}>Keep Appointment</button>
+          <button className="cancel-modal-btn-danger" onClick={handleConfirm} disabled={loading || !notes.trim()}>
+            {loading ? "Cancelling…" : "Confirm Cancellation"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
 const ITEMS_PER_PAGE = 10;
 
 export default function Appointments({ onBook, onReschedule, onCalendar, isEmbedded = false }) {
-  const [appointments, setAppointments] = useState([]);
-  const [stats, setStats] = useState({ today: 0, upcoming: 0, rescheduled: 0, cancelled: 0 });
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [doctorFilter, setDoctorFilter] = useState("all");
+  const [appointments,     setAppointments]     = useState([]);
+  const [stats,            setStats]            = useState({ today: 0, upcoming: 0, rescheduled: 0, cancelled: 0 });
+  const [totalCount,       setTotalCount]       = useState(0);
+  const [loading,          setLoading]          = useState(true);
+  const [error,            setError]            = useState(null);
+  const [doctorFilter,     setDoctorFilter]     = useState("all");
   const [departmentFilter, setDepartmentFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [departments, setDepartments] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [dateFilter, setDateFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const [typeFilter,       setTypeFilter]       = useState("all");
+  const [statusFilter,     setStatusFilter]     = useState("all");
+  const [currentPage,      setCurrentPage]      = useState(1);
+  const [departments,      setDepartments]      = useState([]);
+  const [doctors,          setDoctors]          = useState([]);
+  const [dateFilter,       setDateFilter]       = useState("");
+  const [cancelTarget,     setCancelTarget]     = useState(null);
+  const [searchInput,      setSearchInput]      = useState("");
+  const [searchQuery,      setSearchQuery]      = useState("");
 
-  // Fetch appointments from API
   const fetchAppointments = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      let data;
-      if (searchQuery.trim()) {
-        data = await receptionistApi.searchAppointments(searchQuery.trim());
-      } else {
-        const params = {};
-        if (departmentFilter !== "all") params.department = departmentFilter;
-        if (doctorFilter !== "all") params.doctor = doctorFilter;
-        if (dateFilter) params.date = dateFilter;
-        data = await receptionistApi.getDailyAppointments(params);
-      }
-      
+      const params = {};
+      if (departmentFilter !== "all") params.department = departmentFilter;
+      if (doctorFilter     !== "all") params.doctor     = doctorFilter;
+      if (dateFilter)                  params.date       = dateFilter;
+      const data     = await receptionistApi.getDailyAppointments(params);
       const apptList = Array.isArray(data) ? data : (data.appointments || data.results || []);
       setAppointments(apptList);
       setTotalCount(data.total_count || data.count || apptList.length);
-      if (data.summary && !searchQuery.trim()) {
+      if (data.summary) {
         const s = data.summary;
-        setStats({
-          today: s.total ?? apptList.length,
-          upcoming: s.scheduled ?? 0,
-          rescheduled: s.rescheduled ?? 0,
-          cancelled: s.cancelled ?? 0,
-        });
+        setStats({ today: s.total ?? apptList.length, upcoming: s.scheduled ?? 0, rescheduled: s.rescheduled ?? 0, cancelled: s.cancelled ?? 0 });
       } else {
         setStats({
-          today: apptList.length,
-          upcoming: apptList.filter(a => a.status === "SCHEDULED").length,
+          today:       apptList.length,
+          upcoming:    apptList.filter(a => a.status === "SCHEDULED").length,
           rescheduled: apptList.filter(a => a.status === "RESCHEDULED").length,
-          cancelled: apptList.filter(a => a.status === "CANCELLED").length,
+          cancelled:   apptList.filter(a => a.status === "CANCELLED").length,
         });
       }
     } catch (err) {
@@ -159,75 +193,70 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
     } finally {
       setLoading(false);
     }
-  }, [departmentFilter, doctorFilter, dateFilter, searchQuery]);
+  }, [departmentFilter, doctorFilter, dateFilter]);
 
-  useEffect(() => {
-    fetchAppointments();
-  }, [fetchAppointments]);
+  useEffect(() => { fetchAppointments(); }, [fetchAppointments]);
 
-  // Fetch departments
   const fetchDepartments = useCallback(async () => {
     try {
-      const data = await receptionistApi.getDepartmentList();
-      const list = Array.isArray(data) ? data : (data.departments || data.results || []);
-      setDepartments(list);
-    } catch (err) {
-      console.error("Failed to fetch departments:", err);
-    }
+      const data = await receptionistApi.getDepartments();
+      setDepartments(Array.isArray(data) ? data : (data.departments || data.results || []));
+    } catch (err) { console.error("Failed to fetch departments:", err); }
   }, []);
+  useEffect(() => { fetchDepartments(); }, [fetchDepartments]);
 
-  useEffect(() => {
-    fetchDepartments();
-  }, [fetchDepartments]);
-
-  // Fetch doctors
   const fetchDoctors = useCallback(async () => {
     try {
       const data = await receptionistApi.getDoctorList();
-      const list = Array.isArray(data) ? data : (data.doctors || data.results || []);
-      setDoctors(list);
-    } catch (err) {
-      console.error("Failed to fetch doctors:", err);
-    }
+      setDoctors(Array.isArray(data) ? data : (data.doctors || data.results || []));
+    } catch (err) { console.error("Failed to fetch doctors:", err); }
   }, []);
+  useEffect(() => { fetchDoctors(); }, [fetchDoctors]);
 
-  useEffect(() => {
-    fetchDoctors();
-  }, [fetchDoctors]);
+  const handleCancelSuccess = () => {
+    setCancelTarget(null);
+    fetchAppointments();
+  };
 
-  // Client-side filtering (status and type only — doctor/dept/date are server-side)
   const filteredAppointments = useMemo(() => {
     let result = [...appointments];
-    if (statusFilter !== "all") {
-      result = result.filter(a => (a.status || "").toUpperCase() === statusFilter.toUpperCase());
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter(a =>
+        (a.patient_name  || "").toLowerCase().includes(q) ||
+        (a.appointment_id|| "").toLowerCase().includes(q) ||
+        (a.doctor_name   || "").toLowerCase().includes(q) ||
+        (a.patient_phone || "").toLowerCase().includes(q)
+      );
     }
-    if (typeFilter !== "all") {
-      result = result.filter(a => (a.appointment_type || a.type || "").toLowerCase().includes(typeFilter.toLowerCase()));
-    }
+    if (statusFilter !== "all") result = result.filter(a => (a.status || "").toUpperCase() === statusFilter.toUpperCase());
+    if (typeFilter   !== "all") result = result.filter(a => (a.appointment_type || a.type || "").toLowerCase().includes(typeFilter.toLowerCase()));
     return result;
-  }, [appointments, statusFilter, typeFilter]);
+  }, [appointments, statusFilter, typeFilter, searchQuery]);
 
-  // Pagination
-  const totalPages = Math.ceil(filteredAppointments.length / ITEMS_PER_PAGE) || 1;
-  const paginatedAppointments = filteredAppointments.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const totalPages            = Math.ceil(filteredAppointments.length / ITEMS_PER_PAGE) || 1;
+  const paginatedAppointments = filteredAppointments.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [statusFilter, doctorFilter, typeFilter, departmentFilter, dateFilter]);
+  useEffect(() => { setCurrentPage(1); }, [statusFilter, doctorFilter, typeFilter, departmentFilter, dateFilter]);
 
   const STATS_DISPLAY = [
-    { label: "Today's appointments", value: stats.today },
-    { label: "Upcoming appointments", value: stats.upcoming },
-    { label: "Rescheduled today", value: stats.rescheduled },
-    { label: "Cancelled today", value: stats.cancelled },
+    { label: "Today's appointments",  value: stats.today       },
+    { label: "Upcoming appointments", value: stats.upcoming    },
+    { label: "Rescheduled today",     value: stats.rescheduled },
+    { label: "Cancelled today",       value: stats.cancelled   },
   ];
 
   return (
     <div className="appt-page">
+      {/* Cancel Modal */}
+      {cancelTarget && (
+        <CancelModal
+          appointment={cancelTarget}
+          onClose={() => setCancelTarget(null)}
+          onSuccess={handleCancelSuccess}
+        />
+      )}
+
       {!isEmbedded && (
         <>
           {/* Header */}
@@ -282,65 +311,55 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
 
       {/* Filter Bar */}
       <div className="appt-filter-bar">
-        {/* Today button */}
-        <button
-          className="appt-today-btn"
-          onClick={() => {
-            const today = new Date().toISOString().split("T")[0];
-            setDateFilter(today);
-            setSearchQuery("");
-            setSearchInput("");
-            setCurrentPage(1);
-          }}
-        >
-          <span>Today</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
+        {/* Search */}
+        <div className="appt-search-wrap">
+          <svg className="appt-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-        </button>
-
-        {/* Doctor filter */}
+          <input
+            type="text"
+            className="appt-search-input"
+            placeholder="Search by patient, doctor, ID..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") { setSearchQuery(searchInput); setCurrentPage(1); } }}
+          />
+          {searchInput && (
+            <button
+              className="appt-search-clear"
+              onClick={() => { setSearchInput(""); setSearchQuery(""); setCurrentPage(1); }}
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+        {/* Date */}
+        <div style={{ position: "relative" }}>
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
+            style={{ padding: "10px 12px", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", outline: "none", color: dateFilter ? "#0f172a" : "#94a3b8", background: "white" }}
+          />
+        </div>
         <div className="appt-filter-select-wrapper">
-          <select
-            className="appt-filter-select"
-            value={doctorFilter}
-            onChange={(e) => setDoctorFilter(e.target.value)}
-          >
+          <select className="appt-filter-select" value={doctorFilter} onChange={(e) => setDoctorFilter(e.target.value)}>
             <option value="all">All Doctors</option>
-            {doctors.map((doc) => (
-              <option key={doc.id} value={doc.full_name || doc.doctor_name}>
-                {doc.full_name || doc.doctor_name}
-              </option>
-            ))}
+            {doctors.map((doc) => <option key={doc.id} value={doc.full_name || "-"}>{doc.full_name || "-"}</option>)}
           </select>
         </div>
 
         {/* Department filter */}
         <div className="appt-filter-select-wrapper">
-          <select
-            className="appt-filter-select"
-            value={departmentFilter}
-            onChange={(e) => setDepartmentFilter(e.target.value)}
-          >
+          <select className="appt-filter-select" value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)}>
             <option value="all">Department</option>
-            {departments.map((dept) => (
-              <option key={dept.id} value={dept.id}>
-                {dept.name || dept.department_name}
-              </option>
-            ))}
+            {departments.map((dept) => <option key={dept.id} value={dept.id}>{dept.name || dept.department_name}</option>)}
           </select>
         </div>
 
         {/* Type filter */}
         <div className="appt-filter-select-wrapper">
-          <select
-            className="appt-filter-select"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-          >
+          <select className="appt-filter-select" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
             <option value="all">Type</option>
             <option value="REGULAR">Regular</option>
             <option value="FOLLOWUP">Follow Up</option>
@@ -350,11 +369,7 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
 
         {/* Status filter */}
         <div className="appt-filter-select-wrapper">
-          <select
-            className="appt-filter-select"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
+          <select className="appt-filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="all">Status</option>
             <option value="SCHEDULED">Scheduled</option>
             <option value="CONFIRMED">Confirmed</option>
@@ -377,11 +392,15 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
           </div>
         )}
         <table className="appt-table">
+          <colgroup>
+            <col /><col /><col /><col /><col /><col /><col /><col />
+          </colgroup>
           <thead>
             <tr>
               <th>Appointment ID</th>
               <th>Patient name</th>
               <th>Doctor</th>
+              <th>Department</th>
               <th>Time</th>
               <th>Type</th>
               <th>Status</th>
@@ -390,27 +409,22 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
           </thead>
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan="7" style={{ textAlign: "center", padding: "40px 0", color: "#718096" }}>
-                  Loading appointments...
-                </td>
-              </tr>
+              <tr><td colSpan="8" style={{ textAlign: "center", padding: "40px 0", color: "#718096" }}>Loading appointments...</td></tr>
             ) : paginatedAppointments.length === 0 ? (
-              <tr>
-                <td colSpan="7" style={{ textAlign: "center", padding: "40px 0", color: "#718096" }}>
-                  No appointments found.
-                </td>
-              </tr>
+              <tr><td colSpan="8" style={{ textAlign: "center", padding: "40px 0", color: "#718096" }}>No appointments found.</td></tr>
             ) : (
               paginatedAppointments.map((appt, idx) => {
-                const patientName = appt.patient_name || appt.name || "-";
-                const patientPhone = appt.patient_phone || appt.phone || appt.mobile || "";
-                const appointmentId = appt.appointment_id || appt.id || "-";
-                const doctorName = appt.doctor_name || appt.doctor || "-";
-                const apptType = appt.appointment_type || appt.type || appt.visit_type || "-";
-                const apptStatus = appt.status_display || appt.status || "Scheduled";
-                const statusClass = (appt.status || "").toLowerCase();
-                const appointment_time = appt.time_display || "-";
+                const patientName      = appt.patient_name     || appt.name       || "-";
+                const patientPhone     = appt.patient_phone    || appt.phone      || appt.mobile || "";
+                const appointmentId    = appt.appointment_id   || appt.id         || "-";
+                const doctorName       = appt.doctor_name      || appt.doctor     || "-";
+                const department       = appt.department_name  || "-";
+                const apptType         = appt.appointment_type || appt.type       || appt.visit_type || "-";
+                const apptStatus       = appt.status_display   || appt.status     || "Scheduled";
+                const statusClass      = (appt.status || "").toLowerCase().replace(/_/g, "-");
+                const appointment_time = appt.time_display     || "-";
+                const isCancelled      = (appt.status || "").toUpperCase() === "CANCELLED";
+                const isRescheduled    = (appt.status || "").toUpperCase() === "RESCHEDULED";
                 return (
                   <tr key={appt.id || idx}>
                     <td className="appt-id-cell">{appointmentId}</td>
@@ -421,6 +435,7 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
                       </div>
                     </td>
                     <td className="appt-doctor-cell">{doctorName}</td>
+                    <td className="appt-doctor-cell">{department}</td>
                     <td className="appt-time-cell">{appointment_time}</td>
                     <td className="appt-type-cell">{apptType}</td>
                     <td>
@@ -431,22 +446,24 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
                     </td>
                     <td>
                       <div className="appt-actions">
-                        <button className="appt-action-btn" title="Edit">
-                          <EditIcon />
+                        <button
+                          className="appt-action-btn"
+                          title="Reschedule Appointment"
+                          disabled={isCancelled || isRescheduled}
+                          onClick={() => onReschedule && onReschedule(appt.id)}
+                        >
+                          <RescheduleIcon />
                         </button>
                         <button className="appt-action-btn" title="View">
                           <ViewIcon />
                         </button>
-                        <button 
-                          className="appt-action-btn" 
-                          title="Reschedule"
-                          onClick={() => {
-                            if (onReschedule && appt.id) {
-                              onReschedule(appt.id);
-                            }
-                          }}
+                        <button
+                          className="appt-action-btn appt-action-btn--delete"
+                          title="Cancel appointment"
+                          disabled={isCancelled}
+                          onClick={() => setCancelTarget(appt)}
                         >
-                          <RescheduleIcon />
+                          <Trash2 size={16} strokeWidth={2} />
                         </button>
                       </div>
                     </td>
@@ -464,20 +481,8 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
           Showing <strong>{paginatedAppointments.length}</strong> of <strong className="appt-pagination-total">{filteredAppointments.length}</strong> Patients
         </span>
         <div className="appt-pagination-controls">
-          <button
-            className="appt-page-btn"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-          >
-            &lt;
-          </button>
-          <button
-            className="appt-page-btn active"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-          >
-            &gt;
-          </button>
+          <button className="appt-page-btn" disabled={currentPage === 1}         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>&lt;</button>
+          <button className="appt-page-btn active" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}>&gt;</button>
         </div>
       </div>
     </div>

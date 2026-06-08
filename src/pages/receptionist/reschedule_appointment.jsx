@@ -43,7 +43,6 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
       setAppointment(apptData);
       setDoctorDetails(data.details?.doctor_details || null);
       
-      // Pre-fill existing date/time if available
       setFormData(prev => ({
         ...prev,
         appointment_date: apptData.appointment_date || apptData.date || "",
@@ -139,17 +138,16 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
     );
   }
 
-  // Fallbacks for UI if API doesn't provide them
-  const doctorName = doctorDetails?.name || appointment.doctor_name || "Doctor Name";
-  const doctorRole = doctorDetails?.specialization || appointment.doctor_specialization || "Specialist";
-  const procedure = appointment.visit_reason_display || appointment.appointment_type_display || "Consultation";
-  const duration = appointment.duration_minutes ? `${appointment.duration_minutes} Minutes` : "30 Minutes";
-  const baseFee = appointment.payment_amount ? `$${appointment.payment_amount}` : "$120.00";
+  // Get patient information from appointment data
+  const patientName = appointment.patient_name || "N/A";
+  const appointmentIdDisplay = appointment.appointment_id || appointment.id || "N/A";
+  const patientId = appointment.patient_mrn || appointment.patient || "N/A";
+  const patientPhone = appointment.patient_phone || "N/A";
+  const qrCodeBase64 = appointment.qr_code_base64 || null;
 
-  // Generate days for availability map centered around selected date
+  // Generate days for availability map
   const generateDays = () => {
     const baseDate = formData.appointment_date ? new Date(formData.appointment_date) : new Date();
-    // Validate date
     if (isNaN(baseDate.getTime())) return [];
     
     const daysArr = [];
@@ -281,13 +279,10 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
             </form>
           </div>
 
+          {/* Availability Map */}
           <div className="card map-card">
             <div className="map-header">
               <span>Availability Map</span>
-              <div className="map-nav">
-                <button>&lt;</button>
-                <button>&gt;</button>
-              </div>
             </div>
             <div className="map-days">
               {mapDays.map((day, idx) => (
@@ -307,66 +302,55 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
           </div>
         </div>
 
-        {/* Right Pane */}
+        {/* Right Pane - QR Code and Patient Info only */}
         <div className="reschedule-right">
-          <div className="card doctor-card">
-            <div className="doctor-header-bg"></div>
-            <div className="doctor-profile">
-              <img src="https://via.placeholder.com/80" alt="Doctor" className="doctor-avatar" />
-              <h3>{doctorName}</h3>
-              <p className="doctor-role">{doctorRole}</p>
-              
-              <div className="doctor-stats">
-                <div className="stat">
-                  <span className="stat-label">Rating</span>
-                  <span className="stat-value">⭐ 4.9</span>
+          {/* Appointment QR Code */}
+          <div className="card qr-card">
+            <h4>Appointment QR Code</h4>
+            <div className="qr-container">
+              {qrCodeBase64 ? (
+                <img 
+                  src={qrCodeBase64} 
+                  alt="Appointment QR Code" 
+                  className="qr-code-image"
+                />
+              ) : (
+                <div className="qr-placeholder">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" width="48" height="48">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="8" y1="8" x2="16" y2="16"/>
+                    <line x1="16" y1="8" x2="8" y2="16"/>
+                  </svg>
+                  <p>QR Code not available</p>
                 </div>
-                <div className="stat-divider"></div>
-                <div className="stat">
-                  <span className="stat-label">Experience</span>
-                  <span className="stat-value">12+ Years</span>
-                </div>
-              </div>
+              )}
+            </div>
+          </div>
 
-              <div className="doctor-contact">
-                <div className="contact-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" width="16" height="16">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                  <span>St. Mary's Orthopedic Wing</span>
-                </div>
-                <div className="contact-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" width="16" height="16">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                  </svg>
-                  <span>+1 (555) 092-4822</span>
-                </div>
+          {/* Patient Information */}
+          <div className="card patient-info-card">
+            <h4>Patient Information</h4>
+            <div className="patient-info-details">
+              <div className="info-row">
+                <span className="info-label">Patient Name:</span>
+                <span className="info-value">{patientName}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Appointment ID:</span>
+                <span className="info-value">{appointmentIdDisplay}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Patient ID/MRN:</span>
+                <span className="info-value">{patientId}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-label">Phone Number:</span>
+                <span className="info-value">{patientPhone}</span>
               </div>
             </div>
           </div>
 
-          <div className="card summary-card">
-            <h4>Summary</h4>
-            <div className="summary-row">
-              <span className="summary-label">Procedure</span>
-              <span className="summary-value bold">{procedure}</span>
-            </div>
-            <div className="summary-row">
-              <span className="summary-label">Duration</span>
-              <span className="summary-value bold">{duration}</span>
-            </div>
-            <div className="summary-row">
-              <span className="summary-label">Base Fee</span>
-              <span className="summary-value bold">{baseFee}</span>
-            </div>
-            <div className="summary-divider"></div>
-            <div className="summary-row total">
-              <span className="summary-label bold">Total Due</span>
-              <span className="summary-value purple">{baseFee}</span>
-            </div>
-          </div>
-
+          {/* Buttons */}
           <button type="submit" form="rescheduleForm" className="btn-confirm-reschedule" disabled={saving}>
             {saving ? "Confirming..." : "Confirm Reschedule"}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">

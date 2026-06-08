@@ -42,7 +42,7 @@ export default function SuperAdminDashboard() {
    const navigate = useNavigate();
    const location = useLocation();
    const [profileOpen, setProfileOpen] = useState(false);
-   
+  
    const isActive = (path) =>{
     if (path === "/superadmin/") {
       return location.pathname ==="/superadmin/" || location.pathname==="/superadmin";
