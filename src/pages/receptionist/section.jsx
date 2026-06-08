@@ -9,7 +9,6 @@ import OPQueue from "./opqueue";
 import NewTicket from "./new_ticket";
 import PatientDirectory from "./patient_directory";
 import PhysicianCalendar from "./PhysicianCalendar";
-import Appointments from "./appointments";
 import Icon from "../../components/Icons";
 import { IoNotificationsOutline } from "react-icons/io5";
 import "./receptionist.css";
