@@ -16,7 +16,8 @@ const PhysicianCalendar = ({ onBack }) => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarData, setCalendarData] = useState([]);
-  const [summary, setSummary] = useState(null);
+  const [weeklyTotal, setWeeklyTotal] = useState(0);
+  const [todaySummary, setTodaySummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -43,7 +44,7 @@ const PhysicianCalendar = ({ onBack }) => {
   // 1. Load doctors for dropdown
   const loadDoctors = useCallback(async () => {
     try {
-      const response = await receptionistApi.getDoctors();
+      const response = await receptionistApi.getDoctorList();
       const list = Array.isArray(response) ? response : (response.doctors || response.results || []);
       setDoctors(list);
       if (list.length > 0) {
@@ -54,7 +55,7 @@ const PhysicianCalendar = ({ onBack }) => {
     }
   }, []);
 
-  // 2. Load calendar data
+  // 2. Load calendar data - FIXED for your API response structure
   const loadCalendar = useCallback(async () => {
     if (!selectedDoctor) return;
     
@@ -71,10 +72,23 @@ const PhysicianCalendar = ({ onBack }) => {
         formatDate(endDate)
       );
       
-      if (response.calendar && response.calendar.length > 0) {
-        setCalendarData(response.calendar[0].calendar_view || []);
+      // Handle the actual API response structure
+      if (response && response.success && response.calendar && response.calendar.length > 0) {
+        const doctorCalendar = response.calendar[0];
+        setCalendarData(doctorCalendar.calendar_view || []);
+        setWeeklyTotal(doctorCalendar.total_appointments || 0);
+        
+        // Calculate today's summary from the calendar data
+        calculateTodaySummary(doctorCalendar.calendar_view || []);
+      } else if (response && response.calendar && response.calendar.length > 0) {
+        const doctorCalendar = response.calendar[0];
+        setCalendarData(doctorCalendar.calendar_view || []);
+        setWeeklyTotal(doctorCalendar.total_appointments || 0);
+        calculateTodaySummary(doctorCalendar.calendar_view || []);
       } else {
         setCalendarData([]);
+        setWeeklyTotal(0);
+        setTodaySummary(null);
       }
     } catch (err) {
       setError('Failed to load calendar: ' + err.message);
@@ -83,18 +97,68 @@ const PhysicianCalendar = ({ onBack }) => {
     }
   }, [selectedDoctor, currentDate]);
 
-  // 3. Load today's summary
-  const loadTodaySummary = useCallback(async () => {
-    try {
-      const today = formatDate(new Date());
-      const response = await receptionistApi.getDailyAppointments({ date: today });
-      setSummary(response.summary);
-    } catch (err) {
-      console.error('Failed to load summary:', err);
+  // Calculate today's summary from calendar view
+  const calculateTodaySummary = (calendarView) => {
+    if (!calendarView || calendarView.length === 0) {
+      setTodaySummary(null);
+      return;
     }
-  }, []);
+    
+    const today = formatDate(new Date());
+    const todayData = calendarView.find(day => day.date === today);
+    
+    if (!todayData) {
+      setTodaySummary(null);
+      return;
+    }
+    
+    let summaryData = {
+      total_appointments: 0,
+      scheduled: 0,
+      confirmed: 0,
+      in_progress: 0,
+      completed: 0,
+      cancelled: 0,
+      no_show: 0,
+      rescheduled: 0
+    };
+    
+    todayData.slots.forEach(slot => {
+      if (slot.appointment) {
+        summaryData.total_appointments++;
+        const status = slot.appointment.status;
+        switch(status) {
+          case 'SCHEDULED':
+            summaryData.scheduled++;
+            break;
+          case 'CONFIRMED':
+            summaryData.confirmed++;
+            break;
+          case 'IN_PROGRESS':
+            summaryData.in_progress++;
+            break;
+          case 'COMPLETED':
+            summaryData.completed++;
+            break;
+          case 'CANCELLED':
+            summaryData.cancelled++;
+            break;
+          case 'NO_SHOW':
+            summaryData.no_show++;
+            break;
+          case 'RESCHEDULED':
+            summaryData.rescheduled++;
+            break;
+          default:
+            break;
+        }
+      }
+    });
+    
+    setTodaySummary(summaryData);
+  };
 
-  // 4. Search appointments
+  // 3. Search appointments
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setShowSearchResults(false);
@@ -104,7 +168,8 @@ const PhysicianCalendar = ({ onBack }) => {
     setLoading(true);
     try {
       const response = await receptionistApi.searchAppointments(searchQuery);
-      setSearchResults(Array.isArray(response) ? response : (response.appointments || []));
+      const results = Array.isArray(response) ? response : (response.appointments || response.results || []);
+      setSearchResults(results);
       setShowSearchResults(true);
     } catch (err) {
       setError('Search failed: ' + err.message);
@@ -113,12 +178,19 @@ const PhysicianCalendar = ({ onBack }) => {
     }
   };
 
-  // 5. Get appointment details
+  // 4. Get appointment details
   const handleViewAppointment = async (appointmentId) => {
     setActionLoading(true);
     try {
       const response = await receptionistApi.getAppointment(appointmentId);
-      setSelectedAppointment(response.details);
+      const appointmentDetails = response.details || response.appointment || response;
+      setSelectedAppointment({
+        appointment: appointmentDetails,
+        patient_details: appointmentDetails.patient_details || appointmentDetails.patient || {},
+        doctor_details: appointmentDetails.doctor_details || appointmentDetails.doctor || {},
+        can_reschedule: appointmentDetails.status !== 'CANCELLED' && appointmentDetails.status !== 'COMPLETED',
+        can_cancel: appointmentDetails.status !== 'CANCELLED' && appointmentDetails.status !== 'COMPLETED'
+      });
       setShowDetailsModal(true);
     } catch (err) {
       setError('Failed to load appointment details: ' + err.message);
@@ -127,11 +199,11 @@ const PhysicianCalendar = ({ onBack }) => {
     }
   };
 
-  // 6. Get available slots for reschedule
+  // 5. Get available slots for reschedule
   const handleOpenReschedule = async (appointment) => {
     setSelectedAppointment(appointment);
     setRescheduleData({
-      new_date: appointment.appointment?.appointment_date || '',
+      new_date: appointment.appointment?.appointment_date || formatDate(new Date()),
       new_time_slot: appointment.appointment?.time_slot || '',
       reason: ''
     });
@@ -141,7 +213,8 @@ const PhysicianCalendar = ({ onBack }) => {
         selectedDoctor.id,
         appointment.appointment?.appointment_date || formatDate(new Date())
       );
-      setAvailableSlots(slots.available_slots || slots.slots || slots || []);
+      const slotsList = slots.available_slots || slots.slots || slots || [];
+      setAvailableSlots(slotsList);
       setShowDetailsModal(false);
       setShowRescheduleModal(true);
     } catch (err) {
@@ -149,7 +222,7 @@ const PhysicianCalendar = ({ onBack }) => {
     }
   };
 
-  // 7. Reschedule appointment
+  // 6. Reschedule appointment
   const handleReschedule = async () => {
     if (!rescheduleData.new_date) {
       setError('Please select a new date');
@@ -179,7 +252,6 @@ const PhysicianCalendar = ({ onBack }) => {
         setShowRescheduleModal(false);
         setSelectedAppointment(null);
         loadCalendar();
-        loadTodaySummary();
         setSuccess('');
       }, 2000);
     } catch (err) {
@@ -189,7 +261,7 @@ const PhysicianCalendar = ({ onBack }) => {
     }
   };
 
-  // 8. Cancel appointment
+  // 7. Cancel appointment
   const handleCancelAppointment = async () => {
     if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
     
@@ -205,7 +277,6 @@ const PhysicianCalendar = ({ onBack }) => {
         setShowDetailsModal(false);
         setSelectedAppointment(null);
         loadCalendar();
-        loadTodaySummary();
         setSuccess('');
       }, 2000);
     } catch (err) {
@@ -277,8 +348,7 @@ const PhysicianCalendar = ({ onBack }) => {
   
   useEffect(() => {
     loadDoctors();
-    loadTodaySummary();
-  }, [loadDoctors, loadTodaySummary]);
+  }, [loadDoctors]);
 
   useEffect(() => {
     if (selectedDoctor) {
@@ -341,7 +411,7 @@ const PhysicianCalendar = ({ onBack }) => {
           >
             {doctors.map(doctor => (
               <option key={doctor.id} value={doctor.id}>
-                Dr. {doctor.full_name || doctor.name} - {doctor.role_display || doctor.specialization}
+                Dr. {doctor.full_name || doctor.name || doctor.doctor_name} - {doctor.role_display || doctor.specialization || doctor.department}
               </option>
             ))}
           </select>
@@ -433,7 +503,9 @@ const PhysicianCalendar = ({ onBack }) => {
                             <div className="appointment-patient">
                               {getStatusIcon(appointment.status)} {appointment.patient_name}
                             </div>
-                            <div className="appointment-time">Token: #{appointment.token || appointment.token_number}</div>
+                            <div className="appointment-time">
+                              ID: {appointment.appointment_id || appointment.id}
+                            </div>
                             <div className="appointment-status" style={{background: getStatusColor(appointment.status)}}>
                               {appointment.status_display || appointment.status}
                             </div>
@@ -453,38 +525,47 @@ const PhysicianCalendar = ({ onBack }) => {
         )}
       </div>
 
-      {/* Today's Summary Cards */}
-      {summary && (
-        <div className="summary-section">
-          <h3 className="summary-title">Today's Summary</h3>
-          <div className="summary-cards">
-            <div className="summary-card">
-              <div className="count">{summary.total || 0}</div>
-              <div className="label">Total Appointments</div>
-            </div>
-            <div className="summary-card">
-              <div className="count">{summary.scheduled || 0}</div>
-              <div className="label">Scheduled</div>
-            </div>
-            <div className="summary-card">
-              <div className="count">{summary.confirmed || 0}</div>
-              <div className="label">Confirmed</div>
-            </div>
-            <div className="summary-card">
-              <div className="count">{summary.in_progress || 0}</div>
-              <div className="label">In Progress</div>
-            </div>
-            <div className="summary-card">
-              <div className="count">{summary.completed || 0}</div>
-              <div className="label">Completed</div>
-            </div>
-            <div className="summary-card">
-              <div className="count">{summary.cancelled || 0}</div>
-              <div className="label">Cancelled</div>
-            </div>
+      {/* Summary Cards - Shows both Weekly Total and Today's Summary */}
+      <div className="summary-section">
+        <h3 className="summary-title">Appointment Summary</h3>
+        <div className="summary-cards">
+          {/* Weekly Total Card */}
+          <div className="summary-card primary">
+            <div className="count">{weeklyTotal || 0}</div>
+            <div className="label">Total Weekly Appointments</div>
           </div>
+          
+          {/* Today's Summary Cards */}
+          {todaySummary && (
+            <>
+              <div className="summary-card">
+                <div className="count">{todaySummary.total_appointments || 0}</div>
+                <div className="label">Today's Appointments</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.scheduled || 0}</div>
+                <div className="label">Scheduled</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.confirmed || 0}</div>
+                <div className="label">Confirmed</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.in_progress || 0}</div>
+                <div className="label">In Progress</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.completed || 0}</div>
+                <div className="label">Completed</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.cancelled || 0}</div>
+                <div className="label">Cancelled</div>
+              </div>
+            </>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Appointment Details Modal */}
       {showDetailsModal && selectedAppointment && (
@@ -497,15 +578,18 @@ const PhysicianCalendar = ({ onBack }) => {
             <div className="modal-body">
               <div className="info-row">
                 <span className="info-label">🏥 Appointment ID:</span>
-                <span className="info-value">{selectedAppointment.appointment?.appointment_id}</span>
+                <span className="info-value">{selectedAppointment.appointment?.appointment_id || selectedAppointment.appointment?.id}</span>
               </div>
               <div className="info-row">
                 <span className="info-label">👤 Patient:</span>
-                <span className="info-value">{selectedAppointment.patient_details?.full_name} (MRN: {selectedAppointment.patient_details?.mrn})</span>
+                <span className="info-value">
+                  {selectedAppointment.appointment?.patient_name || selectedAppointment.patient_details?.full_name} 
+                  {selectedAppointment.appointment?.patient_mrn && ` (MRN: ${selectedAppointment.appointment?.patient_mrn})`}
+                </span>
               </div>
               <div className="info-row">
                 <span className="info-label">👨‍⚕️ Doctor:</span>
-                <span className="info-value">{selectedAppointment.doctor_details?.name}</span>
+                <span className="info-value">{selectedDoctor?.doctor_name || selectedDoctor?.name || selectedAppointment.doctor_details?.name}</span>
               </div>
               <div className="info-row">
                 <span className="info-label">📅 Date:</span>
@@ -513,28 +597,28 @@ const PhysicianCalendar = ({ onBack }) => {
               </div>
               <div className="info-row">
                 <span className="info-label">⏰ Time:</span>
-                <span className="info-value">{selectedAppointment.appointment?.time_slot}</span>
+                <span className="info-value">{selectedAppointment.appointment?.time_slot || selectedAppointment.appointment?.time}</span>
               </div>
               <div className="info-row">
                 <span className="info-label">📍 Status:</span>
                 <span className="info-value" style={{color: getStatusColor(selectedAppointment.appointment?.status)}}>
-                  {getStatusIcon(selectedAppointment.appointment?.status)} {selectedAppointment.appointment?.status_display}
+                  {getStatusIcon(selectedAppointment.appointment?.status)} {selectedAppointment.appointment?.status_display || selectedAppointment.appointment?.status}
                 </span>
               </div>
               <div className="info-row">
                 <span className="info-label">💊 Reason:</span>
-                <span className="info-value">{selectedAppointment.appointment?.visit_reason_display || selectedAppointment.appointment?.visit_reason}</span>
+                <span className="info-value">{selectedAppointment.appointment?.visit_reason || selectedAppointment.appointment?.reason || 'Not specified'}</span>
               </div>
             </div>
             <div className="modal-actions">
-              {selectedAppointment.can_reschedule && (
+              {selectedAppointment.can_reschedule && selectedAppointment.appointment?.status !== 'CANCELLED' && (
                 <button className="btn-primary" onClick={() => handleOpenReschedule(selectedAppointment)}>
                   Reschedule
                 </button>
               )}
-              {selectedAppointment.can_cancel && (
+              {selectedAppointment.can_cancel && selectedAppointment.appointment?.status !== 'CANCELLED' && (
                 <button className="btn-danger" onClick={handleCancelAppointment} disabled={actionLoading}>
-                  {actionLoading ? 'Processing...' : 'Cancel'}
+                  {actionLoading ? 'Processing...' : 'Cancel Appointment'}
                 </button>
               )}
               <button className="btn-secondary" onClick={() => setShowDetailsModal(false)}>Close</button>
@@ -554,7 +638,7 @@ const PhysicianCalendar = ({ onBack }) => {
             <div className="modal-body">
               <div className="current-appointment">
                 <strong>Current Appointment:</strong>
-                <p>📅 {formatDisplayDate(selectedAppointment.appointment?.appointment_date)} at {selectedAppointment.appointment?.time_slot}</p>
+                <p>📅 {formatDisplayDate(selectedAppointment.appointment?.appointment_date)} at {selectedAppointment.appointment?.time_slot || selectedAppointment.appointment?.time}</p>
               </div>
               
               <div className="form-group">
@@ -564,10 +648,13 @@ const PhysicianCalendar = ({ onBack }) => {
                   value={rescheduleData.new_date}
                   onChange={(e) => {
                     setRescheduleData({...rescheduleData, new_date: e.target.value});
-                    // Reset time slot when date changes to fetch new slots
+                    setRescheduleData(prev => ({...prev, new_time_slot: ''}));
                     if (selectedDoctor) {
                       receptionistApi.getAvailableSlots(selectedDoctor.id, e.target.value)
-                        .then(res => setAvailableSlots(res.available_slots || res.slots || res || []))
+                        .then(res => {
+                          const slots = res.available_slots || res.slots || res || [];
+                          setAvailableSlots(slots);
+                        })
                         .catch(err => console.error(err));
                     }
                   }}
@@ -582,8 +669,8 @@ const PhysicianCalendar = ({ onBack }) => {
                   onChange={(e) => setRescheduleData({...rescheduleData, new_time_slot: e.target.value})}
                 >
                   <option value="">Select time slot</option>
-                  {availableSlots.map(slot => (
-                    <option key={slot} value={slot}>{slot}</option>
+                  {availableSlots.map((slot, idx) => (
+                    <option key={idx} value={slot.time || slot}>{slot.time || slot}</option>
                   ))}
                 </select>
               </div>

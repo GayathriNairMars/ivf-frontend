@@ -150,7 +150,7 @@ export default function AddStaff() {
     <div className="add-staff-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100vh" }}>
       {/* Header */}
       <div style={{ marginBottom: "32px" }}>
-        <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#0f172a", margin: "0 0 8px 0" }}>Add staff</h1>
+        <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#0f172a", margin: "0 0 8px 0" }}>Add staff/Doctors</h1>
         <p style={{ color: "#64748b", margin: 0, fontSize: "14px" }}>Create staff accounts and assign a role within the hospital system.</p>
       </div>
 
