@@ -426,3 +426,230 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* QR Code Card Styles */
+.qr-card {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.qr-card h4 {
+  margin-bottom: 15px;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+}
+
+.qr-placeholder {
+  text-align: center;
+  color: #6b7280;
+}
+
+.qr-placeholder svg {
+  margin-bottom: 10px;
+}
+
+.qr-placeholder p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Patient Information Card Styles */
+.patient-info-card {
+  margin-bottom: 20px;
+}
+
+.patient-info-card h4 {
+  margin-bottom: 15px;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.patient-info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 600;
+  text-align: right;
+}
+/* Right pane - simplified without doctor card */
+.reschedule-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* QR Code Card Styles */
+.qr-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.qr-card h4 {
+  margin-bottom: 20px;
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 180px;
+}
+
+.qr-code-image {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.qr-placeholder {
+  text-align: center;
+  color: #6b7280;
+}
+
+.qr-placeholder svg {
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+.qr-placeholder p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Patient Information Card Styles */
+.patient-info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.patient-info-card h4 {
+  margin-bottom: 20px;
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.patient-info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn-confirm-reschedule {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-confirm-reschedule:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-confirm-reschedule:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancel-changes {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel-changes:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.btn-cancel-changes:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

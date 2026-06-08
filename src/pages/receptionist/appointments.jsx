@@ -12,20 +12,20 @@ const QUICK_ACTIONS = [
 ];
 
 const CANCEL_REASONS = [
-  { value: "patient_request",   label: "Patient Request"   },
-  { value: "doctor_unavailable",label: "Doctor Unavailable"},
-  { value: "emergency",         label: "Emergency"         },
+  { value: "patient_request",    label: "Patient Request"    },
+  { value: "doctor_unavailable", label: "Doctor Unavailable" },
+  { value: "emergency",          label: "Emergency"          },
   { value: "scheduling_conflict",label: "Scheduling Conflict"},
-  { value: "other",             label: "Other"             },
+  { value: "other",              label: "Other"              },
 ];
 
 function QuickActionIcon({ type, color }) {
   const props = { size: 22, color, strokeWidth: 2 };
   switch (type) {
-    case "book":       return <CalendarPlus      {...props} />;
-    case "reschedule": return <CalendarClock     {...props} />;
-    case "cancel":     return <CalendarX2        {...props} />;
-    case "calendar":   return <BriefcaseMedical  {...props} />;
+    case "book":       return <CalendarPlus     {...props} />;
+    case "reschedule": return <CalendarClock    {...props} />;
+    case "cancel":     return <CalendarX2       {...props} />;
+    case "calendar":   return <BriefcaseMedical {...props} />;
     default:           return null;
   }
 }
@@ -67,7 +67,7 @@ function CancelModal({ appointment, onClose, onSuccess }) {
   const [error, setError]     = useState(null);
 
   const appointmentId = appointment.id;
-  const patientName   = appointment.patient_name   || appointment.name || "-";
+  const patientName   = appointment.patient_name || appointment.name || "-";
 
   const handleConfirm = async () => {
     if (!notes.trim()) {
@@ -77,7 +77,7 @@ function CancelModal({ appointment, onClose, onSuccess }) {
     try {
       setLoading(true);
       setError(null);
-      await receptionistApi.deleteAppointment(appointmentId, { reason, notes: notes.trim() });
+      await receptionistApi.cancelAppointment(appointmentId, { reason, notes: notes.trim() });
       onSuccess();
     } catch (err) {
       console.error("Cancel failed:", err);
@@ -87,7 +87,6 @@ function CancelModal({ appointment, onClose, onSuccess }) {
     }
   };
 
-  // Close on backdrop click
   const handleBackdrop = (e) => {
     if (e.target === e.currentTarget) onClose();
   };
@@ -95,7 +94,6 @@ function CancelModal({ appointment, onClose, onSuccess }) {
   return (
     <div className="cancel-modal-backdrop" onClick={handleBackdrop}>
       <div className="cancel-modal">
-        {/* Header */}
         <div className="cancel-modal-header">
           <div className="cancel-modal-title-row">
             <div className="cancel-modal-icon-wrap">
@@ -111,26 +109,16 @@ function CancelModal({ appointment, onClose, onSuccess }) {
           </button>
         </div>
 
-        {/* Body */}
         <div className="cancel-modal-body">
           {error && <div className="cancel-modal-error">{error}</div>}
-
-          {/* Reason */}
           <div className="cancel-modal-field">
             <label className="cancel-modal-label">Reason <span className="cancel-required">*</span></label>
-            <select
-              className="cancel-modal-select"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              disabled={loading}
-            >
+            <select className="cancel-modal-select" value={reason} onChange={(e) => setReason(e.target.value)} disabled={loading}>
               {CANCEL_REASONS.map((r) => (
                 <option key={r.value} value={r.value}>{r.label}</option>
               ))}
             </select>
           </div>
-
-          {/* Notes */}
           <div className="cancel-modal-field">
             <label className="cancel-modal-label">Notes <span className="cancel-required">*</span></label>
             <textarea
@@ -144,16 +132,9 @@ function CancelModal({ appointment, onClose, onSuccess }) {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="cancel-modal-footer">
-          <button className="cancel-modal-btn-secondary" onClick={onClose} disabled={loading}>
-            Keep Appointment
-          </button>
-          <button
-            className="cancel-modal-btn-danger"
-            onClick={handleConfirm}
-            disabled={loading || !notes.trim()}
-          >
+          <button className="cancel-modal-btn-secondary" onClick={onClose} disabled={loading}>Keep Appointment</button>
+          <button className="cancel-modal-btn-danger" onClick={handleConfirm} disabled={loading || !notes.trim()}>
             {loading ? "Cancelling…" : "Confirm Cancellation"}
           </button>
         </div>
@@ -165,7 +146,7 @@ function CancelModal({ appointment, onClose, onSuccess }) {
 // ── Main Component ────────────────────────────────────────────────────────────
 const ITEMS_PER_PAGE = 10;
 
-export default function Appointments() {
+export default function Appointments({ onBook, onReschedule, onCalendar, isEmbedded = false }) {
   const [appointments,     setAppointments]     = useState([]);
   const [stats,            setStats]            = useState({ today: 0, upcoming: 0, rescheduled: 0, cancelled: 0 });
   const [totalCount,       setTotalCount]       = useState(0);
@@ -179,9 +160,10 @@ export default function Appointments() {
   const [departments,      setDepartments]      = useState([]);
   const [doctors,          setDoctors]          = useState([]);
   const [dateFilter,       setDateFilter]       = useState("");
-  const [cancelTarget,     setCancelTarget]     = useState(null); // appointment being cancelled
+  const [cancelTarget,     setCancelTarget]     = useState(null);
+  const [searchInput,      setSearchInput]      = useState("");
+  const [searchQuery,      setSearchQuery]      = useState("");
 
-  // Fetch appointments
   const fetchAppointments = useCallback(async () => {
     try {
       setLoading(true);
@@ -190,7 +172,7 @@ export default function Appointments() {
       if (departmentFilter !== "all") params.department = departmentFilter;
       if (doctorFilter     !== "all") params.doctor     = doctorFilter;
       if (dateFilter)                  params.date       = dateFilter;
-      const data    = await receptionistApi.getDailyAppointments(params);
+      const data     = await receptionistApi.getDailyAppointments(params);
       const apptList = Array.isArray(data) ? data : (data.appointments || data.results || []);
       setAppointments(apptList);
       setTotalCount(data.total_count || data.count || apptList.length);
@@ -199,10 +181,10 @@ export default function Appointments() {
         setStats({ today: s.total ?? apptList.length, upcoming: s.scheduled ?? 0, rescheduled: s.rescheduled ?? 0, cancelled: s.cancelled ?? 0 });
       } else {
         setStats({
-          today:      apptList.length,
-          upcoming:   apptList.filter(a => a.status === "SCHEDULED").length,
-          rescheduled:apptList.filter(a => a.status === "RESCHEDULED").length,
-          cancelled:  apptList.filter(a => a.status === "CANCELLED").length,
+          today:       apptList.length,
+          upcoming:    apptList.filter(a => a.status === "SCHEDULED").length,
+          rescheduled: apptList.filter(a => a.status === "RESCHEDULED").length,
+          cancelled:   apptList.filter(a => a.status === "CANCELLED").length,
         });
       }
     } catch (err) {
@@ -225,36 +207,43 @@ export default function Appointments() {
 
   const fetchDoctors = useCallback(async () => {
     try {
-      const data = await receptionistApi.getDoctors();
+      const data = await receptionistApi.getDoctorList();
       setDoctors(Array.isArray(data) ? data : (data.doctors || data.results || []));
     } catch (err) { console.error("Failed to fetch doctors:", err); }
   }, []);
   useEffect(() => { fetchDoctors(); }, [fetchDoctors]);
 
-  // After successful cancellation — close modal and refetch to update KPIs + table
   const handleCancelSuccess = () => {
     setCancelTarget(null);
     fetchAppointments();
   };
 
-  // Client-side filtering
   const filteredAppointments = useMemo(() => {
     let result = [...appointments];
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter(a =>
+        (a.patient_name  || "").toLowerCase().includes(q) ||
+        (a.appointment_id|| "").toLowerCase().includes(q) ||
+        (a.doctor_name   || "").toLowerCase().includes(q) ||
+        (a.patient_phone || "").toLowerCase().includes(q)
+      );
+    }
     if (statusFilter !== "all") result = result.filter(a => (a.status || "").toUpperCase() === statusFilter.toUpperCase());
     if (typeFilter   !== "all") result = result.filter(a => (a.appointment_type || a.type || "").toLowerCase().includes(typeFilter.toLowerCase()));
     return result;
-  }, [appointments, statusFilter, typeFilter]);
+  }, [appointments, statusFilter, typeFilter, searchQuery]);
 
-  const totalPages           = Math.ceil(filteredAppointments.length / ITEMS_PER_PAGE) || 1;
+  const totalPages            = Math.ceil(filteredAppointments.length / ITEMS_PER_PAGE) || 1;
   const paginatedAppointments = filteredAppointments.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   useEffect(() => { setCurrentPage(1); }, [statusFilter, doctorFilter, typeFilter, departmentFilter, dateFilter]);
 
   const STATS_DISPLAY = [
-    { label: "Today's appointments",  value: stats.today      },
-    { label: "Upcoming appointments", value: stats.upcoming   },
-    { label: "Rescheduled today",     value: stats.rescheduled},
-    { label: "Cancelled today",       value: stats.cancelled  },
+    { label: "Today's appointments",  value: stats.today       },
+    { label: "Upcoming appointments", value: stats.upcoming    },
+    { label: "Rescheduled today",     value: stats.rescheduled },
+    { label: "Cancelled today",       value: stats.cancelled   },
   ];
 
   return (
@@ -268,55 +257,79 @@ export default function Appointments() {
         />
       )}
 
-      {/* Header */}
-      <div className="appt-header">
-        <h2 className="appt-title">Appointment management</h2>
-        <p className="appt-subtitle">Manage patient appointments, schedules, and consultation bookings.</p>
-      </div>
-
-      {/* Quick Action Cards */}
-      <div className="appt-quick-actions">
-        {QUICK_ACTIONS.map((action, idx) => (
-          <button
-            key={idx}
-            className="appt-action-card"
-            style={{
-              "--action-color": action.color,
-              "--action-bg": action.bgColor,
-              "--action-border": action.borderColor,
-            }}
-            onClick={() => {
-              if (action.icon === "book" && onBook) {
-                onBook();
-              } else if (action.icon === "reschedule" && onReschedule) {
-                onReschedule(null);
-              } else if (action.icon === "calendar" && onCalendar) {
-                onCalendar();
-              }
-            }}
-          >
-            <div className="appt-action-icon">
-              <QuickActionIcon type={action.icon} color={action.color} />
-            </div>
-            <span className="appt-action-label">{action.label}</span>
-            <div className="appt-action-arrow">
-              <ArrowLinkIcon color={action.color} />
-            </div>
-          </button>
-        ))}
-        </div>
-      {/* Stats Row */}
-      <div className="appt-stats-row">
-        {STATS_DISPLAY.map((stat, idx) => (
-          <div key={idx} className="appt-stat-card">
-            <span className="appt-stat-label">{stat.label}</span>
-            <span className="appt-stat-value">{loading ? "-" : stat.value}</span>
+      {!isEmbedded && (
+        <>
+          {/* Header */}
+          <div className="appt-header">
+            <h2 className="appt-title">Appointment management</h2>
+            <p className="appt-subtitle">Manage patient appointments, schedules, and consultation bookings.</p>
           </div>
-        ))}
-      </div>
+
+          {/* Quick Action Cards */}
+          <div className="appt-quick-actions">
+            {QUICK_ACTIONS.map((action, idx) => (
+              <button
+                key={idx}
+                className="appt-action-card"
+                style={{
+                  "--action-color": action.color,
+                  "--action-bg": action.bgColor,
+                  "--action-border": action.borderColor,
+                }}
+                onClick={() => {
+                  if (action.icon === "book" && onBook) onBook();
+                  else if (action.icon === "reschedule" && onReschedule) onReschedule(null);
+                  else if (action.icon === "calendar" && onCalendar) onCalendar();
+                }}
+              >
+                <div className="appt-action-icon">
+                  <QuickActionIcon type={action.icon} color={action.color} />
+                </div>
+                <span className="appt-action-label">{action.label}</span>
+                <div className="appt-action-arrow">
+                  <ArrowLinkIcon color={action.color} />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Stats Row */}
+          <div className="appt-stats-row">
+            {STATS_DISPLAY.map((stat, idx) => (
+              <div key={idx} className="appt-stat-card">
+                <span className="appt-stat-label">{stat.label}</span>
+                <span className="appt-stat-value">{loading ? "-" : stat.value}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* Filter Bar */}
       <div className="appt-filter-bar">
+        {/* Search */}
+        <div className="appt-search-wrap">
+          <svg className="appt-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            className="appt-search-input"
+            placeholder="Search by patient, doctor, ID..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") { setSearchQuery(searchInput); setCurrentPage(1); } }}
+          />
+          {searchInput && (
+            <button
+              className="appt-search-clear"
+              onClick={() => { setSearchInput(""); setSearchQuery(""); setCurrentPage(1); }}
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+        {/* Date */}
         <div style={{ position: "relative" }}>
           <input
             type="date"
@@ -390,16 +403,17 @@ export default function Appointments() {
               <tr><td colSpan="8" style={{ textAlign: "center", padding: "40px 0", color: "#718096" }}>No appointments found.</td></tr>
             ) : (
               paginatedAppointments.map((appt, idx) => {
-                const patientName      = appt.patient_name  || appt.name    || "-";
-                const patientPhone     = appt.patient_phone || appt.phone   || appt.mobile || "";
-                const appointmentId    = appt.appointment_id || appt.id     || "-";
-                const doctorName       = appt.doctor_name   || appt.doctor  || "-";
-                const department       = appt.department_name || "-";
-                const apptType         = appt.appointment_type || appt.type || appt.visit_type || "-";
-                const apptStatus       = appt.status_display  || appt.status || "Scheduled";
+                const patientName      = appt.patient_name     || appt.name       || "-";
+                const patientPhone     = appt.patient_phone    || appt.phone      || appt.mobile || "";
+                const appointmentId    = appt.appointment_id   || appt.id         || "-";
+                const doctorName       = appt.doctor_name      || appt.doctor     || "-";
+                const department       = appt.department_name  || "-";
+                const apptType         = appt.appointment_type || appt.type       || appt.visit_type || "-";
+                const apptStatus       = appt.status_display   || appt.status     || "Scheduled";
                 const statusClass      = (appt.status || "").toLowerCase().replace(/_/g, "-");
-                const appointment_time = appt.time_display || "-";
+                const appointment_time = appt.time_display     || "-";
                 const isCancelled      = (appt.status || "").toUpperCase() === "CANCELLED";
+                const isRescheduled    = (appt.status || "").toUpperCase() === "RESCHEDULED";
                 return (
                   <tr key={appt.id || idx}>
                     <td className="appt-id-cell">{appointmentId}</td>
@@ -421,7 +435,12 @@ export default function Appointments() {
                     </td>
                     <td>
                       <div className="appt-actions">
-                        <button className="appt-action-btn" title="Edit">
+                        <button
+                          className="appt-action-btn"
+                          title="Reschedule Appointment"
+                          disabled={isCancelled || isRescheduled}
+                          onClick={() => onReschedule && onReschedule(appt.id)}
+                        >
                           <RescheduleIcon />
                         </button>
                         <button className="appt-action-btn" title="View">
@@ -451,7 +470,7 @@ export default function Appointments() {
           Showing <strong>{paginatedAppointments.length}</strong> of <strong className="appt-pagination-total">{filteredAppointments.length}</strong> Patients
         </span>
         <div className="appt-pagination-controls">
-          <button className="appt-page-btn" disabled={currentPage === 1}      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>&lt;</button>
+          <button className="appt-page-btn" disabled={currentPage === 1}         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>&lt;</button>
           <button className="appt-page-btn active" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}>&gt;</button>
         </div>
       </div>
