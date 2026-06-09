@@ -411,6 +411,8 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
                 const statusClass      = (appt.status || "").toLowerCase().replace(/_/g, "-");
                 const appointment_time = appt.time_display     || "-";
                 const isCancelled      = (appt.status || "").toUpperCase() === "CANCELLED";
+                const isCompleted      = (appt.status || "").toUpperCase() === "COMPLETED";
+                const isNoShow         = (appt.status || "").toUpperCase() === "NO_SHOW";
                 return (
                   <tr key={appt.id || idx}>
                     <td className="appt-id-cell">{appointmentId}</td>
@@ -435,7 +437,7 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
                         <button
                           className="appt-action-btn"
                           title="Reschedule Appointment"
-                          disabled={isCancelled}
+                          disabled={isCancelled || isCompleted || isNoShow}
                           onClick={() => onReschedule && onReschedule(appt.id)}
                         >
                           <RescheduleIcon />

@@ -21,6 +21,7 @@ import ReceptionistDashboardSection from "./pages/receptionist/section";
 import AdminLoginPage from "./pages/auth/admin_login";
 import DoctorLoginPage from "./pages/doctor/auth/login";
 import CreateEMRWrapper from "./pages/admin/emr/create_emr";
+import DoctorDashboardSection from "./pages/doctor/section";
 
 
 const Placeholder = ({ title }) => {
@@ -98,15 +99,15 @@ export default function App() {
         <Route path="/hrm/*" element={<ProtectedRoute requiredRole="HRM"><Placeholder title="HR Manager Dashboard" /></ProtectedRoute>} />
         <Route path="/cco/*" element={<ProtectedRoute requiredRole="CCO"><Placeholder title="Clinical Counsellor Dashboard" /></ProtectedRoute>} />
         <Route path="/fco/*" element={<ProtectedRoute requiredRole="FCO"><Placeholder title="Financial Counsellor Dashboard" /></ProtectedRoute>} />
-        <Route path="/gyn/*" element={<ProtectedRoute requiredRole="GYN"><Placeholder title="Gynaecologist Dashboard" /></ProtectedRoute>} />
-        <Route path="/ane/*" element={<ProtectedRoute requiredRole="ANE"><Placeholder title="Anesthesiologist Dashboard" /></ProtectedRoute>} />
+        <Route path="/gyn/*" element={<ProtectedRoute requiredRole="GYN"><DoctorDashboardSection /></ProtectedRoute>} />
+        <Route path="/ane/*" element={<ProtectedRoute requiredRole="ANE"><DoctorDashboardSection /></ProtectedRoute>} />
         <Route path="/emb/*" element={<ProtectedRoute requiredRole="EMB"><Placeholder title="Embryologist Dashboard" /></ProtectedRoute>} />
         <Route path="/nur/*" element={<ProtectedRoute requiredRole="NUR"><Placeholder title="Nurse Dashboard" /></ProtectedRoute>} />
         <Route path="/pha/*" element={<ProtectedRoute requiredRole="PHA"><Placeholder title="Pharmacist Dashboard" /></ProtectedRoute>} />
         <Route path="/tec/*" element={<ProtectedRoute requiredRole="TEC"><Placeholder title="Lab Technician Dashboard" /></ProtectedRoute>} />
         <Route path="/and/*" element={<ProtectedRoute requiredRole="AND"><Placeholder title="Andrology Tech Dashboard" /></ProtectedRoute>} />
         <Route path="/pat/*" element={<ProtectedRoute requiredRole="PAT"><Placeholder title="Patient Dashboard" /></ProtectedRoute>} />
-        <Route path="/end/*" element={<ProtectedRoute requiredRole="END"><Placeholder title="Endocrinologist Dashboard" /></ProtectedRoute>} />
+        <Route path="/end/*" element={<ProtectedRoute requiredRole="END"><DoctorDashboardSection /></ProtectedRoute>} />
 
         {/*Fallback*/}
         <Route path="/" element={<Navigate to="/login" replace />} />
