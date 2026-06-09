@@ -7,7 +7,6 @@ import "./appointments.css";
 const QUICK_ACTIONS = [
   { label: "Book\nAppointment",      color: "#4474f6", bgColor: "rgba(68, 116, 246, 0.08)",  borderColor: "rgba(68, 116, 246, 0.25)",  icon: "book"      },
   { label: "Reschedule\nAppointment",color: "#6366f1", bgColor: "rgba(99, 102, 241, 0.08)",  borderColor: "rgba(99, 102, 241, 0.25)",  icon: "reschedule" },
-  { label: "Cancel\nAppointment",    color: "#ef4444", bgColor: "rgba(239, 68, 68, 0.08)",   borderColor: "rgba(239, 68, 68, 0.25)",   icon: "cancel"    },
   { label: "Physician\nCalendar",    color: "#4474f6", bgColor: "rgba(68, 116, 246, 0.08)",  borderColor: "rgba(68, 116, 246, 0.25)",  icon: "calendar"  },
 ];
 
@@ -24,7 +23,6 @@ function QuickActionIcon({ type, color }) {
   switch (type) {
     case "book":       return <CalendarPlus     {...props} />;
     case "reschedule": return <CalendarClock    {...props} />;
-    case "cancel":     return <CalendarX2       {...props} />;
     case "calendar":   return <BriefcaseMedical {...props} />;
     default:           return null;
   }
@@ -247,7 +245,7 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
   ];
 
   return (
-    <div className="appt-page">
+    <div className={isEmbedded ? "appt-page-embedded" : "appt-page"}>
       {/* Cancel Modal */}
       {cancelTarget && (
         <CancelModal
@@ -277,13 +275,9 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
                   "--action-border": action.borderColor,
                 }}
                 onClick={() => {
-                  if (action.icon === "book" && onBook) {
-                    onBook();
-                  } else if (action.icon === "reschedule" && onReschedule) {
-                    onReschedule(null);
-                  } else if (action.icon === "calendar" && onCalendar) {
-                    onCalendar();
-                  }
+                  if (action.icon === "book" && onBook) onBook();
+                  else if (action.icon === "reschedule" && onReschedule) onReschedule(null);
+                  else if (action.icon === "calendar" && onCalendar) onCalendar();
                 }}
               >
                 <div className="appt-action-icon">
@@ -299,10 +293,10 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
 
           {/* Stats Row */}
           <div className="appt-stats-row">
-            {STATS_DISPLAY.map((s, i) => (
-              <div className="appt-stat-card" key={i}>
-                <span className="appt-stat-label">{s.label}</span>
-                <span className="appt-stat-value">{loading ? "—" : s.value}</span>
+            {STATS_DISPLAY.map((stat, idx) => (
+              <div key={idx} className="appt-stat-card">
+                <span className="appt-stat-label">{stat.label}</span>
+                <span className="appt-stat-value">{loading ? "-" : stat.value}</span>
               </div>
             ))}
           </div>
@@ -348,16 +342,12 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
             {doctors.map((doc) => <option key={doc.id} value={doc.full_name || "-"}>{doc.full_name || "-"}</option>)}
           </select>
         </div>
-
-        {/* Department filter */}
         <div className="appt-filter-select-wrapper">
           <select className="appt-filter-select" value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)}>
             <option value="all">Department</option>
             {departments.map((dept) => <option key={dept.id} value={dept.id}>{dept.name || dept.department_name}</option>)}
           </select>
         </div>
-
-        {/* Type filter */}
         <div className="appt-filter-select-wrapper">
           <select className="appt-filter-select" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
             <option value="all">Type</option>
@@ -366,8 +356,6 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
             <option value="NEW">New</option>
           </select>
         </div>
-
-        {/* Status filter */}
         <div className="appt-filter-select-wrapper">
           <select className="appt-filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="all">Status</option>
@@ -375,7 +363,6 @@ export default function Appointments({ onBook, onReschedule, onCalendar, isEmbed
             <option value="CONFIRMED">Confirmed</option>
             <option value="IN_PROGRESS">In Progress</option>
             <option value="COMPLETED">Completed</option>
-            <option value="DONE">Done</option>
             <option value="CANCELLED">Cancelled</option>
             <option value="NO_SHOW">No Show</option>
             <option value="RESCHEDULED">Rescheduled</option>

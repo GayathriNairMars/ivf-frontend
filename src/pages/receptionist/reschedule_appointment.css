@@ -103,15 +103,26 @@
   margin-bottom: 20px;
 }
 
+/* ── Form group layout ── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
 .form-group label {
   display: block;
   font-size: 13px;
   color: #475569;
   margin-bottom: 8px;
+  font-weight: 500;
 }
 
-.input-with-icon,
-.textarea-with-icon {
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+/* ── Input/Select wrapper ── */
+.input-with-icon {
   position: relative;
   display: flex;
   align-items: center;
@@ -120,42 +131,131 @@
 .input-with-icon svg {
   position: absolute;
   left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   pointer-events: none;
+  z-index: 2;
+  flex-shrink: 0;
 }
 
-.input-with-icon input,
-.input-with-icon select {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #0f172a;
-  outline: none;
-  background: #ffffff;
+/* ── New Date input ── */
+.input-with-icon input[type="date"] {
   appearance: none;
+  -webkit-appearance: none;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;          /* no left padding needed — no icon */
+  font-size: 14px;
+  color: #1e293b;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
 }
 
-.input-with-icon select {
+.input-with-icon input[type="date"]:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  background: #fff;
+}
+
+.input-with-icon input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
   cursor: pointer;
 }
 
-.textarea-with-icon svg {
+.input-with-icon:has(input[type="date"]) svg {
+  display: none;
+}
+
+/* ── New Time Slot select ── */
+.input-with-icon select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 36px 10px 38px;
+  font-size: 14px;
+  color: #1e293b;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+  line-height: 1.4;
+}
+
+.input-with-icon svg {
   position: absolute;
-  left: 12px;
-  top: 12px;
+  left: 285px;
+  top: 50%;
+  transform: translateY(-50%);
   pointer-events: none;
+  z-index: 2;
+}
+
+/* Custom dropdown chevron */
+.input-with-icon:has(select)::after {
+  content: "";
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #6b7280;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.input-with-icon select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  background: #fff;
+}
+
+.input-with-icon select option {
+  color: #1e293b;
+  background: #fff;
+}
+/* ── Reason for Change textarea ── */
+.textarea-with-icon {
+  position: relative;
+}
+
+/* Hide the SVG icon in the textarea wrapper */
+.textarea-with-icon svg {
+  display: none;
 }
 
 .textarea-with-icon textarea {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 14px;           /* no left padding — no icon */
   font-size: 14px;
-  color: #0f172a;
-  outline: none;
+  color: #1e293b;
+  width: 100%;
   resize: vertical;
+  min-height: 96px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.textarea-with-icon textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  background: #fff;
 }
 
 /* Map Card */
@@ -655,4 +755,239 @@
 .btn-cancel-changes:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* ── Assigned Doctor Card ─────────────────────────────────────────────────── */
+
+.emr-card.doctor-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Purple header strip */
+.emr-card.doctor-card .card-header {
+  background: #6366f1;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-bottom: none;
+}
+
+/* Profile section */
+.emr-card.doctor-card .card-body.doctor-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 18px 16px;
+}
+
+/* Avatar */
+.doctor-avatar-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.doctor-avatar-img {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.18);
+  display: block;
+}
+
+/* Online status dot */
+.status-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.status-dot.green {
+  background: #22c55e;
+}
+
+.status-dot.away {
+  background: #f59e0b;
+}
+
+.status-dot.offline {
+  background: #94a3b8;
+}
+
+/* Doctor text info */
+.doctor-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding-top: 25px;
+}
+
+.doctor-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doctor-specialty {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6366f1;
+}
+
+.doctor-id-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+.doctor-id-status .doc-id {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.doctor-id-status .bullet {
+  color: #cbd5e1;
+}
+
+.doctor-id-status .status-text.green {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+/* Action buttons */
+.doctor-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 18px 18px;
+}
+
+.btn-doctor-msg,
+.btn-doctor-call {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-doctor-msg {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-doctor-msg:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.btn-doctor-call {
+  background: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.btn-doctor-call:hover {
+  background: #4f46e5;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+/* ── New Date input ── */
+
+
+/* ── QR code image fix ── */
+.qr-code-image {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  image-rendering: pixelated;   /* keeps QR sharp */
+}
+.qr-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0 4px;
+  min-height: 160px;
+}
+
+.reschedule-appt-breadcrumbs {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+.breadcrumb-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8b5cf6;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: #9ca3af;
+}
+
+.breadcrumb-current {
+  color: #4b5563;
+}
+
+.reschedule-appt-header {
+  margin-bottom: 32px;
+}
+
+.reschedule-appt-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  margin: 25px;
+}
+
+/* Add or check in your CSS file */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
 }
