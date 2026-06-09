@@ -4,8 +4,14 @@
 
 .appt-page {
   text-align: left;
+  padding: 0;
+  margin: 0;
 }
 
+/* For embedded mode (if you need it later) */
+.appt-page-embedded {
+  padding: 0;
+}
 /* Header */
 .appt-header {
   margin-bottom: 20px;
@@ -28,7 +34,7 @@
 /* Quick Action Cards */
 .appt-quick-actions {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   margin-bottom: 20px;
 }

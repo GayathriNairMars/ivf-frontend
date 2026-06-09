@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import receptionistApi from '../../api/receptionistApi';
 import './PhysicianCalendar.css';
+import Icon from '../../components/Icons';
 
 // Time slots for the calendar
 const TIME_SLOTS = [
@@ -383,19 +384,23 @@ const PhysicianCalendar = ({ onBack }) => {
   return (
     <div className="physician-calendar">
       {/* Header */}
-      <div className="calendar-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          {onBack && (
-            <button className="back-btn" onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' }}>
-              ←
-            </button>
-          )}
-          <div>
-            <h2>📅 Physician Calendar</h2>
-            <p className="subtitle">Appointment Management Dashboard</p>
-          </div>
-        </div>
+      <div className="calendar-breadcrumbs">
+          <span className="breadcrumb-link" onClick={onBack}>
+          <Icon name="appointments" />
+            Appointment management
+          </span>
+          <span className="breadcrumb-separator">&gt;</span>
+          <span className="breadcrumb-current">📅 Physician Calendar</span>
       </div>
+      <div className="calendar-header">
+        <h2 className="calendar-title">
+          Physician Calendar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" style={{ marginLeft: '8px', color: '#6366f1' }}>
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </h2>
+      </div>
+      <h3><p className="summary-title">Appointment Management Dashboard</p></h3>
 
       {/* Calendar Control Bar */}
       <div className="control-bar">
@@ -464,6 +469,47 @@ const PhysicianCalendar = ({ onBack }) => {
           <button onClick={() => setShowSearchResults(false)} className="close-results">Close</button>
         </div>
       )}
+  {/* Summary Cards - Shows both Weekly Total and Today's Summary */}
+      <div className="summary-section">
+        <h3 className="summary-title">Appointment Summary</h3>
+        <div className="summary-cards">
+          {/* Weekly Total Card */}
+          <div className="summary-card primary">
+            <div className="count">{weeklyTotal || 0}</div>
+            <div className="label">Total Weekly Appointments</div>
+          </div>
+          
+          {/* Today's Summary Cards */}
+          {todaySummary && (
+            <>
+              <div className="summary-card">
+                <div className="count">{todaySummary.total_appointments || 0}</div>
+                <div className="label">Today's Appointments</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.scheduled || 0}</div>
+                <div className="label">Scheduled</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.confirmed || 0}</div>
+                <div className="label">Confirmed</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.in_progress || 0}</div>
+                <div className="label">In Progress</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.completed || 0}</div>
+                <div className="label">Completed</div>
+              </div>
+              <div className="summary-card">
+                <div className="count">{todaySummary.cancelled || 0}</div>
+                <div className="label">Cancelled</div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Calendar Grid */}
       <div className="calendar-grid">
@@ -525,48 +571,7 @@ const PhysicianCalendar = ({ onBack }) => {
         )}
       </div>
 
-      {/* Summary Cards - Shows both Weekly Total and Today's Summary */}
-      <div className="summary-section">
-        <h3 className="summary-title">Appointment Summary</h3>
-        <div className="summary-cards">
-          {/* Weekly Total Card */}
-          <div className="summary-card primary">
-            <div className="count">{weeklyTotal || 0}</div>
-            <div className="label">Total Weekly Appointments</div>
-          </div>
-          
-          {/* Today's Summary Cards */}
-          {todaySummary && (
-            <>
-              <div className="summary-card">
-                <div className="count">{todaySummary.total_appointments || 0}</div>
-                <div className="label">Today's Appointments</div>
-              </div>
-              <div className="summary-card">
-                <div className="count">{todaySummary.scheduled || 0}</div>
-                <div className="label">Scheduled</div>
-              </div>
-              <div className="summary-card">
-                <div className="count">{todaySummary.confirmed || 0}</div>
-                <div className="label">Confirmed</div>
-              </div>
-              <div className="summary-card">
-                <div className="count">{todaySummary.in_progress || 0}</div>
-                <div className="label">In Progress</div>
-              </div>
-              <div className="summary-card">
-                <div className="count">{todaySummary.completed || 0}</div>
-                <div className="label">Completed</div>
-              </div>
-              <div className="summary-card">
-                <div className="count">{todaySummary.cancelled || 0}</div>
-                <div className="label">Cancelled</div>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
+    
       {/* Appointment Details Modal */}
       {showDetailsModal && selectedAppointment && (
         <div className="modal-overlay" onClick={() => setShowDetailsModal(false)}>

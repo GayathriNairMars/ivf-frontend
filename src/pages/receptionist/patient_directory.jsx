@@ -23,15 +23,21 @@ export default function PatientDirectory() {
   });
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      {/* Tab Bar */}
+    <div
+      className="patient-directory-root"
+      style={{ height: "100%", display: "flex", flexDirection: "column", marginTop: 0, paddingTop: 0 }}
+    >
+      {/* Tab Bar — no borderTop, no margin */}
       <div style={{
         background: "white",
         borderBottom: "1px solid #e2e8f0",
+        // borderTop removed — was causing the visible gap
         display: "flex",
         padding: "0 24px",
         gap: "8px",
         flexShrink: 0,
+        margin: 0,
+        paddingTop: 0,
       }}>
         <button style={tabStyle("manage")} onClick={() => setTab("manage")}>
           <Users size={16} />
@@ -44,7 +50,7 @@ export default function PatientDirectory() {
       </div>
 
       {/* Tab Content */}
-      <div style={{ flex: 1, overflowY: "auto" }}>
+      <div style={{ flex: 1, overflowY: "auto", marginTop: 0, paddingTop: 0 }}>
         {tab === "manage" ? (
           <ManagePatients onAddPatient={() => setTab("add")} />
         ) : (
