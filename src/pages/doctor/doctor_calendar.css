@@ -1,0 +1,550 @@
+.physician-calendar {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1e293b;
+}
+
+.calendar-header {
+  margin-bottom: 30px;
+}
+
+.calendar-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 30px;
+}
+
+.calendar-header .subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.top-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 12px;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.nav-item:hover {
+  background: #f1f5f9;
+}
+
+.nav-item.active {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.control-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.doctor-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.doctor-selector label {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.doctor-select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: white;
+  min-width: 200px;
+  outline: none;
+}
+
+.week-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-btn {
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  background: #f1f5f9;
+}
+
+.week-range {
+  font-weight: 600;
+  font-size: 14px;
+  color: #334155;
+}
+
+.search-box {
+  display: flex;
+  gap: 8px;
+}
+
+.search-box input {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  min-width: 250px;
+  outline: none;
+}
+
+.search-btn {
+  padding: 8px 16px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 0px;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.calendar-grid {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calendar-table th {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 2px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.calendar-table td {
+  padding: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  vertical-align: top;
+  min-width: 140px;
+}
+
+.time-slot {
+  font-weight: 500;
+  font-size: 13px;
+  color: #64748b;
+  text-align: right;
+  width: 100px;
+  background: #f8fafc;
+}
+
+.slot-cell {
+  height: 80px;
+  transition: background 0.2s;
+}
+
+.slot-cell.today {
+  background-color: #f0fdfa;
+}
+
+.slot-cell:hover {
+  background-color: #f1f5f9;
+}
+
+.appointment-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.appointment-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.appointment-patient {
+  font-weight: 600;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.appointment-time {
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.appointment-status {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: white;
+  font-weight: 500;
+}
+
+.free-slot {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  font-size: 12px;
+  border: 1px dashed transparent;
+  cursor: pointer;
+}
+
+.slot-cell:hover .free-slot {
+  color: #94a3b8;
+  border-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.summary-section {
+  margin-bottom: 24px;
+}
+
+.summary-title {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.summary-card {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.summary-card .count {
+  font-size: 28px;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-bottom: 4px;
+}
+
+.summary-card .label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.error-message, .success-message {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.error-message {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.success-message {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.info-label {
+  width: 120px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.info-value {
+  flex: 1;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.modal-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #f8fafc;
+}
+
+.btn-primary, .btn-secondary, .btn-danger {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #4f46e5;
+  color: white;
+  border: none;
+}
+
+.btn-primary:disabled {
+  background: #818cf8;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+}
+
+.btn-danger:disabled {
+  background: #fca5a5;
+  cursor: not-allowed;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.current-appointment {
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.search-results {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.search-results h4 {
+  margin: 0 0 12px 0;
+  color: #1e293b;
+}
+
+.search-result-item {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.search-result-item:hover {
+  background: #f8fafc;
+}
+
+.close-results {
+  margin-top: 12px;
+  padding: 6px 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.calendar-breadcrumbs {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+.breadcrumb-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8b5cf6;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: #9ca3af;
+}
+
+.breadcrumb-current {
+  color: #4b5563;
+}
+
+
+
+.calendar-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  margin: 25px;
+}
+
+/* Add or check in your CSS file */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}

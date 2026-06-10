@@ -1,12 +1,18 @@
 import React, { useState, useMemo } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import TodaysQueue from "./todays_queue";
+import DoctorProfile from "./doctor_profile";
+import PatientDirectory from "./patient_directory";
+import DoctorCalendar from "./doctor_calendar";
 import Icon from "../../components/Icons";
 import { IoNotificationsOutline } from "react-icons/io5";
 import "../receptionist/receptionist.css"; // Reuse the layout CSS
+import { CalendarCheck } from "lucide-react";
 
 const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
+  { key: "patients", label: "Patient Directory", icon: "patients" },
+  { key: "calendar", label: "My Calendar", icon: "calendar",lucideIcon: <CalendarCheck size={17} /> },
   { key: "departments", label: "Departments", icon: "departments" }, // Assuming you have these icons or fallback
   { key: "emr", label: "EMR", icon: "activity" },
 ];
@@ -19,7 +25,6 @@ const ROLE_LABELS = {
   gyn: "Gynaecologist",
   end: "Endocrinologist",
   ane: "Anesthesiologist",
-  doctor: "Doctor"
 };
 
 function QueueIcon() {
@@ -45,6 +50,12 @@ export default function DoctorDashboardSection() {
     switch (active) {
       case "queue":
         return <TodaysQueue />;
+      case "patients":
+        return <PatientDirectory />;
+      case "calendar":
+        return <DoctorCalendar />;
+      case "profile":
+        return <DoctorProfile />;
       default:
         return <div style={{ padding: '24px' }}><h2>{active} View</h2><p>This section is under construction.</p></div>;
     }
@@ -76,8 +87,10 @@ export default function DoctorDashboardSection() {
               className={`nav-item ${active === item.key ? "active" : ""}`}
               onClick={() => handleNavClick(item.key)}
               title={!sidebarOpen ? item.label : ""}
-            >
-              <Icon name={item.icon} fallback={<QueueIcon />} />
+            > {item.lucideIcon
+                ? item.lucideIcon
+                : <Icon name={item.icon} fallback={<QueueIcon />} />
+              }
               {sidebarOpen && <span>{item.label}</span>}
               {active === item.key && <div className="nav-indicator" />}
             </button>
@@ -175,15 +188,30 @@ export default function DoctorDashboardSection() {
               {profileOpen && (
                 <div className="topbar-dropdown">
                   <div className="dropdown-user-info">
-                    <img
+                  <button
+                    className="dropdown-item"
+                    onClick={() => { setActive("profile"); setProfileOpen(false); }}
+                  >
+                   <img
                       src={doctorAvatar}
                       alt="Profile"
                       className="dropdown-avatar"
                     />
                     <h4>{user?.full_name || "Doctor Name"}</h4>
                     <p>{ROLE_LABELS[userRole] || user?.role || "Doctor"}</p>
+                  </button>
                   </div>
 
+                  <button
+                    className="dropdown-item"
+                    onClick={() => { setActive("profile"); setProfileOpen(false); }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8, verticalAlign: 'middle' }}>
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    My Profile
+                  </button>
                   <button
                     className="dropdown-item logout-btn"
                     onClick={handleLogout}

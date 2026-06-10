@@ -22,7 +22,7 @@
 }
 
 /* ── Root layout ─────────────────────────────────────────────── */
-.sad-root {
+.superadmin-root {
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -33,7 +33,7 @@
 }
 
 /* ── Sidebar ─────────────────────────────────────────────────── */
-.sad-sidebar {
+.superadmin-sidebar {
   width: var(--sidebar-w);
   background: var(--surface);
   border-right: 1px solid var(--border);
@@ -382,18 +382,19 @@ button.logout-btn:hover,
 
 
 /* ── Main Area ───────────────────────────────────────────────── */
-.sad-main {
+.superadmin-main {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  overflow: visible; /* NOT hidden — hidden clips the topbar dropdown */
+  overflow: hidden;
   background: var(--surface);
 }
 
 
 
 /* ── Topbar ──────────────────────────────────────────────────── */
-.sad-topbar {
+.superadmin-topbar {
   height: var(--topbar-h);
   background: #fff;
   border-bottom: 1px solid var(--border);
@@ -404,6 +405,8 @@ button.logout-btn:hover,
   padding: 0 32px;
 
   flex-shrink: 0;
+  position: relative;
+  z-index: 50;
 
   /* ensure dropdown can overflow outside topbar bounds */
   overflow: visible;
@@ -481,8 +484,9 @@ button.logout-btn:hover,
 
 
 /* ── Body ────────────────────────────────────────────────────── */
-.sad-body {
+.superadmin-body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 32px 48px;
 }
@@ -824,3 +828,4 @@ button.logout-btn:hover,
   background: var(--accent);
   border-radius: 999px;
 }
+
