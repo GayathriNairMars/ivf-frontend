@@ -24,5 +24,21 @@ export const doctorApi = {
     if (filters.end_date) url += `&end_date=${filters.end_date}`;
     const response = await api.get(url);
     return response.data;
-  }
+  },
+
+  getProfile: async () => {
+    const response = await api.get('/doctor/profile/');
+    return response.data;
+  },
+
+  getPatients: async ({ page = 1, page_size = 20, search = '', status = '',treatment='', sort_by = '' } = {}) => {
+    let url = `/doctor/patients/?page=${page}&page_size=${page_size}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    if (status) url += `&status=${encodeURIComponent(status)}`;
+    if (treatment) url += `&treatment=${encodeURIComponent(treatment)}`;
+    if (sort_by) url += `&sort_by=${encodeURIComponent(sort_by)}`;
+    const response = await api.get(url);
+    return response.data;
+  },
+  getCalendar: (start, end) => api.get(`/doctor/calendar/`, { params: { start_date: start, end_date: end } }).then(res => res.data),
 };
