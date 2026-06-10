@@ -5,7 +5,7 @@ import { FiPlayCircle, FiEye, FiClock, FiFileText } from 'react-icons/fi';
 import { HiOutlineMail } from 'react-icons/hi';
 import { IoDocumentTextOutline } from 'react-icons/io5';
 
-export default function TodaysQueue() {
+export default function TodaysQueue({ onViewPatient }) {
   const [queueData, setQueueData] = useState({
     success: false,
     current_patient: null,
@@ -181,7 +181,7 @@ export default function TodaysQueue() {
                   <button className="btn-outline btn-block">
                     <IoDocumentTextOutline /> Rx
                   </button>
-                  <button className="btn-outline btn-block">
+                  <button className="btn-outline btn-block" onClick={() => onViewPatient && onViewPatient(current_patient.patient || current_patient.patient_mrn)}>
                     <FiEye /> View
                   </button>
                 </div>
@@ -254,7 +254,7 @@ export default function TodaysQueue() {
                       <button className="action-btn" title="Start Consultation" onClick={() => handleStartConsultation(patient.id)}>
                         <FiPlayCircle size={18} />
                       </button>
-                      <button className="action-btn" title="View Details">
+                      <button className="action-btn" title="View Details" onClick={() => onViewPatient && onViewPatient(patient.patient || patient.patient_mrn)}>
                         <FiEye size={18} />
                       </button>
                     </div>
