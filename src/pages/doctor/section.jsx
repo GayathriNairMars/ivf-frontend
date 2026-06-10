@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import TodaysQueue from "./todays_queue";
-import PatientsList from "./patients";
 import PatientDetail from "./patient_detail";
 import DoctorProfile from "./doctor_profile";
 import PatientDirectory from "./patient_directory";
@@ -16,7 +15,6 @@ const NAV_TOP = [
   { key: "patients", label: "Patient Directory", icon: "patients" },
   { key: "calendar", label: "My Calendar", icon: "calendar",lucideIcon: <CalendarCheck size={17} /> },
   { key: "departments", label: "Departments", icon: "departments" }, // Assuming you have these icons or fallback
-  { key: "patients", label: "Patients", icon: "users" },
 ];
 
 const DOCTOR_CHILDREN = [
@@ -66,12 +64,9 @@ export default function DoctorDashboardSection() {
       case "queue":
         return <TodaysQueue onViewPatient={handleViewPatient} />;
       case "patients":
-        return <PatientsList onViewPatient={handleViewPatient} />;
+        return <PatientDirectory onViewPatient={handleViewPatient} />;
       case "patient_detail":
         return <PatientDetail patientId={selectedPatientId} onBack={handleBackToPatients} />;
-       
-      case "patients":
-        return <PatientDirectory />;
       case "calendar":
         return <DoctorCalendar />;
       case "profile":
