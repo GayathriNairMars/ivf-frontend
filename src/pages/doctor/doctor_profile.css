@@ -1,0 +1,497 @@
+/* ════════════════════════════════════════════════════════════════
+   DOCTOR PROFILE PAGE
+   ════════════════════════════════════════════════════════════════ */
+
+.dp-container {
+  padding: 24px 32px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ── Loading State ─────────────────────────────────────────────── */
+.dp-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  color: #64748b;
+}
+
+.dp-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #16a34a;
+  border-radius: 50%;
+  animation: dp-spin 0.8s linear infinite;
+}
+
+@keyframes dp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error State ───────────────────────────────────────────────── */
+.dp-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  color: #64748b;
+}
+
+.dp-error p {
+  font-size: 15px;
+  color: #374151;
+}
+
+.dp-retry-btn {
+  padding: 8px 20px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dp-retry-btn:hover {
+  background: #15803d;
+}
+
+/* ── Page Header ───────────────────────────────────────────────── */
+.dp-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dp-page-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.dp-page-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.dp-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.dp-btn-outline {
+  background: white;
+  color: #374151;
+  border: 1.5px solid #d1d5db;
+}
+
+.dp-btn-outline:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.dp-btn-primary {
+  background: #16a34a;
+  color: white;
+  border: 1.5px solid #16a34a;
+}
+
+.dp-btn-primary:hover {
+  background: #15803d;
+  border-color: #15803d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+}
+
+/* ── Profile Card ──────────────────────────────────────────────── */
+.dp-profile-card {
+  display: flex;
+  background: white;
+  border: 1.5px solid #dcfce7;
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  gap: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.dp-profile-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Avatar Section */
+.dp-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+  padding-right: 32px;
+}
+
+.dp-avatar-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.dp-avatar-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 50%, #86efac 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #e5e7eb;
+  transition: transform 0.3s ease;
+}
+
+.dp-avatar-circle:hover {
+  transform: scale(1.03);
+}
+
+.dp-avatar-initials {
+  font-size: 36px;
+  font-weight: 700;
+  color: #16a34a;
+  letter-spacing: -1px;
+}
+
+.dp-online-dot {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.dp-doctor-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+  text-align: center;
+}
+
+.dp-doctor-role {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 12px;
+}
+
+.dp-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dp-status-badge.active {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.dp-status-badge.inactive {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.dp-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.dp-status-badge.active .dp-status-dot {
+  background: #22c55e;
+}
+
+.dp-status-badge.inactive .dp-status-dot {
+  background: #ef4444;
+}
+
+/* Card Divider */
+.dp-card-divider {
+  width: 1px;
+  background: #e5e7eb;
+  align-self: stretch;
+  margin: 0 32px;
+  flex-shrink: 0;
+}
+
+/* Details Section */
+.dp-details-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 180px;
+}
+
+.dp-section-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #16a34a;
+  margin: 0 0 20px;
+  letter-spacing: 0.01em;
+}
+
+.dp-details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dp-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dp-detail-label {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.dp-detail-value {
+  font-size: 15px;
+  color: #111827;
+  font-weight: 600;
+}
+
+/* ── Department Overview ───────────────────────────────────────── */
+.dp-dept-section {
+  background: white;
+  border: 1.5px solid #dcfce7;
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.dp-dept-section:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.dp-dept-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.dp-dept-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.dp-dept-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dp-dept-item {
+  padding: 20px 24px;
+}
+
+.dp-dept-item-bordered {
+  border-left: 1px solid #e5e7eb;
+}
+
+.dp-dept-label {
+  display: block;
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.dp-dept-value {
+  display: block;
+  font-size: 15px;
+  color: #111827;
+  font-weight: 700;
+}
+
+/* ── Capabilities ──────────────────────────────────────────────── */
+.dp-capabilities-section {
+  background: white;
+  border: 1.5px solid #dcfce7;
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.dp-capabilities-section:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.dp-capabilities-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.dp-capabilities-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.dp-capabilities-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dp-capability-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.dp-capability-chip:hover {
+  transform: translateY(-1px);
+}
+
+.dp-capability-chip.enabled {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.dp-capability-chip.disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+}
+
+.dp-cap-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dp-capability-chip.enabled .dp-cap-dot {
+  background: #22c55e;
+}
+
+.dp-capability-chip.disabled .dp-cap-dot {
+  background: #d1d5db;
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .dp-profile-card {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .dp-card-divider {
+    width: 100%;
+    height: 1px;
+    margin: 0;
+  }
+
+  .dp-avatar-section {
+    padding-right: 0;
+  }
+
+  .dp-details-section {
+    align-items: center;
+    text-align: center;
+  }
+
+  .dp-dept-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dp-dept-item-bordered {
+    border-left: none;
+  }
+
+  .dp-dept-item:nth-child(even) {
+    border-left: 1px solid #e5e7eb;
+  }
+
+  .dp-dept-item:nth-child(n+3) {
+    border-top: 1px solid #e5e7eb;
+  }
+}
+
+@media (max-width: 600px) {
+  .dp-container {
+    padding: 16px;
+  }
+
+  .dp-page-header {
+    flex-direction: column;
+  }
+
+  .dp-dept-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dp-dept-item-bordered,
+  .dp-dept-item:nth-child(even) {
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+  }
+}

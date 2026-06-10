@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import receptionistApi from "../../api/receptionistApi";
 import Appointments from "./appointments";
 import "./reschedule_appointment.css";
+import Icon from "../../components/Icons";
+import doctorAvatar from "../../assets/doctor_avatar.png";
+
 
 export default function RescheduleAppointment({ appointmentId, onCancel }) {
   const [appointment, setAppointment] = useState(null);
@@ -10,7 +13,7 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-
+  
   const [formData, setFormData] = useState({
     appointment_date: "",
     time_slot: "",
@@ -109,15 +112,22 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
     if (!currentId) {
       return (
         <div className="reschedule-page" style={{ padding: 0 }}>
-          <div className="reschedule-topbar" style={{ padding: "20px 24px", margin: 0, borderBottom: "1px solid #e2e8f0", display: "flex", alignItems: "center" }}>
-            <button className="back-button" onClick={onCancel} style={{ marginRight: "20px" }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
+          <div className="reschedule-appt-breadcrumbs">
+            <span className="breadcrumb-link" onClick={onCancel}>
+              <Icon name="appointments" />
+              Appointment management
+            </span>
+            <span className="breadcrumb-separator">&gt;</span>
+            <span className="breadcrumb-current">Reschedule appointment</span>
+          </div>
+
+          <div className="reschedule-appt-header">
+            <h2 className="reschedule-appt-title">
+              Reschedule Appointment
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" style={{ marginLeft: '8px', color: '#6366f1' }}>
+                <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
-              Go Back
-            </button>
-            <h3 style={{ margin: 0, fontSize: "16px", color: "#1e293b" }}>Select an Appointment to Reschedule</h3>
+            </h2>
           </div>
           <div style={{ padding: "24px" }}>
             <Appointments 
@@ -143,8 +153,11 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
   const appointmentIdDisplay = appointment.appointment_id || appointment.id || "N/A";
   const patientId = appointment.patient_mrn || appointment.patient || "N/A";
   const patientPhone = appointment.patient_phone || "N/A";
-  const qrCodeBase64 = appointment.qr_code_base64 || null;
-
+  const rawQr = appointment.qr_code_base64 || null;
+  const qrCodeBase64 = rawQr ? rawQr.replace(/^data:image\/png;base64,data:image\/png;base64,/, "data:image/png;base64,") : null;
+  const doctorCode = appointment.doctor || "-";
+  const doctorName = appointment.doctor_name || "-";
+  const doctorSpecialty = appointment.doctor_specialization || "-";
   // Generate days for availability map
   const generateDays = () => {
     const baseDate = formData.appointment_date ? new Date(formData.appointment_date) : new Date();
@@ -174,6 +187,16 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
 
   return (
     <div className="reschedule-page">
+      <div className="reschedule-breadcrumbs">
+        <span className="breadcrumb-link" onClick={onCancel}>
+        <Icon name="appointments" />
+          Appointment management
+        </span>
+        <span className="breadcrumb-separator">&gt;</span>
+        <span className="breadcrumb-current">Reschedule appointment</span>
+        <span className="breadcrumb-separator">&gt;</span>
+        <span className="breadcrumb-current">Reschedule session</span>
+      </div>
       <div className="reschedule-topbar">
         <button className="back-button" onClick={onCancel}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -182,14 +205,6 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
           </svg>
           Book Appointment
         </button>
-      </div>
-
-      <div className="reschedule-breadcrumbs">
-        <span>Dashboard</span>
-        <span className="separator">&gt;</span>
-        <span>Appointments</span>
-        <span className="separator">&gt;</span>
-        <span className="current">Reschedule</span>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -304,6 +319,36 @@ export default function RescheduleAppointment({ appointmentId, onCancel }) {
 
         {/* Right Pane - QR Code and Patient Info only */}
         <div className="reschedule-right">
+          {/* Assigned Doctor Card */}
+					<div className="emr-card doctor-card">
+						<div className="card-header">Assigned doctor</div>
+						<div className="card-body doctor-profile">
+							<div className="doctor-avatar-container">
+								<img src={doctorAvatar} alt={doctorName} className="doctor-avatar-img" />
+								<span className="status-dot green"></span>
+							</div>
+							<div className="doctor-meta" >
+								<h4 className="doctor-name">{doctorName}</h4>
+								<span className="doctor-specialty">{doctorSpecialty}</span>
+								{doctorCode && (
+									<span className="doctor-id-status">
+										<span className="doc-id">{doctorCode}</span>
+										<span className="bullet">•</span>
+										<span className="status-text green">Online</span>
+									</span>
+								)}
+							</div>
+						</div>
+						<div className="doctor-actions">
+							<button className="btn-doctor-msg" onClick={() => alert("Messaging is under construction.")}>
+								✉ Message
+							</button>
+							<button className="btn-doctor-call" onClick={() => alert("Voice call is under construction.")}>
+								📞 Voice Call
+							</button>
+						</div>
+					</div>
+
           {/* Appointment QR Code */}
           <div className="card qr-card">
             <h4>Appointment QR Code</h4>

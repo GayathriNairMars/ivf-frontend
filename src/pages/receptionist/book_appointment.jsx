@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import receptionistApi from "../../api/receptionistApi";
 import "./book_appointment.css";
+import Icon from "../../components/Icons";
 
 export default function BookAppointment({ onCancel }) {
   const [formData, setFormData] = useState({
@@ -105,12 +106,7 @@ export default function BookAppointment({ onCancel }) {
     <div className="book-appt-page">
       <div className="book-appt-breadcrumbs">
         <span className="breadcrumb-link" onClick={onCancel}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
+        <Icon name="appointments" />
           Appointment management
         </span>
         <span className="breadcrumb-separator">&gt;</span>

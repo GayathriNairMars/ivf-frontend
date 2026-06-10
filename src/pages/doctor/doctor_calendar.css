@@ -7,12 +7,12 @@
 }
 
 .calendar-header {
-  margin-bottom: 24px;
+  margin-bottom: 30px;
 }
 
 .calendar-header h2 {
   margin: 0 0 4px 0;
-  font-size: 24px;
+  font-size: 30px;
 }
 
 .calendar-header .subtitle {
@@ -135,11 +135,10 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin-bottom: 0px;
   padding: 12px 16px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  background: none;
+  border: none;
 }
 
 .legend-item {
@@ -527,7 +526,7 @@
 
 
 .calendar-title {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 600;
   color: #111827;
   display: flex;
