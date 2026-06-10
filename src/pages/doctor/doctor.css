@@ -47,7 +47,7 @@
 
 .btn-primary {
   padding: 8px 16px;
-  background: #3b82f6;
+  background: #0fc958;
   color: white;
   border: none;
   border-radius: 6px;
@@ -57,7 +57,7 @@
   transition: all 0.2s;
 }
 .btn-primary:hover {
-  background: #2563eb;
+  background: #2ce451;
 }
 
 .queue-stats-grid {

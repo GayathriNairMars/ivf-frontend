@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import TodaysQueue from "./todays_queue";
+import PatientsList from "./patients";
+import PatientDetail from "./patient_detail";
 import DoctorProfile from "./doctor_profile";
 import PatientDirectory from "./patient_directory";
 import DoctorCalendar from "./doctor_calendar";
@@ -14,7 +16,7 @@ const NAV_TOP = [
   { key: "patients", label: "Patient Directory", icon: "patients" },
   { key: "calendar", label: "My Calendar", icon: "calendar",lucideIcon: <CalendarCheck size={17} /> },
   { key: "departments", label: "Departments", icon: "departments" }, // Assuming you have these icons or fallback
-  { key: "emr", label: "EMR", icon: "activity" },
+  { key: "patients", label: "Patients", icon: "users" },
 ];
 
 const DOCTOR_CHILDREN = [
@@ -38,6 +40,8 @@ function QueueIcon() {
 export default function DoctorDashboardSection() {
   const { user, logout } = useAuth();
   const [active, setActive] = useState("queue"); // Default to queue
+  const [previousActive, setPreviousActive] = useState(null);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -46,10 +50,26 @@ export default function DoctorDashboardSection() {
     setTimeout(() => { window.location.href = "/login"; }, 100);
   };
 
+  const handleViewPatient = (id) => {
+    setSelectedPatientId(id);
+    setPreviousActive(active);
+    setActive("patient_detail");
+  };
+
+  const handleBackToPatients = () => {
+    setSelectedPatientId(null);
+    setActive(previousActive || "patients");
+  };
+
   const content = useMemo(() => {
     switch (active) {
       case "queue":
-        return <TodaysQueue />;
+        return <TodaysQueue onViewPatient={handleViewPatient} />;
+      case "patients":
+        return <PatientsList onViewPatient={handleViewPatient} />;
+      case "patient_detail":
+        return <PatientDetail patientId={selectedPatientId} onBack={handleBackToPatients} />;
+       
       case "patients":
         return <PatientDirectory />;
       case "calendar":
@@ -59,7 +79,7 @@ export default function DoctorDashboardSection() {
       default:
         return <div style={{ padding: '24px' }}><h2>{active} View</h2><p>This section is under construction.</p></div>;
     }
-  }, [active]);
+  }, [active, selectedPatientId]);
 
   const handleNavClick = (key) => {
     setActive(key);
