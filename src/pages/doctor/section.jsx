@@ -5,6 +5,8 @@ import PatientDetail from "./patient_detail";
 import DoctorProfile from "./doctor_profile";
 import PatientDirectory from "./patient_directory";
 import DoctorCalendar from "./doctor_calendar";
+import DoctorDashboard from "./doctor_dashboard";
+import DoctorPrescriptions from "./doctor_prescriptions";
 import Icon from "../../components/Icons";
 import { IoNotificationsOutline } from "react-icons/io5";
 import "../receptionist/receptionist.css"; // Reuse the layout CSS
@@ -15,6 +17,7 @@ const NAV_TOP = [
   { key: "patients", label: "Patient Directory", icon: "patients" },
   { key: "calendar", label: "My Calendar", icon: "calendar",lucideIcon: <CalendarCheck size={17} /> },
   { key: "departments", label: "Departments", icon: "departments" }, // Assuming you have these icons or fallback
+  { key: "prescriptions", label: "Prescriptions", icon: "prescriptions" },
 ];
 
 const DOCTOR_CHILDREN = [
@@ -37,7 +40,7 @@ function QueueIcon() {
 
 export default function DoctorDashboardSection() {
   const { user, logout } = useAuth();
-  const [active, setActive] = useState("queue"); // Default to queue
+  const [active, setActive] = useState("dashboard"); // Default to dashboard
   const [previousActive, setPreviousActive] = useState(null);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -61,6 +64,8 @@ export default function DoctorDashboardSection() {
 
   const content = useMemo(() => {
     switch (active) {
+      case "dashboard":
+        return <DoctorDashboard onViewPatient={handleViewPatient} onNavigate={setActive} />;
       case "queue":
         return <TodaysQueue onViewPatient={handleViewPatient} />;
       case "patients":
@@ -69,6 +74,9 @@ export default function DoctorDashboardSection() {
         return <PatientDetail patientId={selectedPatientId} onBack={handleBackToPatients} />;
       case "calendar":
         return <DoctorCalendar />;
+      case "prescriptions":
+        return <DoctorPrescriptions />;
+
       case "profile":
         return <DoctorProfile />;
       default:
@@ -87,12 +95,12 @@ export default function DoctorDashboardSection() {
     <div className={`sad-root ${sidebarOpen ? "sidebar-open" : "sidebar-collapsed"}`}>
       <aside className="sad-sidebar">
         <div className="sidebar-brand">
-          <div className="brand-logo" style={{ cursor: "pointer" }} onClick={() => setActive("queue")}>
+          <div className="brand-logo" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
             </svg>
           </div>
-          {sidebarOpen && <span className="brand-name" style={{ cursor: "pointer" }} onClick={() => setActive("queue")}>HIMS</span>}
+          {sidebarOpen && <span className="brand-name" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>HIMS</span>}
         </div>
 
         <nav className="sidebar-nav">
