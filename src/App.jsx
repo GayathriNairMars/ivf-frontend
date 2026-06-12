@@ -22,6 +22,9 @@ import AdminLoginPage from "./pages/auth/admin_login";
 import DoctorLoginPage from "./pages/doctor/auth/login";
 import CreateEMRWrapper from "./pages/admin/emr/create_emr";
 import DoctorDashboardSection from "./pages/doctor/section";
+import HRLoginPage from "./pages/hr/auth/login";
+import HRDashboardSection from "./pages/hr/hr_section";
+
 
 
 const Placeholder = ({ title }) => {
@@ -64,6 +67,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin-login" element={<AdminLoginPage />} />
         <Route path="/doctor-login" element={<DoctorLoginPage />} />
+        <Route path="/hr-login" element={<HRLoginPage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/*Super Admin*/}
@@ -96,7 +100,7 @@ export default function App() {
           </ProtectedRoute>
         } />
         {/*Other roles-swap placeholder with real comp*/}
-        <Route path="/hrm/*" element={<ProtectedRoute requiredRole="HRM"><Placeholder title="HR Manager Dashboard" /></ProtectedRoute>} />
+        <Route path="/hrm/*" element={<ProtectedRoute requiredRole="HRM"><HRDashboardSection /></ProtectedRoute>} />
         <Route path="/cco/*" element={<ProtectedRoute requiredRole="CCO"><Placeholder title="Clinical Counsellor Dashboard" /></ProtectedRoute>} />
         <Route path="/fco/*" element={<ProtectedRoute requiredRole="FCO"><Placeholder title="Financial Counsellor Dashboard" /></ProtectedRoute>} />
         <Route path="/gyn/*" element={<ProtectedRoute requiredRole="GYN"><DoctorDashboardSection /></ProtectedRoute>} />

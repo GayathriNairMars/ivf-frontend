@@ -5,16 +5,20 @@ import PatientDetail from "./patient_detail";
 import DoctorProfile from "./doctor_profile";
 import PatientDirectory from "./patient_directory";
 import DoctorCalendar from "./doctor_calendar";
+import LeaveManagement from "./leave_management";
 import DoctorDashboard from "./doctor_dashboard";
 import DoctorPrescriptions from "./doctor_prescriptions";
 import Icon from "../../components/Icons";
 import { IoNotificationsOutline } from "react-icons/io5";
 import "../receptionist/receptionist.css"; // Reuse the layout CSS
-import { CalendarCheck } from "lucide-react";
+import { CalendarCheck, CalendarOff } from "lucide-react";
 
 const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "patients", label: "Patient Directory", icon: "patients" },
+  { key: "calendar", label: "My Calendar", icon: "calendar", lucideIcon: <CalendarCheck size={17} /> },
+  { key: "leave", label: "Leave Management", icon: "leave", lucideIcon: <CalendarOff size={17} /> },
+  { key: "departments", label: "Departments", icon: "departments" },
   { key: "calendar", label: "My Calendar", icon: "calendar",lucideIcon: <CalendarCheck size={17} /> },
   { key: "departments", label: "Departments", icon: "departments" }, // Assuming you have these icons or fallback
   { key: "prescriptions", label: "Prescriptions", icon: "prescriptions" },
@@ -74,6 +78,8 @@ export default function DoctorDashboardSection() {
         return <PatientDetail patientId={selectedPatientId} onBack={handleBackToPatients} />;
       case "calendar":
         return <DoctorCalendar />;
+      case "leave":
+        return <LeaveManagement />;
       case "prescriptions":
         return <DoctorPrescriptions />;
 

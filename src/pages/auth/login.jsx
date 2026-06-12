@@ -595,12 +595,15 @@ export default function LoginPage() {
                 </p>
               </>
             )}
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "12px" }}>
+            <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", marginTop: "12px", gap: "16px" }}>
               <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
                 Are you an Admin? <a href="/admin-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>Admin login →</a>
               </p>
               <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
                 Are you a Doctor? <a href="/doctor-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>Doctor login →</a>
+              </p>
+              <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                Are you an HR? <a href="/hr-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>HR login →</a>
               </p>
             </div>
           </div>
