@@ -318,11 +318,10 @@ const DoctorCalendar = ({ onBack }) => {
 		});
 	};
 
-	const getAppointmentForSlot = (dayDate, timeSlot) => {
+	const getSlotData = (dayDate, timeSlot) => {
 		const dayData = calendarData.find(d => d.date === dayDate);
 		if (!dayData || !dayData.slots) return null;
-		const slotData = dayData.slots.find(s => s.time === timeSlot);
-		return slotData?.appointment || null;
+		return dayData.slots.find(s => s.time === timeSlot) || null;
 	};
 
 	const weekDays = renderWeekDays();
@@ -454,12 +453,19 @@ const DoctorCalendar = ({ onBack }) => {
 									<td className="time-slot">{timeSlot}</td>
 									{weekDays.map((day, dayIdx) => {
 										const dayDate = formatDate(day);
-										const appointment = getAppointmentForSlot(dayDate, timeSlot);
+										const slotData = getSlotData(dayDate, timeSlot);
+										const appointment = slotData?.appointment;
+										const isLeave = slotData?.is_leave;
 										const isToday = dayDate === formatDate(new Date());
 
 										return (
-											<td key={dayIdx} className={`slot-cell ${isToday ? 'today' : ''}`}>
-												{appointment ? (
+											<td key={dayIdx} className={`slot-cell ${isToday ? 'today' : ''} ${isLeave ? 'on-leave' : ''}`}>
+												{isLeave ? (
+													<div className="leave-card" style={{ background: '#fef2f2', borderLeft: '4px solid #ef4444', padding: '6px', borderRadius: '4px', fontSize: '12px', color: '#991b1b', height: '100%' }}>
+														<div style={{ fontWeight: 600 }}>🌴 {slotData.leave_info?.leave_type ? slotData.leave_info.leave_type.toUpperCase() : 'ON LEAVE'}</div>
+														<div style={{ fontSize: '10px', marginTop: '2px', opacity: 0.8 }}>{slotData.leave_info?.status || 'Approved'}</div>
+													</div>
+												) : appointment ? (
 													<div
 														className="appointment-card"
 														style={{ borderLeftColor: getStatusColor(appointment.status) }}

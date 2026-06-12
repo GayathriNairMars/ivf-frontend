@@ -22,8 +22,8 @@ export function AuthProvider({children}){
        init();
    },[]);
 
-   const login=useCallback(async(email,password)=>{
-      const {data} = await api.post("/login/",{email,password});
+   const login=useCallback(async(email,password, endpoint="/login/")=>{
+      const {data} = await api.post(endpoint,{email,password});
       setUser(data.user);
       return { redirectUrl: data.redirect_url, user:data.user};
    },[]);

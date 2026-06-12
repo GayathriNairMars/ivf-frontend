@@ -247,12 +247,15 @@ export default function DoctorLoginPage() {
               </p>
             ) : (
               <>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "12px" }}>
+                <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", marginTop: "12px", gap: "16px" }}>
                   <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
                     Are you a Staff? <a href="/login" style={{ color: "#10b981", textDecoration: "none", fontWeight: "500" }}>Staff login →</a>
                   </p>
                   <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
                     Are you an Admin? <a href="/admin-login" style={{ color: "#10b981", textDecoration: "none", fontWeight: "500" }}>Admin login →</a>
+                  </p>
+                  <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                    Are you an HR? <a href="/hr-login" style={{ color: "#10b981", textDecoration: "none", fontWeight: "500" }}>HR login →</a>
                   </p>
                 </div>
               </>

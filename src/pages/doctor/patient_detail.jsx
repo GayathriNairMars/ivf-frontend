@@ -30,6 +30,9 @@ export default function PatientDetail({ patientId, onBack }) {
   const [isNotesListOpen, setIsNotesListOpen] = useState(false);
   const [clinicalNotes, setClinicalNotes] = useState([]);
   const [loadingNotes, setLoadingNotes] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [isSelectedNoteModalOpen, setIsSelectedNoteModalOpen] = useState(false);
+
 
   // Prescription Modal State
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
@@ -69,14 +72,14 @@ export default function PatientDetail({ patientId, onBack }) {
     setIsNotesListOpen(true);
     setLoadingNotes(true);
     try {
-      // Assuming the API filters by patient ID using a query parameter
       const res = await api.get(`doctor/notes/?patient_id=${patientData.id}`);
-      // Fallback logic in case the API doesn't support filtering and returns all notes
-      let notes = res.data?.results || res.data?.notes || res.data || [];
-      if (Array.isArray(notes)) {
-        notes = notes.filter(n => n.patient === patientData.id || n.patient === patientData.patient_id);
+      let fetchedNotes = [];
+      if (res.data?.success && Array.isArray(res.data.notes)) {
+        fetchedNotes = res.data.notes;
+      } else {
+        fetchedNotes = res.data?.results || res.data || [];
       }
-      setClinicalNotes(Array.isArray(notes) ? notes : []);
+      setClinicalNotes(fetchedNotes);
     } catch (error) {
       console.error("Error fetching clinical notes:", error);
     } finally {
@@ -474,23 +477,17 @@ export default function PatientDetail({ patientId, onBack }) {
               ) : clinicalNotes.length > 0 ? (
                 <div className="pd-notes-list">
                   {clinicalNotes.map(note => (
-                    <div className="pd-note-card" key={note.id}>
-                      <div className="pd-note-date">{note.date || "Unknown Date"}</div>
-                      <div className="pd-note-section">
-                        <strong>Subjective:</strong>
-                        <p>{note.subjective}</p>
+                    <div className="pd-note-card" key={note.id} onClick={() => { setSelectedNote(note); setIsSelectedNoteModalOpen(true); }} style={{ cursor: "pointer", transition: "all 0.2s" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                        <div className="pd-note-date" style={{ margin: 0 }}>{note.date || "Unknown Date"}</div>
+                        <div style={{ fontSize: "12px", color: "#6b7280", fontWeight: 500 }}>Dr. {note.created_by}</div>
                       </div>
-                      <div className="pd-note-section">
-                        <strong>Objective:</strong>
-                        <p>{note.objective}</p>
+                      <h4 style={{ margin: "0 0 8px 0", color: "#1f2937", fontSize: "15px" }}>{note.title || "Consultation Note"}</h4>
+                      <div style={{ fontSize: "13px", color: "#6b7280", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        {note.subjective || "No additional details provided."}
                       </div>
-                      <div className="pd-note-section">
-                        <strong>Assessment:</strong>
-                        <p>{note.assessment}</p>
-                      </div>
-                      <div className="pd-note-section">
-                        <strong>Plan:</strong>
-                        <p>{note.plan}</p>
+                      <div style={{ marginTop: "12px", color: "#10b981", fontSize: "13px", fontWeight: 500, display: "flex", alignItems: "center", gap: "4px" }}>
+                        View Details <FiChevronRight size={14} />
                       </div>
                     </div>
                   ))}
@@ -625,6 +622,44 @@ export default function PatientDetail({ patientId, onBack }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Note Details Modal */}
+      {isSelectedNoteModalOpen && selectedNote && (
+        <div className="pd-modal-overlay">
+          <div className="pd-modal-content" style={{maxWidth: '600px', width: '90%'}}>
+            <div className="pd-modal-header" style={{ borderBottom: '1px solid #e5e7eb', paddingBottom: '16px', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '20px', color: '#111827', margin: '0 0 8px 0' }}>{selectedNote.title || "Clinical Note Details"}</h2>
+              <div style={{ display: 'flex', gap: '16px', color: '#6b7280', fontSize: '14px' }}>
+                <span>Date: <strong>{selectedNote.date}</strong></span>
+                <span>By: <strong>Dr. {selectedNote.created_by}</strong></span>
+              </div>
+              <button className="pd-modal-close" onClick={() => setIsSelectedNoteModalOpen(false)}>&times;</button>
+            </div>
+            
+            <div style={{display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '60vh', overflowY: 'auto', paddingRight: '8px'}}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{fontWeight: '600', color: '#374151', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Subjective</label>
+                <div style={{padding: '12px 16px', background: '#f9fafb', borderLeft: '4px solid #3b82f6', borderRadius: '4px', color: '#1f2937', fontSize: '15px', lineHeight: '1.5'}}>{selectedNote.subjective || "-"}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{fontWeight: '600', color: '#374151', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Objective</label>
+                <div style={{padding: '12px 16px', background: '#f9fafb', borderLeft: '4px solid #10b981', borderRadius: '4px', color: '#1f2937', fontSize: '15px', lineHeight: '1.5'}}>{selectedNote.objective || "-"}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{fontWeight: '600', color: '#374151', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Assessment</label>
+                <div style={{padding: '12px 16px', background: '#f9fafb', borderLeft: '4px solid #f59e0b', borderRadius: '4px', color: '#1f2937', fontSize: '15px', lineHeight: '1.5'}}>{selectedNote.assessment || "-"}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{fontWeight: '600', color: '#374151', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Plan</label>
+                <div style={{padding: '12px 16px', background: '#f9fafb', borderLeft: '4px solid #8b5cf6', borderRadius: '4px', color: '#1f2937', fontSize: '15px', lineHeight: '1.5'}}>{selectedNote.plan || "-"}</div>
+              </div>
+            </div>
+            
+            <div className="pd-modal-footer" style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+              <button type="button" className="pd-btn-solid-blue" onClick={() => setIsSelectedNoteModalOpen(false)}>Close</button>
+            </div>
           </div>
         </div>
       )}
