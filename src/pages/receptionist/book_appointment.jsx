@@ -97,7 +97,7 @@ export default function BookAppointment({ onCancel }) {
         if (onCancel) onCancel();
       }, 2000);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to book appointment");
+      setError(err.response?.data?.error || err.response?.data?.message || "Failed to book appointment");
       setLoading(false);
     }
   };

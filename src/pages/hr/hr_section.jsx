@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import HRLeaveManagement from "./hr_leave";
+import HRSettings from "./hr_settings";
 import "./hr_section.css";
 
 /* ── Nav items ── */
@@ -83,7 +84,7 @@ export default function HRDashboardSection() {
       case "dashboard": return <ComingSoon title="Dashboard" />;
       case "employees": return <ComingSoon title="Employee Directory" />;
       case "payroll":   return <ComingSoon title="Payroll" />;
-      case "settings":  return <ComingSoon title="Settings" />;
+      case "settings":  return <HRSettings />;
       default:          return <HRLeaveManagement />;
     }
   })();

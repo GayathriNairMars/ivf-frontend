@@ -31,6 +31,16 @@ export const doctorApi = {
     return response.data;
   },
 
+  updateProfile: async (data) => {
+    const response = await api.put('/doctor/profile/', data);
+    return response.data;
+  },
+
+  changePassword: async (data) => {
+    const response = await api.post('/doctor/change-password/', data);
+    return response.data;
+  },
+
   getPatients: async ({ page = 1, page_size = 20, search = '', status = '',treatment='', sort_by = '' } = {}) => {
     let url = `/doctor/patients/?page=${page}&page_size=${page_size}`;
     if (search) url += `&search=${encodeURIComponent(search)}`;

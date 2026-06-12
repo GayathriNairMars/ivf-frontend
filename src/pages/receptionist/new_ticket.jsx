@@ -586,6 +586,8 @@ useEffect(() => {
         Object.entries(d).forEach(([k, v]) => {
           fe[k] = Array.isArray(v) ? v[0] : v;
         });
+        if (fe.error) fe.general = fe.error;
+        if (fe.detail) fe.general = fe.detail;
         setErrors(fe);
       } else {
         setErrors({ general: "Failed to create OP ticket. Please try again." });
