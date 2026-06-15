@@ -19,8 +19,6 @@ const NAV_TOP = [
   { key: "calendar", label: "My Calendar", icon: "calendar", lucideIcon: <CalendarCheck size={17} /> },
   { key: "leave", label: "Leave Management", icon: "leave", lucideIcon: <CalendarOff size={17} /> },
   { key: "departments", label: "Departments", icon: "departments" },
-  { key: "calendar", label: "My Calendar", icon: "calendar",lucideIcon: <CalendarCheck size={17} /> },
-  { key: "departments", label: "Departments", icon: "departments" }, // Assuming you have these icons or fallback
   { key: "prescriptions", label: "Prescriptions", icon: "prescriptions" },
 ];
 

@@ -1,0 +1,1005 @@
+/* ── Department Section ──────────────────────────────────────── */
+.dept-section { width: 100%; }
+
+/* ── Department Grid ─────────────────────────────────────────── */
+.dept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* ── Department Card ─────────────────────────────────────────── */
+.dept-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  border: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dept-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  border-color: var(--accent);
+}
+
+.dept-inactive { opacity: 0.55; }
+
+.dept-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dept-icon    { font-size: 1.8rem; line-height: 1; }
+.dept-icon-lg { font-size: 2.4rem; line-height: 1; flex-shrink: 0; }
+
+.dept-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.dept-desc {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  line-height: 1.5;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dept-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.dept-stat { display: flex; flex-direction: column; }
+
+.dept-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  line-height: 1;
+}
+
+.dept-stat-label {
+  font-size: 0.7rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dept-head { display: flex; flex-direction: column; align-items: flex-end; max-width: 60%; }
+
+.dept-head-label {
+  font-size: 0.65rem;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dept-head-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-2);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ── Department Detail Container ─────────────────────────────── */
+.dept-detail-container { width: 100%; padding-bottom: 40px; }
+
+.dept-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.breadcrumb-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.breadcrumb-link:hover {
+  color: var(--accent);
+}
+.breadcrumb-current {
+  color: #000000;
+  font-weight: 500;
+}
+.dept-detail-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+}
+
+.dept-title-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dept-title-section h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.dept-status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.dept-status-badge.active {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+}
+.dept-status-badge.inactive {
+  background: var(--surface);
+  color: var(--text-3);
+}
+
+.dept-stats-section {
+  display: flex;
+  gap: 40px;
+  border-left: 1px solid var(--border);
+  padding-left: 40px;
+}
+
+.dept-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.dept-stat-item .stat-label {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.dept-stat-item .stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.dept-head-info-card {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 24px 0;
+  border-radius: 0;
+  margin-bottom: 30px;
+  border-left: none;
+  border-right: none;
+}
+
+.dept-head-left {
+  flex: 0 0 auto;
+  min-width: 300px;
+  padding-right: 30px;
+}
+
+.dept-head-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hod-avatar-lg {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0369a1;
+  flex-shrink: 0;
+}
+
+.dept-head-label {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.hod-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.hod-details .hod-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.hod-details .hod-role {
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.dept-head-divider {
+  width: 1px;
+  height: 50px;
+  background: var(--border);
+  margin: 0 30px;
+}
+
+.dept-head-right {
+  flex: 1;
+}
+
+.dept-head-right p {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Tabs */
+.dept-tabs {
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+  border-radius: 12px 12px 0 0;
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  border-bottom: none;
+  background: white;
+}
+
+.dept-tabs-line {
+  height: 1.5px;
+  background: var(--accent);
+  width: 100%;
+  margin-bottom: 24px;
+  position: relative;
+  top: -1.5px;
+  z-index: -1;
+}
+
+/* Table Card */
+.dept-staffs-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.staffs-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.staffs-card-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.staffs-header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-wrap-new {
+  position: relative;
+  width: 260px;
+}
+
+.search-icon-new {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+}
+
+.search-input-new {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: white;
+}
+
+.search-input-new:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.filter-select-new {
+  padding: 8px 32px 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  background-color: white;
+}
+
+.btn-add-staff-new {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-add-staff-new:hover {
+  background: #2563eb;
+}
+
+/* Table Overrides */
+.table-wrap-new {
+  overflow-x: auto;
+}
+
+.staff-table-new {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.staff-table-new th {
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.staff-table-new td {
+  padding: 16px 20px;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.staff-table-new tr:last-child td {
+  border-bottom: none;
+}
+
+.staff-name-bold {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.role-cell-new {
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.status-badge-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge-new.active {
+  color: #16a34a;
+}
+.status-badge-new.inactive {
+  color: var(--text-3);
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.status-badge-new.active .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #16a34a;
+}
+
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.showing-text {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.pagination-arrows {
+  display: flex;
+  gap: 8px;
+}
+
+.page-arrow-btn {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.page-arrow-btn:disabled {
+  color: var(--border);
+  cursor: not-allowed;
+}
+
+/* ── Dept assignment badge in AddStaff ───────────────────────── */
+.dept-assignment-row {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+}
+
+.dept-badge { display: flex; flex-direction: column; gap: 3px; }
+
+.dept-badge-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+
+.dept-badge.primary .dept-badge-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.dept-badge-value { font-size: 0.875rem; font-weight: 500; color: var(--text); }
+
+.field-hint {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* ── Redesigned Header and Subheader ─────────────────────────── */
+.dept-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.dept-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.dept-main-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+}
+
+.dept-main-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-3);
+  font-weight: 400;
+  margin: 0;
+}
+
+.dept-header-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-seed-depts {
+  background: white;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-seed-depts:hover {
+  background: rgba(68, 116, 246, 0.05);
+}
+
+.btn-add-dept-action {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background var(--transition);
+}
+
+.btn-add-dept-action:hover {
+  background: var(--accent-hover);
+}
+
+/* ── Filters Bar ─────────────────────────────────────────────── */
+.dept-filters-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.dept-search-input-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+}
+
+.dept-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+}
+
+.dept-search-input-field {
+  width: 100%;
+  padding: 10px 12px 10px 38px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.875rem;
+  color: var(--text);
+  font-family: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.dept-search-input-field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(68, 116, 246, 0.1);
+}
+
+.dept-filter-dropdown-wrapper {
+  position: relative;
+}
+
+.dept-filter-select-field {
+  padding: 10px 36px 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.875rem;
+  color: var(--text-2);
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+
+.dept-filter-select-field:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ── New Department Grid ───────────────────────────────────────── */
+.dept-grid-new {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .dept-grid-new {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── New Department Card ───────────────────────────────────────── */
+.dept-card-new {
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1.5px solid transparent;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+  display: flex;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+}
+
+.dept-card-new:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(16, 24, 40, 0.08);
+  border-color: var(--accent);
+}
+
+.dept-card-inactive {
+  opacity: 0.6;
+}
+
+/* Left Column */
+.dept-card-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* allows text truncation */
+  padding-right: 16px;
+}
+
+.dept-card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.dept-card-title {
+  font-size: 1.0rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.dept-card-status-badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-dot-text {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #16a34a; /* Nice clean green */
+}
+
+.status-dot-text.inactive {
+  color: #98a2b3;
+}
+
+.dot-bullet {
+  width: 6px;
+  height: 6px;
+  background-color: currentColor;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.dept-card-updated {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--text-3);
+  font-weight: 500;
+  gap: 4px;
+}
+
+.clock-icon {
+  color: var(--text-3);
+  stroke: var(--text-3);
+}
+
+.dept-card-description {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6rem; /* fixed height for two lines to keep cards aligned */
+}
+
+/* HOD Box */
+.dept-card-hod-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 8px 14px;
+  margin-top: auto;
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.hod-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e0f2fe; /* Light blueish grey background */
+  color: #0369a1;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hod-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: left;
+}
+
+.hod-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hod-role {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Divider */
+.dept-card-divider {
+  width: 1px;
+  background-color: var(--border);
+  align-self: stretch;
+  margin: 0 8px;
+}
+
+/* Right Column */
+.dept-card-right {
+  width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-left: 16px;
+  flex-shrink: 0;
+}
+
+.staff-stat-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.staff-stat-number {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.staff-stat-label {
+  font-size: 0.85rem;
+  color: var(--text-3);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.btn-manage-card {
+  width: 100%;
+  border: 1.5px solid rgba(68, 116, 246, 0.25);
+  background: white;
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.btn-manage-card:hover {
+  background: rgba(68, 116, 246, 0.05);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.arrow-icon {
+  transition: transform 0.2s ease-in-out;
+  transform: rotate(0deg);
+}
+
+.btn-manage-card:hover .arrow-icon {
+  transform: rotate(60deg);
+}
+
+/* ── Staff Cards Grid ─────────────────────────────────────────── */
+.staff-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.staff-card-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.staff-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.staff-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.staff-card-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.staff-card-role {
+    display: flex;
+    align-items: center;
+}
+
+/* ── Fix role badge — was rendering as blob with no text ──────── */
+.role-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.staff-card-email {
+    font-size: 0.8rem;
+    color: var(--text-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.staff-card-unit {
+    font-size: 0.78rem;
+    color: var(--text-3);
+    font-style: italic;
+}
+
+/* ── Status dot at end of card ────────────────────────────────── */
+.staff-card-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-3);
+    flex-shrink: 0;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-dot.active {
+    background-color: #16a34a;
+}
+
+.status-dot.inactive {
+    background-color: #cbd5e1;
+}

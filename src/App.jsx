@@ -99,8 +99,13 @@ export default function App() {
             <ReceptionistDashboardSection />
           </ProtectedRoute>
         } />
+
+        <Route path="/hrm/" element={
+          <ProtectedRoute requiredRole="HRM">
+            <HRDashboardSection />
+          </ProtectedRoute>
+        }/>
         {/*Other roles-swap placeholder with real comp*/}
-        <Route path="/hrm/*" element={<ProtectedRoute requiredRole="HRM"><HRDashboardSection /></ProtectedRoute>} />
         <Route path="/cco/*" element={<ProtectedRoute requiredRole="CCO"><Placeholder title="Clinical Counsellor Dashboard" /></ProtectedRoute>} />
         <Route path="/fco/*" element={<ProtectedRoute requiredRole="FCO"><Placeholder title="Financial Counsellor Dashboard" /></ProtectedRoute>} />
         <Route path="/gyn/*" element={<ProtectedRoute requiredRole="GYN"><DoctorDashboardSection /></ProtectedRoute>} />
