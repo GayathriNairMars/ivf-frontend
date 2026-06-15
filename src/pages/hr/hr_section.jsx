@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import HRLeaveManagement from "./hr_leave";
+import HRStaffManagement from "./hr_staff_management";
+import AddStaffHR from "./add_staff";
 import "./hr_section.css";
+import HRDepartmentSection from "./hr_departments";
+import { Building2 } from "lucide-react";
 
 /* ── Nav items ── */
 const NAV = [
@@ -32,6 +36,12 @@ const NAV = [
         <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
         <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
       </svg>
+    ),
+  },
+  {
+    key: "departments", label: "Departments",
+    icon: (
+      <Building2 />
     ),
   },
   {
@@ -81,7 +91,9 @@ export default function HRDashboardSection() {
     switch (active) {
       case "leave":     return <HRLeaveManagement />;
       case "dashboard": return <ComingSoon title="Dashboard" />;
-      case "employees": return <ComingSoon title="Employee Directory" />;
+      case "employees": return <HRStaffManagement onAddStaff={() => setActive("add_staff")} />;
+      case "add_staff": return <AddStaffHR onDone={() => setActive("employees")} />;
+      case "departments": return <HRDepartmentSection title="Departments" />;
       case "payroll":   return <ComingSoon title="Payroll" />;
       case "settings":  return <ComingSoon title="Settings" />;
       default:          return <HRLeaveManagement />;
