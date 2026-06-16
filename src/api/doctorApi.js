@@ -6,6 +6,11 @@ export const doctorApi = {
     return response.data;
   },
 
+  getDashboard: async () => {
+    const response = await api.get('/doctor/dashboard/');
+    return response.data;
+  },
+
   startConsultation: async (ticketId) => {
     // We assume the API expects action and ticket_id
     const response = await api.post('/doctor/queue/', { action: 'start', ticket_id: ticketId });
@@ -51,4 +56,24 @@ export const doctorApi = {
     return response.data;
   },
   getCalendar: (start, end) => api.get(`/doctor/calendar/`, { params: { start_date: start, end_date: end } }).then(res => res.data),
+
+  getPrescriptions: async ({ patient_id, search, start_date, end_date, status } = {}) => {
+    let url = `/doctor/prescriptions/?`;
+    if (patient_id) url += `patient_id=${patient_id}&`;
+    if (search) url += `search=${encodeURIComponent(search)}&`;
+    if (start_date) url += `start_date=${start_date}&`;
+    if (end_date) url += `end_date=${end_date}&`;
+    if (status) url += `status=${encodeURIComponent(status)}&`;
+    
+    // Remove trailing '&' or '?'
+    url = url.endsWith('&') || url.endsWith('?') ? url.slice(0, -1) : url;
+
+    const response = await api.get(url);
+    return response.data;
+  },
+
+  createPrescription: async (data) => {
+    const response = await api.post('/doctor/prescriptions/', data);
+    return response.data;
+  }
 };

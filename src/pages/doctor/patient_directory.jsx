@@ -6,7 +6,7 @@ import { PATIENT_STATUSES,TREATMENT_TYPES } from "../../constants/constants";
 
 const AVATAR_CLASSES = ["av-purple", "av-blue", "av-green", "av-orange", "av-pink", "av-red"];
 
-export default function PatientDirectory() {
+export default function PatientDirectory({onViewPatient}) {
   const [patients, setPatients] = useState([]);
   const [statistics, setStatistics] = useState({
     total_patients: 0,
@@ -294,7 +294,7 @@ export default function PatientDirectory() {
                     <td>
                       <div className="pd-actions-cell">
                         <button className="pd-btn-history">History</button>
-                        <button className="pd-btn-view">View</button>
+                        <button className="pd-btn-view" onClick={() => onViewPatient && onViewPatient(patient.id)}>View</button>
                       </div>
                     </td>
                   </tr>
