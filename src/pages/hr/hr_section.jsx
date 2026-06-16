@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import HRLeaveManagement from "./hr_leave";
+import HRSettings from "./hr_settings";
 import HRStaffManagement from "./hr_staff_management";
 import AddStaffHR from "./add_staff";
 import HRDashboard from "./hr_dashboard";
@@ -134,7 +135,7 @@ export default function HRDashboardSection() {
 
   const content = (() => {
     switch (active) {
-      case "leave":        return <HRLeaveManagement />;
+      default:          return <HRDashboard />;
       case "dashboard":    return <HRDashboard />;
       case "manage_staff": return <HRStaffManagement onAddStaff={() => setActive("add_staff")} />;
       case "add_staff":    return <AddStaffHR onDone={() => setActive("manage_staff")} />;
@@ -146,8 +147,8 @@ export default function HRDashboardSection() {
       case "attendance":   return <ComingSoon title="Attendance" />;
       case "shift_reports": return <ComingSoon title="Reports" />;
       case "payroll":      return <ComingSoon title="Payroll" />;
-      case "settings":     return <ComingSoon title="Settings" />;
-      default:             return <HRLeaveManagement />;
+      case "leave":     return <HRLeaveManagement />;
+      case "settings":  return <HRSettings />;
     }
   })();
 
