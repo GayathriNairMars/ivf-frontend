@@ -12,6 +12,7 @@ import arathyAvatar from "../../assets/arathy_avatar.png";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import HRShiftTypes from "./shifts/hr_shift_types";
+import HRAssignShifts from "./shifts/hr_assign_shifts";
 import { Calendar, Clock, RefreshCw, ClipboardCheck, FileText } from "lucide-react";
 
 /* ── Nav items ── */
@@ -142,7 +143,7 @@ export default function HRDashboardSection() {
       case "departments":  return <HRDepartmentSection title="Departments" />;
       case "shift_types":  return <HRShiftTypes />;
       case "shift_calendar": return <ComingSoon title="Shift Calendar" />;
-      case "assign_shifts": return <ComingSoon title="Assign Shifts" />;
+      case "assign_shifts": return <HRAssignShifts />;
       case "shift_swaps":  return <ComingSoon title="Shift Swaps" />;
       case "attendance":   return <ComingSoon title="Attendance" />;
       case "shift_reports": return <ComingSoon title="Reports" />;
