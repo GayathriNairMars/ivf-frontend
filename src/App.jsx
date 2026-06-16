@@ -24,7 +24,8 @@ import CreateEMRWrapper from "./pages/admin/emr/create_emr";
 import DoctorDashboardSection from "./pages/doctor/section";
 import HRLoginPage from "./pages/hr/auth/login";
 import HRDashboardSection from "./pages/hr/hr_section";
-
+import LabLoginPage from "./pages/lab_technician/auth/login";
+import LabDashboardSection from "./pages/lab_technician/lab_section";
 
 
 const Placeholder = ({ title }) => {
@@ -68,6 +69,7 @@ export default function App() {
         <Route path="/admin-login" element={<AdminLoginPage />} />
         <Route path="/doctor-login" element={<DoctorLoginPage />} />
         <Route path="/hr-login" element={<HRLoginPage />} />
+        <Route path="/lab-login" element={<LabLoginPage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/*Super Admin*/}
@@ -113,7 +115,7 @@ export default function App() {
         <Route path="/emb/*" element={<ProtectedRoute requiredRole="EMB"><Placeholder title="Embryologist Dashboard" /></ProtectedRoute>} />
         <Route path="/nur/*" element={<ProtectedRoute requiredRole="NUR"><Placeholder title="Nurse Dashboard" /></ProtectedRoute>} />
         <Route path="/pha/*" element={<ProtectedRoute requiredRole="PHA"><Placeholder title="Pharmacist Dashboard" /></ProtectedRoute>} />
-        <Route path="/tec/*" element={<ProtectedRoute requiredRole="TEC"><Placeholder title="Lab Technician Dashboard" /></ProtectedRoute>} />
+        <Route path="/tec/*" element={<ProtectedRoute requiredRole="TEC"><LabDashboardSection /></ProtectedRoute>} />
         <Route path="/and/*" element={<ProtectedRoute requiredRole="AND"><Placeholder title="Andrology Tech Dashboard" /></ProtectedRoute>} />
         <Route path="/pat/*" element={<ProtectedRoute requiredRole="PAT"><Placeholder title="Patient Dashboard" /></ProtectedRoute>} />
         <Route path="/end/*" element={<ProtectedRoute requiredRole="END"><DoctorDashboardSection /></ProtectedRoute>} />

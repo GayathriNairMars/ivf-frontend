@@ -5,7 +5,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.hr-root {
+.lab-root {
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -15,7 +15,7 @@
 }
 
 /* ── Sidebar ── */
-.hr-sidebar {
+.lab-sidebar {
   width: 210px;
   min-width: 210px;
   background: #fff;
@@ -25,30 +25,30 @@
   padding: 0;
   transition: width 0.25s;
 }
-.hr-brand {
+.lab-brand {
   padding: 22px 20px 18px;
   border-bottom: 1px solid #f3f4f6;
 }
-.hr-brand h2 { font-size: 15px; font-weight: 800; color: #0d9488; line-height: 1.2; }
-.hr-brand p  { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+.lab-brand h2 { font-size: 15px; font-weight: 800; color: #0d9488; line-height: 1.2; }
+.lab-brand p  { font-size: 11px; color: #9ca3af; margin-top: 2px; }
 
-.hr-nav { flex: 1; padding: 16px 10px; display: flex; flex-direction: column; gap: 4px; }
-.hr-nav-item {
+.lab-nav { flex: 1; padding: 16px 10px; display: flex; flex-direction: column; gap: 4px; }
+.lab-nav-item {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 12px; border-radius: 10px;
   font-size: 13px; font-weight: 500; color: #6b7280;
   cursor: pointer; border: none; background: none;
   width: 100%; text-align: left; transition: all 0.15s;
 }
-.hr-nav-item:hover { background: #f0fdf4; color: #0d9488; }
-.hr-nav-item.active { background: #0d9488; color: #fff; font-weight: 600; }
-.hr-nav-item svg { flex-shrink: 0; }
+.lab-nav-item:hover { background: #f0fdf4; color: #0d9488; }
+.lab-nav-item.active { background: #0d9488; color: #fff; font-weight: 600; }
+.lab-nav-item svg { flex-shrink: 0; }
 
-.hr-sidebar-footer {
+.lab-sidebar-footer {
   padding: 16px 14px;
   border-top: 1px solid #f3f4f6;
 }
-.hr-new-btn {
+.lab-new-btn {
   width: 100%; padding: 10px;
   background: #0d9488; color: #fff;
   border: none; border-radius: 10px;
@@ -56,7 +56,7 @@
   display: flex; align-items: center; justify-content: center; gap: 6px;
   transition: opacity 0.15s;
 }
-.hr-new-btn:hover { opacity: 0.9; }
+.lab-new-btn:hover { opacity: 0.9; }
 /* NAV */
 
 .sidebar-nav {
@@ -195,37 +195,37 @@
   border-radius: 2px;
 }
 /* ── Main ── */
-.hr-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.lab-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 /* Topbar */
-.hr-topbar {
+.lab-topbar {
   height: 60px; min-height: 60px;
   background: #fff; border-bottom: 1px solid #e5e7eb;
   display: flex; align-items: center; gap: 16px;
   padding: 0 24px;
 }
-.hr-search {
+.lab-search {
   flex: 1; max-width: 420px;
   display: flex; align-items: center; gap: 10px;
   background: #f9fafb; border: 1px solid #e5e7eb;
   border-radius: 10px; padding: 0 14px; height: 38px;
 }
-.hr-search input { border: none; background: none; outline: none; font-size: 13px; color: #374151; width: 100%; }
-.hr-search svg { color: #9ca3af; flex-shrink: 0; }
-.hr-topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-.hr-icon-btn {
+.lab-search input { border: none; background: none; outline: none; font-size: 13px; color: #374151; width: 100%; }
+.lab-search svg { color: #9ca3af; flex-shrink: 0; }
+.lab-topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.lab-icon-btn {
   width: 36px; height: 36px; border-radius: 8px;
   border: 1px solid #e5e7eb; background: #fff;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: #6b7280; transition: all 0.15s;
 }
-.hr-icon-btn:hover { background: #f3f4f6; }
-.hr-user { display: flex; align-items: center; gap: 8px; }
-.hr-user-info { text-align: right; }
-.hr-user-info span { display: block; }
-.hr-user-name { font-size: 13px; font-weight: 600; color: #111827; }
-.hr-user-role { font-size: 11px; color: #9ca3af; }
-.hr-avatar {
+.lab-icon-btn:hover { background: #f3f4f6; }
+.lab-user { display: flex; align-items: center; gap: 8px; }
+.lab-user-info { text-align: right; }
+.lab-user-info span { display: block; }
+.lab-user-name { font-size: 13px; font-weight: 600; color: #111827; }
+.lab-user-role { font-size: 11px; color: #9ca3af; }
+.lab-avatar {
   width: 36px; height: 36px; border-radius: 50%;
   background: linear-gradient(135deg, #0d9488, #065f46);
   display: flex; align-items: center; justify-content: center;
@@ -233,7 +233,7 @@
 }
 
 /* Body */
-.hr-body { flex: 1; overflow-y: auto; padding: 28px; }
+.lab-body { flex: 1; overflow-y: auto; padding: 28px; }
 
 /* TOPBAR DROPDOWN */
 
