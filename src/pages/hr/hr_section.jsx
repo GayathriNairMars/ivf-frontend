@@ -3,9 +3,15 @@ import { useAuth } from "../../hooks/useAuth";
 import HRLeaveManagement from "./hr_leave";
 import HRStaffManagement from "./hr_staff_management";
 import AddStaffHR from "./add_staff";
+import HRDashboard from "./hr_dashboard";
 import "./hr_section.css";
 import HRDepartmentSection from "./hr_departments";
-import { Building2 } from "lucide-react";
+import { Building2, Users, UserPlus, ChevronDown } from "lucide-react";
+import arathyAvatar from "../../assets/arathy_avatar.png";
+import { IoNotificationsOutline } from "react-icons/io5";
+import { ROLE_LABELS } from "../../constants/constants";
+import HRShiftTypes from "./shifts/hr_shift_types";
+import { Calendar, Clock, RefreshCw, ClipboardCheck, FileText } from "lucide-react";
 
 /* ── Nav items ── */
 const NAV = [
@@ -28,6 +34,10 @@ const NAV = [
         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
       </svg>
     ),
+    subItems: [
+      { key: "manage_staff", label: "Manage staff", icon: Users },
+      { key: "add_staff", label: "Add Staff", icon: UserPlus },
+    ],
   },
   {
     key: "leave", label: "Leave Management",
@@ -40,9 +50,24 @@ const NAV = [
   },
   {
     key: "departments", label: "Departments",
+    icon: <Building2 size={16} />,
+  },
+  {
+    key: "shifts", label: "Shift Management",
     icon: (
-      <Building2 />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
     ),
+    subItems: [
+      { key: "shift_calendar", label: "Shift Calendar", icon: Calendar },
+      { key: "shift_types", label: "Shift Types", icon: Clock },
+      { key: "assign_shifts", label: "Assign Shifts", icon: UserPlus },
+      { key: "shift_swaps", label: "Shift Swaps", icon: RefreshCw },
+      { key: "attendance", label: "Attendance", icon: ClipboardCheck },
+      { key: "shift_reports", label: "Reports", icon: FileText },
+    ],
   },
   {
     key: "payroll", label: "Payroll",
@@ -77,26 +102,52 @@ function ComingSoon({ title }) {
 export default function HRDashboardSection() {
   const { user, logout } = useAuth();
   const [active, setActive] = useState("leave");
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [expandedNav, setExpandedNav] = useState("employees");
 
   const handleLogout = async () => {
     await logout();
     window.location.href = "/hr-login";
   };
 
-  const initials = user?.full_name
-    ? user.full_name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase()
-    : "HR";
+  // Map subitem keys -> their parent's key, so we know which parent to highlight/expand
+  const parentOf = (childKey) => {
+    for (const item of NAV) {
+      if (item.subItems?.some((s) => s.key === childKey)) return item.key;
+    }
+    return null;
+  };
+
+  const handleNavClick = (item) => {
+    if (item.subItems) {
+      // Toggle expand; if collapsing the currently-active group, keep active as-is
+      setExpandedNav((prev) => (prev === item.key ? null : item.key));
+      // If no sub-page is active under this parent yet, jump to the first sub item
+      if (!item.subItems.some((s) => s.key === active)) {
+        setActive(item.subItems[0].key);
+      }
+    } else {
+      setActive(item.key);
+      setExpandedNav(null);
+    }
+  };
 
   const content = (() => {
     switch (active) {
-      case "leave":     return <HRLeaveManagement />;
-      case "dashboard": return <ComingSoon title="Dashboard" />;
-      case "employees": return <HRStaffManagement onAddStaff={() => setActive("add_staff")} />;
-      case "add_staff": return <AddStaffHR onDone={() => setActive("employees")} />;
-      case "departments": return <HRDepartmentSection title="Departments" />;
-      case "payroll":   return <ComingSoon title="Payroll" />;
-      case "settings":  return <ComingSoon title="Settings" />;
-      default:          return <HRLeaveManagement />;
+      case "leave":        return <HRLeaveManagement />;
+      case "dashboard":    return <HRDashboard />;
+      case "manage_staff": return <HRStaffManagement onAddStaff={() => setActive("add_staff")} />;
+      case "add_staff":    return <AddStaffHR onDone={() => setActive("manage_staff")} />;
+      case "departments":  return <HRDepartmentSection title="Departments" />;
+      case "shift_types":  return <HRShiftTypes />;
+      case "shift_calendar": return <ComingSoon title="Shift Calendar" />;
+      case "assign_shifts": return <ComingSoon title="Assign Shifts" />;
+      case "shift_swaps":  return <ComingSoon title="Shift Swaps" />;
+      case "attendance":   return <ComingSoon title="Attendance" />;
+      case "shift_reports": return <ComingSoon title="Reports" />;
+      case "payroll":      return <ComingSoon title="Payroll" />;
+      case "settings":     return <ComingSoon title="Settings" />;
+      default:             return <HRLeaveManagement />;
     }
   })();
 
@@ -109,17 +160,52 @@ export default function HRDashboardSection() {
           <p>HR Administration Portal</p>
         </div>
 
-        <nav className="hr-nav">
-          {NAV.map(item => (
-            <button
-              key={item.key}
-              className={`hr-nav-item ${active === item.key ? "active" : ""}`}
-              onClick={() => setActive(item.key)}
-            >
-              {item.icon}
-              {item.label}
-            </button>
-          ))}
+        <nav className="sidebar-nav">
+          {NAV.map((item) => {
+            const isParentActive =
+              active === item.key || parentOf(active) === item.key;
+            const isExpanded = expandedNav === item.key;
+
+            return (
+              <div key={item.key} className="nav-group">
+                <button
+                  className={`nav-item ${isParentActive ? "nav-item-active" : ""}`}
+                  onClick={() => handleNavClick(item)}
+                >
+                  <div className="icon">{item.icon}</div>
+                  <span>{item.label}</span>
+                  {item.subItems ? (
+                    <ChevronDown
+                      size={14}
+                      className={`nav-chevron ${isExpanded ? "open" : ""}`}
+                    />
+                  ) : (
+                    isParentActive && <div className="nav-indicator" />
+                  )}
+                </button>
+
+                {item.subItems && isExpanded && (
+                  <div className="sub-nav">
+                    {item.subItems.map((sub) => {
+                      const SubIcon = sub.icon;
+                      const isSubActive = active === sub.key;
+                      return (
+                        <button
+                          key={sub.key}
+                          onClick={() => setActive(sub.key)}
+                          className={`sub-nav-item ${isSubActive ? "active" : ""}`}
+                        >
+                          {isSubActive && <span className="sub-nav-indicator" />}
+                          <SubIcon size={15} />
+                          <span>{sub.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
 
         <div className="hr-sidebar-footer">
@@ -142,41 +228,44 @@ export default function HRDashboardSection() {
             </svg>
             <input type="text" placeholder="Search employee or leave request..." />
           </div>
-
-          <div className="hr-topbar-right">
-            {/* Bell */}
-            <button className="hr-icon-btn" title="Notifications">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={17} height={17}>
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
+          <div className="user-area">
+            <button className="notification-btn-square">
+              <IoNotificationsOutline size={17} />
+              <span className="dot-red" />
             </button>
-            {/* Help */}
-            <button className="hr-icon-btn" title="Help">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={17} height={17}>
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                <line x1="12" y1="17" x2="12.01" y2="17"/>
-              </svg>
-            </button>
+            <div className="topbar-profile-container">
+              <div className="topbar-profile" onClick={() => setProfileOpen(!profileOpen)}>
+                <div className="profile-details">
+                  <span className="profile-name">
+                    {user?.full_name || "Arathy Sreekumar"}
+                  </span>
+                  <span className="profile-role">
+                    {ROLE_LABELS[user?.role] || user?.role || "System Administrator"}
+                  </span>
+                </div>
 
-            {/* User */}
-            <div className="hr-user">
-              <div className="hr-user-info">
-                <span className="hr-user-name">{user?.full_name || "Admin User"}</span>
-                <span className="hr-user-role">HR ADMINISTRATOR</span>
+                <img src={arathyAvatar} alt="Profile" className="profile-img" />
               </div>
-              <div className="hr-avatar" title="Logout" onClick={handleLogout} style={{ cursor: "pointer" }}>
-                {initials}
-              </div>
+
+              {profileOpen && (
+                <div className="topbar-dropdown">
+                  <div className="dropdown-user-info">
+                    <img src={arathyAvatar} alt="Profile" className="dropdown-avatar" />
+                    <h4>{user?.full_name}</h4>
+                    <p>{ROLE_LABELS[user?.role] || user?.role}</p>
+                  </div>
+
+                  <button className="dropdown-item logout-btn" onClick={handleLogout}>
+                    Sign out
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>
 
         {/* Body */}
-        <main className="hr-body">
-          {content}
-        </main>
+        <main className="hr-body">{content}</main>
       </div>
     </div>
   );

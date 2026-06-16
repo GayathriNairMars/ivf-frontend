@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { Search, Plus, Users, UserCheck, UserX, Network, Download, Eye, Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Search, Plus, Users, UserCheck, UserX, Network, Eye, Pencil, Ban } from "lucide-react";
 import { hrApi } from "../../api/hrApi";
 import "./hr_staff_management.css";
-import AddStaff from "../admin/staff/add_staff";
+import { ROLES } from "../../constants/constants";
 
-export default function HRStaffManagement({onAddStaff}) {
+export default function HRStaffManagement({ onAddStaff }) {
+  const navigate = useNavigate();
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchStaff = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await hrApi.getStaff();
       if (data && data.success) {
         setStaffList(data.staff || []);
       } else {
         setStaffList(data || []);
       }
-      setLoading(false);
-    } catch (error) {
-      console.error("Failed to fetch staff", error);
+    } catch (err) {
+      console.error("Failed to fetch staff", err);
+      setError("Failed to load staff data. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
@@ -32,19 +37,52 @@ export default function HRStaffManagement({onAddStaff}) {
     const newAction = currentStatus ? "deactivate" : "activate";
     try {
       await hrApi.toggleStaffStatus(staffId, newAction);
-      // Optimistically update UI
-      setStaffList(prev => prev.map(staff => 
-        staff.id === staffId ? { ...staff, is_active: !currentStatus } : staff
-      ));
+      setStaffList((prev) =>
+        prev.map((staff) =>
+          staff.id === staffId ? { ...staff, is_active: !currentStatus } : staff
+        )
+      );
     } catch (error) {
       console.error("Failed to toggle status", error);
       alert("Failed to update status. Please try again.");
     }
   };
+
+  // Filters
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+
+  // Pagination
+  const [page, setPage] = useState(1);
+  const PER_PAGE = 10;
+
+  // Filter logic
+  const filtered = staffList.filter((s) => {
+    const matchSearch =
+      !search ||
+      s.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+      s.email?.toLowerCase().includes(search.toLowerCase());
+    const matchRole = !roleFilter || s.role === roleFilter;
+    const matchStatus =
+      statusFilter === "" ? true : statusFilter === "active" ? s.is_active : !s.is_active;
+    const matchDate = !dateFilter || s.date_joined?.startsWith(dateFilter);
+    return matchSearch && matchRole && matchStatus && matchDate;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
   const totalStaff = staffList.length;
-  const activeStaff = staffList.filter(s => s.is_active).length;
-  const inactiveStaff = staffList.filter(s => !s.is_active).length;
-  const uniqueDepartments = new Set(staffList.map(s => s.department).filter(Boolean)).size;
+  const activeStaff = staffList.filter((s) => s.is_active).length;
+  const inactiveStaff = staffList.filter((s) => !s.is_active).length;
+  const uniqueDepartments = new Set(staffList.map((s) => s.department).filter(Boolean)).size;
+
+  const isHod = (staffId) => {
+    const staff = staffList.find((s) => s.id === staffId);
+    return staff?.is_hod === true || staff?.is_head_of_department === true;
+  };
 
   return (
     <div className="staff-management-container">
@@ -63,7 +101,9 @@ export default function HRStaffManagement({onAddStaff}) {
         <div className="summary-card">
           <div className="card-top">
             <span className="card-title">Total Staff</span>
-            <div className="card-icon blue"><Users size={18} /></div>
+            <div className="card-icon blue">
+              <Users size={18} />
+            </div>
           </div>
           <div className="card-bottom">
             <span className="card-value">{totalStaff}</span>
@@ -73,7 +113,9 @@ export default function HRStaffManagement({onAddStaff}) {
         <div className="summary-card">
           <div className="card-top">
             <span className="card-title">Active Staff</span>
-            <div className="card-icon green"><UserCheck size={18} /></div>
+            <div className="card-icon green">
+              <UserCheck size={18} />
+            </div>
           </div>
           <div className="card-bottom">
             <span className="card-value">{activeStaff}</span>
@@ -83,7 +125,9 @@ export default function HRStaffManagement({onAddStaff}) {
         <div className="summary-card">
           <div className="card-top">
             <span className="card-title">Inactive Staff</span>
-            <div className="card-icon red"><UserX size={18} /></div>
+            <div className="card-icon red">
+              <UserX size={18} />
+            </div>
           </div>
           <div className="card-bottom">
             <span className="card-value">{inactiveStaff}</span>
@@ -93,7 +137,9 @@ export default function HRStaffManagement({onAddStaff}) {
         <div className="summary-card">
           <div className="card-top">
             <span className="card-title">Departments</span>
-            <div className="card-icon gray"><Network size={18} /></div>
+            <div className="card-icon gray">
+              <Network size={18} />
+            </div>
           </div>
           <div className="card-bottom">
             <span className="card-value">{uniqueDepartments}</span>
@@ -102,107 +148,182 @@ export default function HRStaffManagement({onAddStaff}) {
         </div>
       </div>
 
-      <div className="filters-section">
-        <div className="filter-group" style={{ flex: 1 }}>
-          <label>Search Staff</label>
-          <div className="search-input-wrapper" style={{ width: '100%' }}>
-            <Search size={16} />
-            <input type="text" placeholder="Search by name, ID or email..." />
-          </div>
+      {/* Filters Bar */}
+      <div className="filters-bar">
+        <div className="search-input-wrapper">
+          <Search size={16} />
+          <input
+            type="text"
+            placeholder="Search by name, role, or email..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+          />
         </div>
-        <div className="filter-group">
-          <label>Role</label>
-          <select className="filter-select">
-            <option>All Roles</option>
-            <option>HR Manager</option>
-            <option>Doctor</option>
-            <option>Technician</option>
-          </select>
-        </div>
-        <div className="filter-group">
-          <label>Status</label>
-          <select className="filter-select">
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Inactive</option>
-          </select>
-        </div>
-        <div className="filter-actions">
-          <button className="btn-primary" style={{ padding: '10px 24px' }}>Apply Filters</button>
-          <button className="btn-secondary">Reset</button>
-          <button className="btn-icon-only"><Download size={18} /></button>
-        </div>
+
+        <select
+          className="filter-select"
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="">Status (All)</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+
+        <select
+          className="filter-select"
+          value={roleFilter}
+          onChange={(e) => {
+            setRoleFilter(e.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="">Role (All)</option>
+          {ROLES.filter((r) => r.value !== "").map((r) => (
+            <option key={r.value} value={r.value}>
+              {r.label}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="month"
+          className="date-filter-input"
+          value={dateFilter}
+          onChange={(e) => {
+            setDateFilter(e.target.value);
+            setPage(1);
+          }}
+        />
+
+        <button className="btn-link">More filters</button>
       </div>
 
+      {/* Table */}
       <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>S.No</th>
-              <th>Employee Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {staffList.map((staff, idx) => (
-              <tr key={staff.id}>
-                <td style={{ color: '#64748b' }}>{String(idx + 1).padStart(2, '0')}</td>
-                <td>
-                  <div className="employee-cell">
-                    <div className="employee-avatar">
-                      {staff.name.substring(0, 2).toUpperCase()}
-                    </div>
-                    <div className="employee-info">
-                      <span className="employee-name">{staff.name}</span>
-                      <span className="employee-meta">
-                        {staff.employee_id || 'N/A'} • {staff.department}
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td style={{ color: '#64748b' }}>{staff.email}</td>
-                <td style={{ color: '#475569' }}>{staff.role_name}</td>
-              <td>
-                <div className="actions-cell" style={{ alignItems: "center" }}>
-                  <label className="toggle-switch" style={{ width: "36px", height: "20px" }}>
-                    <input
-                      type="checkbox"
-                      checked={staff.is_active}
-                      onChange={() => handleToggleStatus(staff.id, staff.is_active)}
-                    />
-                    <span className="toggle-slider" style={{ borderRadius: "20px" }}></span>
-                  </label>
-                  <button className="action-btn"><Eye size={16} /></button>
-                  <button className="action-btn"><Pencil size={16} /></button>
-                </div>
-              </td>
-              </tr>
-            ))}
-            {staffList.length === 0 && !loading && (
-              <tr>
-                <td colSpan="7" style={{ textAlign: "center", padding: "40px", color: "#64748b" }}>
-                  No staff members found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-        
-        <div className="pagination">
-          <div className="pagination-info">Showing 1-{Math.min(10, totalStaff)} of {totalStaff} records</div>
-          <div className="pagination-controls">
-            <button className="page-btn">&lt;</button>
-            <button className="page-btn active">1</button>
-            <button className="page-btn">2</button>
-            <button className="page-btn">3</button>
-            <span style={{ color: '#94a3b8', margin: '0 4px', display: 'flex', alignItems: 'center' }}>...</span>
-            <button className="page-btn">9</button>
-            <button className="page-btn">&gt;</button>
+        {loading ? (
+          <div className="table-status">Loading staff...</div>
+        ) : error ? (
+          <div className="table-status error">{error}</div>
+        ) : (
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Staff ID</th>
+                  <th>Staff name</th>
+                  <th>Role</th>
+                  <th>Email</th>
+                  <th>Joined date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginated.length > 0 ? (
+                  paginated.map((s) => {
+                    const roleLabel = ROLES.find((r) => r.value === s.role)?.label || s.role;
+                    return (
+                      <tr key={s.id} className={!s.is_active ? "row-inactive" : ""}>
+                        <td>STAFF-{String(s.id).padStart(5, "0")}</td>
+                        <td className="cell-strong">{s.full_name}</td>
+                        <td>
+                          <div className="role-cell">
+                            {roleLabel}
+                            {isHod(s.id) && <span className="hod-badge">head</span>}
+                          </div>
+                        </td>
+                        <td className="cell-email">{s.email}</td>
+                        <td>
+                          {s.date_joined
+                            ? new Date(s.date_joined).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })
+                            : "-"}
+                        </td>
+                        <td>
+                          <label className="toggle-switch">
+                            <input
+                              type="checkbox"
+                              checked={!!s.is_active}
+                              onChange={() => handleToggleStatus(s.id, s.is_active)}
+                            />
+                            <span className="toggle-slider"></span>
+                          </label>
+                        </td>
+                        <td>
+                          <div className="actions-cell">
+                            <button
+                              onClick={() => navigate(`/superadmin/staff/edit/${s.id}`)}
+                              className="action-btn"
+                              title="Edit"
+                            >
+                              <Pencil size={18} />
+                            </button>
+                            <button
+                              onClick={() => navigate(`/superadmin/staff/view/${s.id}`)}
+                              className="action-btn"
+                              title="View"
+                            >
+                              <Eye size={18} />
+                            </button>
+                            <button
+                              onClick={() => handleToggleStatus(s.id, s.is_active)}
+                              className="action-btn action-btn-danger"
+                              title={s.is_active ? "Deactivate" : "Activate"}
+                            >
+                              <Ban size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="table-status">
+                      No staff members found matching your filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-        </div>
+        )}
+
+        {/* Footer / Pagination */}
+        {!loading && filtered.length > 0 && (
+          <div className="pagination">
+            <div className="pagination-info">
+              Showing {Math.min((page - 1) * PER_PAGE + 1, filtered.length)} to{" "}
+              {Math.min(page * PER_PAGE, filtered.length)} of {filtered.length} Staffs
+            </div>
+            <div className="pagination-controls">
+              <button
+                className="page-btn"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                &lt;
+              </button>
+              <button
+                className="page-btn page-btn-active"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+              >
+                &gt;
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -834,7 +834,7 @@
 
 /* Divider */
 .dept-card-divider {
-  width: 1px;
+  width: 0px;
   background-color: var(--border);
   align-self: stretch;
   margin: 0 8px;
