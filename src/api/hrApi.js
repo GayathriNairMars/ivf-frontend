@@ -31,6 +31,8 @@ export const hrApi = {
   assignShift: (payload) => api.post("/hr/shift-assignments/", payload).then(res => res.data),
   bulkAssignShifts: (payload) => api.post("/hr/shift-assignments/bulk/", payload).then(res => res.data),
   deleteShiftAssignment: (id) => api.delete(`/hr/shift-assignments/${id}/`).then(res => res.data),
+  // Dashboard
+  getDashboard: () => api.get("/hr/dashboard/").then(res => res.data),
 };
 
 export default hrApi;
