@@ -25,6 +25,9 @@ export const hrApi = {
   createShift: (payload) => api.post("/hr/shifts/", payload).then(res => res.data),
   updateShift: (id, payload) => api.put(`/hr/shifts/${id}/`, payload).then(res => res.data),
   deleteShift: (id) => api.delete(`/hr/shifts/${id}/`).then(res => res.data),
+
+  // Dashboard
+  getDashboard: () => api.get("/hr/dashboard/").then(res => res.data),
 };
 
 export default hrApi;
