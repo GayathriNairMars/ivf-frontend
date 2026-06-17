@@ -8,8 +8,6 @@ import {
   Edit2,
   Users,
   Trash2,
-  ChevronLeft,
-  ChevronRight,
   X
 } from "lucide-react";
 import "./hr_shift_types.css";
@@ -18,18 +16,17 @@ export default function HRShiftTypes() {
   const [shifts, setShifts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentShiftId, setCurrentShiftId] = useState(null);
   
-  // Form state
   const [formData, setFormData] = useState({
     name: "",
     shift_type: "MORNING",
     start_time: "08:00",
     end_time: "16:00",
     duration_hours: "8",
+    description: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -54,16 +51,15 @@ export default function HRShiftTypes() {
     if (shift) {
       setEditMode(true);
       setCurrentShiftId(shift.id);
-      // Strip seconds if present for time inputs
-      const sTime = shift.start_time ? shift.start_time.substring(0,5) : "";
-      const eTime = shift.end_time ? shift.end_time.substring(0,5) : "";
-      
+      const sTime = shift.start_time ? shift.start_time.substring(0, 5) : "";
+      const eTime = shift.end_time ? shift.end_time.substring(0, 5) : "";
       setFormData({
         name: shift.name || "",
         shift_type: shift.shift_type || "MORNING",
         start_time: sTime,
         end_time: eTime,
         duration_hours: shift.duration_hours ? parseFloat(shift.duration_hours).toString() : "",
+        description: shift.description || "",
       });
     } else {
       setEditMode(false);
@@ -74,14 +70,13 @@ export default function HRShiftTypes() {
         start_time: "08:00",
         end_time: "16:00",
         duration_hours: "8",
+        description: "",
       });
     }
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  const handleCloseModal = () => setIsModalOpen(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,8 +93,9 @@ export default function HRShiftTypes() {
         start_time: formData.start_time.length === 5 ? formData.start_time + ":00" : formData.start_time,
         end_time: formData.end_time.length === 5 ? formData.end_time + ":00" : formData.end_time,
         duration_hours: parseFloat(formData.duration_hours),
+        description: formData.description,
         is_active: true,
-        requires_on_site: true
+        requires_on_site: true,
       };
 
       if (editMode) {
@@ -129,17 +125,17 @@ export default function HRShiftTypes() {
 
   const totalDefinitions = shifts.length;
   const activeVariants = shifts.filter(s => s.is_active).length;
-  const avgDuration = shifts.length > 0 
+  const avgDuration = shifts.length > 0
     ? (shifts.reduce((acc, curr) => acc + parseFloat(curr.duration_hours), 0) / shifts.length).toFixed(1)
     : 0;
 
   const getShiftDotColor = (shiftType) => {
     switch (shiftType) {
-      case 'MORNING': return '#eab308'; // yellow
-      case 'EVENING': return '#f97316'; // orange
-      case 'NIGHT': return '#3b82f6'; // blue
-      case 'ONCALL': return '#ef4444'; // red
-      default: return '#22c55e'; // green
+      case 'MORNING': return '#eab308';
+      case 'EVENING': return '#f97316';
+      case 'NIGHT':   return '#3b82f6';
+      case 'ONCALL':  return '#ef4444';
+      default:        return '#22c55e';
     }
   };
 
@@ -152,13 +148,12 @@ export default function HRShiftTypes() {
     return `${h.toString().padStart(2, '0')}:${minutes} ${ampm}`;
   };
 
-  // Mock department for demo purposes if not available in API
   const getDepartmentLabel = (shiftType) => {
     switch (shiftType) {
-      case 'NIGHT': return { label: 'ER / ICU', type: 'blue' };
-      case 'ONCALL': return { label: 'Specialist', type: 'red' };
-      case 'CUSTOM': return { label: 'Support', type: 'green' };
-      default: return { label: 'General Care', type: 'green' };
+      case 'NIGHT':  return { label: 'ER / ICU',     type: 'blue' };
+      case 'ONCALL': return { label: 'Specialist',   type: 'red' };
+      case 'CUSTOM': return { label: 'Support',      type: 'green' };
+      default:       return { label: 'General Care', type: 'green' };
     }
   };
 
@@ -185,7 +180,6 @@ export default function HRShiftTypes() {
             <LayoutTemplate size={20} />
           </div>
         </div>
-        
         <div className="metric-card">
           <div className="metric-info">
             <span className="metric-label">ACTIVE VARIANTS</span>
@@ -195,7 +189,6 @@ export default function HRShiftTypes() {
             <CheckCircle2 size={20} />
           </div>
         </div>
-
         <div className="metric-card">
           <div className="metric-info">
             <span className="metric-label">AVG. DURATION</span>
@@ -221,9 +214,9 @@ export default function HRShiftTypes() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="6" style={{textAlign: 'center', padding: '2rem'}}>Loading...</td></tr>
+              <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>Loading...</td></tr>
             ) : shifts.length === 0 ? (
-              <tr><td colSpan="6" style={{textAlign: 'center', padding: '2rem'}}>No shift types found.</td></tr>
+              <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>No shift types found.</td></tr>
             ) : (
               shifts.map((shift) => {
                 const dept = getDepartmentLabel(shift.shift_type);
@@ -231,29 +224,25 @@ export default function HRShiftTypes() {
                   <tr key={shift.id}>
                     <td>
                       <div className="shift-name">
-                        <span className="dot" style={{ backgroundColor: getShiftDotColor(shift.shift_type) }}></span>
-                        {shift.name || shift.shift_type_display.split('(')[0].trim()}
+                        <span className="dot" style={{ backgroundColor: getShiftDotColor(shift.shift_type) }} />
+                        {shift.name || shift.shift_type_display?.split('(')[0].trim()}
                       </div>
                     </td>
-                    <td>
-                      <span className="code-badge">{shift.shift_type}</span>
-                    </td>
-                    <td>
-                      <span className="time-range">
-                        {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
-                      </span>
-                    </td>
+                    <td><span className="code-badge">{shift.shift_type}</span></td>
+                    <td><span className="time-range">{formatTime(shift.start_time)} - {formatTime(shift.end_time)}</span></td>
                     <td>{parseFloat(shift.duration_hours)} hours</td>
-                    <td>
-                      <span className={`dept-badge ${dept.type}`}>
-                        {dept.label}
-                      </span>
-                    </td>
+                    <td><span className={`dept-badge ${dept.type}`}>{dept.label}</span></td>
                     <td>
                       <div className="actions-cell">
-                        <button className="action-btn" title="Edit" onClick={() => handleOpenModal(shift)}><Edit2 size={16} /></button>
-                        <button className="action-btn" title="Assign Staff"><Users size={16} /></button>
-                        <button className="action-btn delete" title="Delete" onClick={() => handleDelete(shift.id)}><Trash2 size={16} /></button>
+                        <button className="action-btn" title="Edit" onClick={() => handleOpenModal(shift)}>
+                          <Edit2 size={16} />
+                        </button>
+                        <button className="action-btn" title="Assign Staff">
+                          <Users size={16} />
+                        </button>
+                        <button className="action-btn delete" title="Delete" onClick={() => handleDelete(shift.id)}>
+                          <Trash2 size={16} />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -262,7 +251,7 @@ export default function HRShiftTypes() {
             )}
           </tbody>
         </table>
-        
+
         <div className="pagination">
           <span className="showing-text">Showing {shifts.length} of {shifts.length} entries</span>
           <div className="page-controls">
@@ -282,18 +271,20 @@ export default function HRShiftTypes() {
                 <X size={20} />
               </button>
             </div>
+
             <form onSubmit={handleSubmit} className="shift-form">
               <div className="form-group">
                 <label>Shift Name</label>
-                <input 
-                  type="text" 
-                  name="name" 
-                  value={formData.name} 
-                  onChange={handleChange} 
-                  placeholder="e.g. Early Morning Shift" 
-                  required 
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="e.g. Early Morning Shift"
+                  required
                 />
               </div>
+
               <div className="form-group">
                 <label>Code (Shift Type)</label>
                 <select name="shift_type" value={formData.shift_type} onChange={handleChange} required>
@@ -304,43 +295,64 @@ export default function HRShiftTypes() {
                   <option value="CUSTOM">CUSTOM</option>
                 </select>
               </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label>Start Time</label>
-                  <input 
-                    type="time" 
-                    name="start_time" 
-                    value={formData.start_time} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="time"
+                    name="start_time"
+                    value={formData.start_time}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="form-group">
                   <label>End Time</label>
-                  <input 
-                    type="time" 
-                    name="end_time" 
-                    value={formData.end_time} 
-                    onChange={handleChange} 
-                    required 
+                  <input
+                    type="time"
+                    name="end_time"
+                    value={formData.end_time}
+                    onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
+
               <div className="form-group">
                 <label>Duration (Hours)</label>
-                <input 
-                  type="number" 
-                  step="0.5" 
-                  name="duration_hours" 
-                  value={formData.duration_hours} 
-                  onChange={handleChange} 
-                  required 
+                <input
+                  type="number"
+                  step="0.5"
+                  name="duration_hours"
+                  value={formData.duration_hours}
+                  onChange={handleChange}
+                  required
                 />
               </div>
+
+              {/* Description: editable on Add, read-only on Edit */}
+              <div className="form-group">
+                <label>Description</label>
+                {editMode ? (
+                  <div className="description-readonly">
+                    {formData.description || <span className="description-empty">No description provided.</span>}
+                  </div>
+                ) : (
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="e.g. Regular morning duty for general care staff"
+                    rows={3}
+                  />
+                )}
+              </div>
+
               <div className="modal-footer">
                 <button type="button" className="cancel-btn" onClick={handleCloseModal}>Cancel</button>
                 <button type="submit" className="save-btn" disabled={isSubmitting}>
-                  {isSubmitting ? "Saving..." : (editMode ? "Save Changes" : "Create Shift")}
+                  {isSubmitting ? "Saving..." : editMode ? "Save Changes" : "Create Shift"}
                 </button>
               </div>
             </form>
