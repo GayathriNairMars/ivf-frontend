@@ -106,12 +106,17 @@ export default function HRDashboardSection() {
   const [active, setActive] = useState("leave");
   const [profileOpen, setProfileOpen] = useState(false);
   const [expandedNav, setExpandedNav] = useState("employees");
+  const [departmentTarget, setDepartmentTarget] = useState(null);
 
   const handleLogout = async () => {
     await logout();
     window.location.href = "/hr-login";
   };
-
+  const handleViewDepartment = (dept) => {
+    setDepartmentTarget(dept);
+    setActive("departments");
+    setExpandedNav(null);
+  };
   // Map subitem keys -> their parent's key, so we know which parent to highlight/expand
   const parentOf = (childKey) => {
     for (const item of NAV) {
@@ -132,15 +137,18 @@ export default function HRDashboardSection() {
       setActive(item.key);
       setExpandedNav(null);
     }
+    setDepartmentTarget(null);
   };
 
   const content = (() => {
     switch (active) {
       default:          return <HRDashboard />;
-      case "dashboard":    return <HRDashboard />;
+      case "dashboard":    return <HRDashboard onViewDepartment={handleViewDepartment} />;
       case "manage_staff": return <HRStaffManagement onAddStaff={() => setActive("add_staff")} />;
       case "add_staff":    return <AddStaffHR onDone={() => setActive("manage_staff")} />;
-      case "departments":  return <HRDepartmentSection title="Departments" />;
+      case "departments":  return <HRDepartmentSection title="Departments" 
+        initialDept={departmentTarget}
+        key={departmentTarget?.id ?? "dept-list"} />;
       case "shift_types":  return <HRShiftTypes />;
       case "shift_calendar": return <ComingSoon title="Shift Calendar" />;
       case "assign_shifts": return <ComingSoon title="Assign Shifts" />;

@@ -30,7 +30,6 @@ export const hrApi = {
   getShiftSwaps: (params) => api.get("/hr/shift-swaps/", { params }).then(res => res.data),
   respondToShiftSwap: (id, payload) => api.post(`/hr/shift-swaps/${id}/`, payload).then(res => res.data),
 
-  // Dashboard
   getDashboard: () => api.get("/hr/dashboard/").then(res => res.data),
 };
 

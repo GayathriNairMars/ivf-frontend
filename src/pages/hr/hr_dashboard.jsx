@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import "./hr_dashboard.css";
 
-export default function HRDashboard() {
+export default function HRDashboard({onViewDepartment}) {
   const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -186,7 +186,7 @@ export default function HRDashboard() {
                   <td className="staff-name-col">{getMockHeadName(dept.code)}</td>
                   <td>{dept.staff_count}</td>
                   <td>
-                    <button className="eye-btn"><Eye size={18} /></button>
+                    <button className="eye-btn" onClick={() => onViewDepartment(dept)}><Eye size={18} /></button>
                   </td>
                 </tr>
               ))}
