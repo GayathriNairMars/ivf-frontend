@@ -8,7 +8,7 @@ function getCookie(name) {
 }
  
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/", // ✅ trailing slash
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/",
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
@@ -18,47 +18,92 @@ let csrfToken = null;
 export async function initCsrf() {
   try {
     const res = await api.get("csrf/");
-    csrfToken = res.data.csrfToken; 
+    csrfToken = res.data.csrfToken;
+    return csrfToken;
   } catch (error) {
     console.error("Failed to initialize CSRF token", error);
+    return null;
   }
 }
  
-// Request Interceptor
+// ── Request Interceptor ──────────────────────────────────────────────────────
 api.interceptors.request.use(
   (config) => {
     const method = config.method?.toUpperCase();
     if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
-      const token = getCookie("csrftoken") || csrfToken; // ✅ cookie first, stored token as fallback
-      if (token) config.headers["X-CSRFToken"] = token;
+      if (config._csrfRetry && config.headers["X-CSRFToken"]) {
+        return config;
+      }
+      // Always prefer the in-memory token; fall back to the live cookie
+      const token = csrfToken || getCookie("csrftoken");
+      if (token) {
+        config.headers["X-CSRFToken"] = token;
+      }
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
- 
-// Response Interceptor
+
+// ── Response Interceptor ─────────────────────────────────────────────────────
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {                          // ✅ async so we can await initCsrf
+  async (error) => {
+    const originalRequest = error.config;
+
     if (error.response) {
-      if (error.response.status === 401) {
-        console.error("Unauthorized! Redirecting to login...");
+      const status = error.response.status;
+      const data   = error.response.data;
+
+      // ── CSRF 403: refresh token then retry ONCE ──────────────────────────
+      const isCsrfError =
+        status === 403 &&
+        !originalRequest._csrfRetry &&
+        (typeof data === "object"
+          ? JSON.stringify(data).toLowerCase().includes("csrf")
+          : String(data).toLowerCase().includes("csrf"));
+
+      if (isCsrfError) {
+        originalRequest._csrfRetry = true;               // prevent infinite loop
+        console.warn("CSRF token stale — refreshing and retrying…");
+
+        const newToken = await initCsrf();
+
+        if (newToken) {
+          // Inject the fresh token into the retried request
+          originalRequest.headers["X-CSRFToken"] = newToken;
+        } else {
+          // Cookie may have been set by the CSRF endpoint even if the
+          // response body was empty, so try the cookie as well.
+          const cookieToken = getCookie("csrftoken");
+          if (cookieToken) {
+            originalRequest.headers["X-CSRFToken"] = cookieToken;
+          }
+        }
+
+        return api(originalRequest);                      // ✅ retry original call
+      }
+
+      // ── Auth 401 ─────────────────────────────────────────────────────────
+      if (status === 401) {
+        console.error("Unauthorized — redirecting to login…");
         if (
           window.location.pathname !== "/login" &&
-          window.location.pathname !== "/admin-login"
+          window.location.pathname !== "/admin-login" &&
+          window.location.pathname !== "/hr-login"
         ) {
           window.location.href = "/login";
         }
-      } else if (error.response.status === 403) {
-        console.error("Access Denied! Refreshing CSRF token...");
-        await initCsrf();                     // ✅ auto-refresh token on 403
-      } else if (error.response.status >= 500) {
-        console.error("Server Error!");
+      }
+
+      // ── Server error ──────────────────────────────────────────────────────
+      if (status >= 500) {
+        console.error("Server Error!", error.response.data);
       }
     } else if (error.request) {
-      console.error("Network Error! Please check your connection.");
+      console.error("Network Error — no response received.");
     }
+
     return Promise.reject(error);
   }
 );
