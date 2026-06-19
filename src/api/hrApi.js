@@ -33,6 +33,16 @@ export const hrApi = {
   deleteShiftAssignment: (id) => api.delete(`/hr/shift-assignments/${id}/`).then(res => res.data),
   // Dashboard
   getDashboard: () => api.get("/hr/dashboard/").then(res => res.data),
+
+  // Attendance
+  getAttendanceDashboard: (params) => api.get("/attendance/admin/dashboard/", { params }).then(res => res.data),
+  getAttendanceAll: (params) => api.get("/attendance/admin/all/", { params }).then(res => res.data),
+  getStaffAttendance: (userId, params) => api.get(`/attendance/admin/staff/${userId}/`, { params }).then(res => res.data),
+  markAttendance: (payload) => api.post("/attendance/admin/mark/", payload).then(res => res.data),
+  getAttendanceRecord: (id) => api.get(`/attendance/admin/${id}/`).then(res => res.data),
+  updateAttendance: (id, payload) => api.put(`/attendance/admin/${id}/`, payload).then(res => res.data),
+  deleteAttendance: (id) => api.delete(`/attendance/admin/${id}/`).then(res => res.data),
+  bulkMarkAttendance: (payload) => api.post("/attendance/admin/bulk/", payload).then(res => res.data),
 };
 
 export default hrApi;

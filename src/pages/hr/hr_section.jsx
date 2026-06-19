@@ -14,6 +14,8 @@ import { ROLE_LABELS } from "../../constants/constants";
 import HRShiftTypes from "./shifts/hr_shift_types";
 import HRAssignShifts from "./shifts/hr_assign_shifts";
 import { Calendar, Clock, RefreshCw, ClipboardCheck, FileText } from "lucide-react";
+import HRAttendance from "./attendance/hr_attendance";
+import ViewAllAttendance from "./attendance/ViewAllAttendance";
 
 /* ── Nav items ── */
 const NAV = [
@@ -67,18 +69,21 @@ const NAV = [
       { key: "shift_types", label: "Shift Types", icon: Clock },
       { key: "assign_shifts", label: "Assign Shifts", icon: UserPlus },
       { key: "shift_swaps", label: "Shift Swaps", icon: RefreshCw },
-      { key: "attendance", label: "Attendance", icon: ClipboardCheck },
       { key: "shift_reports", label: "Reports", icon: FileText },
     ],
   },
   {
-    key: "payroll", label: "Payroll",
+    key: "attendance_management", label: "Attendance Management",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
         <rect x="2" y="5" width="20" height="14" rx="2"/>
         <line x1="2" y1="10" x2="22" y2="10"/>
       </svg>
     ),
+    subItems: [
+      { key: "attendance", label: "Dashboard", icon: Calendar },
+      { key: "all_attendance", label: "All Attendance", icon: ClipboardCheck },
+    ],
   },
   {
     key: "settings", label: "Settings",
@@ -145,9 +150,9 @@ export default function HRDashboardSection() {
       case "shift_calendar": return <ComingSoon title="Shift Calendar" />;
       case "assign_shifts": return <HRAssignShifts />;
       case "shift_swaps":  return <ComingSoon title="Shift Swaps" />;
-      case "attendance":   return <ComingSoon title="Attendance" />;
+      case "attendance":   return <HRAttendance />;
+      case "all_attendance": return <ViewAllAttendance onClose={() => setActive("attendance")} />;
       case "shift_reports": return <ComingSoon title="Reports" />;
-      case "payroll":      return <ComingSoon title="Payroll" />;
       case "leave":     return <HRLeaveManagement />;
       case "settings":  return <HRSettings />;
     }
