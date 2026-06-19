@@ -30,6 +30,13 @@ export const receptionistApi = {
   getAvailableSlots: (doctorId, date) => api.get('/receptionist/appointments/available-slots/', { params: { doctor_id: doctorId, date: date } }).then(res => res.data),
   getCalendar: (id, start, end) => api.get(`/receptionist/appointments/calendar/${id}/`, { params: { start_date: start, end_date: end } }).then(res => res.data),
   cancelAppointment: (id, payload) => api.patch(`/receptionist/appointments/cancel/${id}/`, payload).then(res => res.data),
+
+  // Attendance
+  getTodayAttendance: () => api.get("/attendance/my/").then(res => res.data),
+  markAttendance: (payload) => api.post("/attendance/mark/", payload).then(res => res.data),
+  updateAttendance: (payload) => api.put("/attendance/mark/", payload).then(res => res.data),
+  getAttendanceHistory: (params) => api.get("/attendance/history/", { params }).then(res => res.data),
+  getAttendanceStats: (params) => api.get("/attendance/stats/", { params }).then(res => res.data),
 };
  
 export default receptionistApi;

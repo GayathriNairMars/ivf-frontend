@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { doctorApi } from "../../api/doctorApi";
+import { receptionistApi } from "../../api/receptionistApi";
 import {
   Calendar, Clock, Briefcase, CheckCircle, XCircle,
   AlertCircle, TrendingUp, Home, AlarmClock,
 } from "lucide-react";
-import "./doctor_attendance.css";
+import "./receptionist_attendance.css";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -51,7 +51,7 @@ const EMPTY_TODAY = {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function DoctorAttendance() {
+export default function ReceptionistAttendance() {
   const [loading,       setLoading]       = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [todayData,     setTodayData]     = useState(null);
@@ -86,9 +86,9 @@ export default function DoctorAttendance() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const todayRes = await doctorApi.getTodayAttendance().catch(() => null);
-      const histRes  = await doctorApi.getAttendanceHistory({}).catch(() => null);
-      const statsRes = await doctorApi.getAttendanceStats({}).catch(() => null);
+      const todayRes = await receptionistApi.getTodayAttendance().catch(() => null);
+      const histRes  = await receptionistApi.getAttendanceHistory({}).catch(() => null);
+      const statsRes = await receptionistApi.getAttendanceStats({}).catch(() => null);
 
       // ── Today attendance ──────────────────────────────────────────────────
       // If API returns success + attendance object → record exists in DB
@@ -189,7 +189,7 @@ export default function DoctorAttendance() {
       remarks:   "Checked in",
     };
     try {
-      await doctorApi.markAttendance(payload);  // POST
+      await receptionistApi.markAttendance(payload);  // POST
       await fetchData();
     } catch (e) {
       console.error("Check-in failed", e);
@@ -208,7 +208,7 @@ export default function DoctorAttendance() {
       check_out: timeNow(),   // "17:00" — only field needed
     };
     try {
-      await doctorApi.updateAttendance(payload);  // PUT
+      await receptionistApi.updateAttendance(payload);  // PUT
       await fetchData();
     } catch (e) {
       console.error("Check-out failed", e);
@@ -229,7 +229,7 @@ export default function DoctorAttendance() {
       remarks:   todayData?.remarks || "",
     };
     try {
-      await doctorApi.updateAttendance(payload);  // PUT
+      await receptionistApi.updateAttendance(payload);  // PUT
       await fetchData();
     } catch (e) {
       console.error("Update failed", e);

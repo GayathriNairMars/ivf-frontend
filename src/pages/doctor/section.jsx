@@ -18,7 +18,7 @@ const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "patients", label: "Patient Directory", icon: "patients" },
   { key: "calendar", label: "My Calendar", icon: "calendar", lucideIcon: <CalendarCheck size={17} /> },
-  { key: "attendance", label: "My Attendance", icon: "clipboard", lucideIcon: <CalendarCheck size={17} /> },
+  { key: "attendance", label: "My Attendance", icon: "attendance" },
   { key: "leave", label: "Leave Management", icon: "leave", lucideIcon: <CalendarOff size={17} /> },
   { key: "departments", label: "Departments", icon: "departments" },
   { key: "prescriptions", label: "Prescriptions", icon: "prescriptions" },

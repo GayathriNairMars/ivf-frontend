@@ -1,4 +1,4 @@
-
+import { ClipboardCheck } from "lucide-react";
 
 // Icons 
 const icons = {
@@ -78,6 +78,9 @@ const icons = {
               <path d="M12 14v4"/>
               <path d="M10 16h4"/>
             </svg>
+          ),
+          attendance: (
+            <ClipboardCheck size={17} />
           ),
       };
 

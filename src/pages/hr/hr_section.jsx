@@ -7,6 +7,7 @@ import AddStaffHR from "./add_staff";
 import HRDashboard from "./hr_dashboard";
 import "./hr_section.css";
 import HRDepartmentSection from "./hr_departments";
+import HRAttendance from "./hr_attendance";
 import { Building2, Users, UserPlus, ChevronDown } from "lucide-react";
 import arathyAvatar from "../../assets/arathy_avatar.png";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -14,6 +15,7 @@ import { ROLE_LABELS } from "../../constants/constants";
 import HRShiftTypes from "./shifts/hr_shift_types";
 import HRShiftSwaps from "./shifts/hr_shift_swaps";
 import { Calendar, Clock, RefreshCw, ClipboardCheck, FileText } from "lucide-react";
+import Icon from "../../components/Icons";
 
 /* ── Nav items ── */
 const NAV = [
@@ -71,6 +73,7 @@ const NAV = [
       { key: "shift_reports", label: "Reports", icon: FileText },
     ],
   },
+  {key:"myattendance",label:"My Attendance",icon: <ClipboardCheck size={17} />},
   {
     key: "payroll", label: "Payroll",
     icon: (
@@ -152,9 +155,11 @@ export default function HRDashboardSection() {
       case "shift_types":  return <HRShiftTypes />;
       case "shift_calendar": return <ComingSoon title="Shift Calendar" />;
       case "assign_shifts": return <ComingSoon title="Assign Shifts" />;
+      case "attendance": return <ComingSoon title="Attendance Management" />;
       case "shift_swaps":  return <HRShiftSwaps />;
-      case "attendance":   return <ComingSoon title="Attendance" />;
       case "shift_reports": return <ComingSoon title="Reports" />;
+      case "attendance_management": return <ComingSoon title="Attendance Manegement" />;
+      case "myattendance": return <HRAttendance />
       case "payroll":      return <ComingSoon title="Payroll" />;
       case "leave":     return <HRLeaveManagement />;
       case "settings":  return <HRSettings />;

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import "./lab_section.css";
+import "./section.css";
 import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck } from "lucide-react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import arathyAvatar from "../../assets/arathy_avatar.png";
-import LabAttendance from "./lab_attendance";
+import PharmacistAttendance from "./pharmacist_attendance";
 
 const NAV = [
   {
@@ -18,12 +18,8 @@ const NAV = [
     ),
   },
   {
-    key: "tests", label: "Lab Tests",
+    key: "billing", label: "Billing",
     icon: <FlaskConical size={16} />,
-  },
-  {
-    key: "results", label: "Results",
-    icon: <FileText size={16} />,
   },
   {
     key: "inventory", label: "Inventory",
@@ -33,7 +29,7 @@ const NAV = [
     key:"attendance", label:"My Attendance", icon: <ClipboardCheck size={16} />, 
   },
   {
-    key: "reports", label: "Reports",
+    key: "settings", label: "Settings",
     icon: <Activity size={16} />,
   },
 ];
@@ -47,7 +43,7 @@ function ComingSoon({ title }) {
   );
 }
 
-export default function LabDashboardSection() {
+export default function PharmacistDashboardSection() {
   const { user, logout } = useAuth();
   const [active, setActive] = useState("dashboard");
   const [profileOpen, setProfileOpen] = useState(false);
@@ -65,13 +61,12 @@ export default function LabDashboardSection() {
 
   const content = (() => {
     switch (active) {
-      case "dashboard":  return <ComingSoon title="Lab Dashboard" />;
-      case "tests":      return <ComingSoon title="Lab Tests" />;
-      case "results":    return <ComingSoon title="Test Results" />;
-      case "inventory":  return <ComingSoon title="Lab Inventory" />;
-      case "attendance": return <LabAttendance />;
-      case "reports":    return <ComingSoon title="Reports" />;
-      default:           return <ComingSoon title="Lab Dashboard" />;
+      case "dashboard":  return <ComingSoon title="Pharmacy Dashboard" />;
+      case "billing":      return <ComingSoon title="Billing" />;
+      case "inventory":  return <ComingSoon title="Pharmacy Inventory" />;
+      case "attendance": return <PharmacistAttendance />;
+      case "settings":    return <ComingSoon title="Settings" />;
+      default:           return <ComingSoon title="Pharmacy Dashboard" />;
     }
   })();
 
@@ -80,7 +75,7 @@ export default function LabDashboardSection() {
       <aside className="lab-sidebar">
         <div className="lab-brand">
           <h2>HIMS</h2>
-          <p>Lab Administration Portal</p>
+          <p>Pharmacist Portal</p>
         </div>
 
         <nav className="sidebar-nav">
@@ -130,10 +125,10 @@ export default function LabDashboardSection() {
               <div className="topbar-profile" onClick={() => setProfileOpen(!profileOpen)}>
                 <div className="profile-details">
                   <span className="profile-name">
-                    {user?.full_name || "Lab Technician"}
+                    {user?.full_name || "Pharmacist"}
                   </span>
                   <span className="profile-role">
-                    {ROLE_LABELS?.[user?.role] || user?.role || "Laboratory"}
+                    {ROLE_LABELS?.[user?.role] || user?.role || "Pharmacy"}
                   </span>
                 </div>
 
@@ -144,8 +139,8 @@ export default function LabDashboardSection() {
                 <div className="topbar-dropdown">
                   <div className="dropdown-user-info">
                     <img src={arathyAvatar} alt="Profile" className="dropdown-avatar" />
-                    <h4>{user?.full_name || "Lab Technician"}</h4>
-                    <p>{ROLE_LABELS?.[user?.role] || user?.role || "Laboratory"}</p>
+                    <h4>{user?.full_name || "Pharmacist"}</h4>
+                    <p>{ROLE_LABELS?.[user?.role] || user?.role || "Pharmacy"}</p>
                   </div>
 
                   <button className="dropdown-item logout-btn" onClick={handleLogout}>

@@ -599,11 +599,18 @@ export default function LoginPage() {
               <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
                 Are you an Admin? <a href="/admin-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>Admin login →</a>
               </p>
+
               <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
-                Are you a Doctor? <a href="/doctor-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>Doctor login →</a>
+                Are you a Doctor? <a href="/doctor-login" style={{ color: "#3b82f6", textDecoration: "none", fontWeight: "500" }}>Doctor login →</a>
               </p>
               <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
-                Are you an HR? <a href="/hr-login" style={{ color: "#2563eb", textDecoration: "none", fontWeight: "600" }}>HR login →</a>
+                Are you an HR? <a href="/hr-login" style={{ color: "#3b82f6", textDecoration: "none", fontWeight: "500" }}>HR login →</a>
+              </p>
+              <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                Are you a Lab Tech? <a href="/lab-login" style={{ color: "#3b82f6", textDecoration: "none", fontWeight: "500" }}>Lab login →</a>
+              </p>
+              <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                Are you a Pharmacist? <a href="/pharmacist-login" style={{ color: "#3b82f6", textDecoration: "none", fontWeight: "500" }}>Pharmacist login →</a>
               </p>
             </div>
           </div>
