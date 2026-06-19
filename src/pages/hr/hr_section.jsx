@@ -11,9 +11,9 @@ import { Building2, Users, UserPlus, ChevronDown } from "lucide-react";
 import arathyAvatar from "../../assets/arathy_avatar.png";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
-import HRAssignShifts from "./shifts/hr_assign_shifts";
 import HRShiftTypes from "./shifts/hr_shift_types";
 import HRShiftSwaps from "./shifts/hr_shift_swaps";
+import HRAssignShifts from "./shifts/hr_assign_shifts";
 import { Calendar, Clock, RefreshCw, ClipboardCheck, FileText } from "lucide-react";
 import HRAttendance from "./attendance/hr_attendance";
 import ViewAllAttendance from "./attendance/ViewAllAttendance";
@@ -21,7 +21,8 @@ import ViewAllAttendance from "./attendance/ViewAllAttendance";
 /* ── Nav items ── */
 const NAV = [
   {
-    key: "dashboard", label: "Dashboard",
+    key: "dashboard", 
+    label: "Dashboard",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
         <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
@@ -30,7 +31,8 @@ const NAV = [
     ),
   },
   {
-    key: "employees", label: "Employee Directory",
+    key: "employees", 
+    label: "Employee Directory",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -45,7 +47,8 @@ const NAV = [
     ],
   },
   {
-    key: "leave", label: "Leave Management",
+    key: "leave", 
+    label: "Leave Management",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
         <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
@@ -54,11 +57,13 @@ const NAV = [
     ),
   },
   {
-    key: "departments", label: "Departments",
+    key: "departments", 
+    label: "Departments",
     icon: <Building2 size={16} />,
   },
   {
-    key: "shifts", label: "Shift Management",
+    key: "shifts", 
+    label: "Shift Management",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
         <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
@@ -74,7 +79,8 @@ const NAV = [
     ],
   },
   {
-    key: "attendance_management", label: "Attendance Management",
+    key: "attendance_management", 
+    label: "Attendance Management",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
         <rect x="2" y="5" width="20" height="14" rx="2"/>
@@ -87,7 +93,8 @@ const NAV = [
     ],
   },
   {
-    key: "settings", label: "Settings",
+    key: "settings", 
+    label: "Settings",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
         <circle cx="12" cy="12" r="3"/>
@@ -142,20 +149,34 @@ export default function HRDashboardSection() {
 
   const content = (() => {
     switch (active) {
-      default:          return <HRDashboard />;
-      case "dashboard":    return <HRDashboard />;
-      case "manage_staff": return <HRStaffManagement onAddStaff={() => setActive("add_staff")} />;
-      case "add_staff":    return <AddStaffHR onDone={() => setActive("manage_staff")} />;
-      case "departments":  return <HRDepartmentSection title="Departments" />;
-      case "shift_types":  return <HRShiftTypes />;
-      case "shift_calendar": return <ComingSoon title="Shift Calendar" />;
-      case "assign_shifts": return <HRAssignShifts />;
-      case "shift_swaps":  return <HRShiftSwaps />;      
-      case "attendance":   return <HRAttendance />;
-      case "all_attendance": return <ViewAllAttendance onClose={() => setActive("attendance")} />;
-      case "shift_reports": return <ComingSoon title="Reports" />;
-      case "leave":     return <HRLeaveManagement />;
-      case "settings":  return <HRSettings />;
+      default:          
+        return <HRDashboard />;
+      case "dashboard":    
+        return <HRDashboard />;
+      case "manage_staff": 
+        return <HRStaffManagement onAddStaff={() => setActive("add_staff")} />;
+      case "add_staff":    
+        return <AddStaffHR onDone={() => setActive("manage_staff")} />;
+      case "departments":  
+        return <HRDepartmentSection title="Departments" />;
+      case "shift_types":  
+        return <HRShiftTypes />;
+      case "shift_calendar": 
+        return <ComingSoon title="Shift Calendar" />;
+      case "assign_shifts": 
+        return <HRAssignShifts />;
+      case "shift_swaps":  
+        return <HRShiftSwaps />;
+      case "attendance":   
+        return <HRAttendance />;
+      case "all_attendance": 
+        return <ViewAllAttendance onClose={() => setActive("attendance")} />;
+      case "shift_reports": 
+        return <ComingSoon title="Reports" />;
+      case "leave":     
+        return <HRLeaveManagement />;
+      case "settings":  
+        return <HRSettings />;
     }
   })();
 
