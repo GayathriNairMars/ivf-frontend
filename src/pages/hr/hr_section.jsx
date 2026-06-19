@@ -7,7 +7,7 @@ import AddStaffHR from "./add_staff";
 import HRDashboard from "./hr_dashboard";
 import "./hr_section.css";
 import HRDepartmentSection from "./hr_departments";
-import HRAttendance from "./hr_attendance";
+import MyAttendance from "./my_attendance";
 import { Building2, Users, UserPlus, ChevronDown } from "lucide-react";
 import arathyAvatar from "../../assets/arathy_avatar.png";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -80,7 +80,6 @@ const NAV = [
       { key: "shift_reports", label: "Reports", icon: FileText },
     ],
   },
-  {key:"myattendance",label:"My Attendance",icon: <ClipboardCheck size={17} />},
   {
     key: "attendance_management", 
     label: "Attendance Management",
@@ -93,6 +92,7 @@ const NAV = [
     subItems: [
       { key: "attendance", label: "Dashboard", icon: Calendar },
       { key: "all_attendance", label: "All Attendance", icon: ClipboardCheck },
+      { key: "my_attendance", label: "My Attendance", icon: ClipboardCheck },
     ],
   },
   {
@@ -180,6 +180,8 @@ export default function HRDashboardSection() {
         return <HRAttendance />;
       case "all_attendance": 
         return <ViewAllAttendance onClose={() => setActive("attendance")} />;
+      case "my_attendance":
+        return <MyAttendance />;
       case "shift_reports": 
         return <ComingSoon title="Reports" />;
       case "leave":     
