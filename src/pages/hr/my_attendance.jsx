@@ -4,7 +4,7 @@ import {
 	Calendar, Clock, Briefcase, CheckCircle, XCircle,
 	AlertCircle, TrendingUp, Home, AlarmClock,
 } from "lucide-react";
-import "./hr_attendance.css";
+import "./my_attendance.css";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -51,7 +51,7 @@ const EMPTY_TODAY = {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function HRAttendance() {
+export default function MyAttendance() {
 	const [loading,       setLoading]       = useState(false);
 	const [actionLoading, setActionLoading] = useState(false);
 	const [todayData,     setTodayData]     = useState(null);
