@@ -50,8 +50,8 @@ export default function PharmacistDashboardSection() {
   const [expandedNav, setExpandedNav] = useState(null);
 
   const handleLogout = async () => {
-    await logout("lab/logout/");
-    window.location.href = "/lab-login";
+    await logout();
+    window.location.href = "/pharmacist-login";
   };
 
   const handleNavClick = (item) => {
