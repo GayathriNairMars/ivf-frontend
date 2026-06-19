@@ -7,6 +7,7 @@ import AddStaffHR from "./add_staff";
 import HRDashboard from "./hr_dashboard";
 import "./hr_section.css";
 import HRDepartmentSection from "./hr_departments";
+import HRAttendance from "./hr_attendance";
 import { Building2, Users, UserPlus, ChevronDown } from "lucide-react";
 import arathyAvatar from "../../assets/arathy_avatar.png";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -15,6 +16,7 @@ import HRShiftTypes from "./shifts/hr_shift_types";
 import HRShiftSwaps from "./shifts/hr_shift_swaps";
 import HRAssignShifts from "./shifts/hr_assign_shifts";
 import { Calendar, Clock, RefreshCw, ClipboardCheck, FileText } from "lucide-react";
+import Icon from "../../components/Icons";
 import HRAttendance from "./attendance/hr_attendance";
 import ViewAllAttendance from "./attendance/ViewAllAttendance";
 
@@ -78,6 +80,7 @@ const NAV = [
       { key: "shift_reports", label: "Reports", icon: FileText },
     ],
   },
+  {key:"myattendance",label:"My Attendance",icon: <ClipboardCheck size={17} />},
   {
     key: "attendance_management", 
     label: "Attendance Management",
@@ -119,12 +122,17 @@ export default function HRDashboardSection() {
   const [active, setActive] = useState("leave");
   const [profileOpen, setProfileOpen] = useState(false);
   const [expandedNav, setExpandedNav] = useState("employees");
+  const [departmentTarget, setDepartmentTarget] = useState(null);
 
   const handleLogout = async () => {
     await logout();
     window.location.href = "/hr-login";
   };
-
+  const handleViewDepartment = (dept) => {
+    setDepartmentTarget(dept);
+    setActive("departments");
+    setExpandedNav(null);
+  };
   // Map subitem keys -> their parent's key, so we know which parent to highlight/expand
   const parentOf = (childKey) => {
     for (const item of NAV) {
@@ -145,6 +153,7 @@ export default function HRDashboardSection() {
       setActive(item.key);
       setExpandedNav(null);
     }
+    setDepartmentTarget(null);
   };
 
   const content = (() => {

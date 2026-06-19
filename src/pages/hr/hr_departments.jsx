@@ -320,12 +320,12 @@ function DeptCard({ dept, onClick, onEdit }) {
 }
 
 // Main Department Section
-export default function HRDepartmentSection() {
+export default function HRDepartmentSection({ initialDept = null }) {
 		const [departments, setDepartments] = useState([]);
-		const [selected, setSelected] = useState(null);
+		const [selected, setSelected] = useState(initialDept);
 		const [loading, setLoading] = useState(true);
 		const [seeding, setSeeding] = useState(false);
-		const [view, setView] = useState("list");
+		const [view, setView] = useState(initialDept ? "detail" : "list");
 		const [searchQuery, setSearchQuery] = useState("");
 		const [statusFilter, setStatusFilter] = useState("active");
 		const [isModalOpen, setIsModalOpen] = useState(false);

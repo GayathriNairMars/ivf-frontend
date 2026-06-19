@@ -30,10 +30,14 @@ export const hrApi = {
   getShiftSwaps: (params) => api.get("/hr/shift-swaps/", { params }).then(res => res.data),
   respondToShiftSwap: (id, payload) => api.post(`/hr/shift-swaps/${id}/`, payload).then(res => res.data),
 
-  // Dashboard
   getDashboard: () => api.get("/hr/dashboard/").then(res => res.data),
 
   // Attendance
+  getTodayAttendance: () => api.get("/attendance/my/").then(res => res.data),
+  markAttendance: (payload) => api.post("/attendance/mark/", payload).then(res => res.data),
+  updateAttendance: (payload) => api.put("/attendance/mark/", payload).then(res => res.data),
+  getAttendanceHistory: (params) => api.get("/attendance/history/", { params }).then(res => res.data),
+  getAttendanceStats: (params) => api.get("/attendance/stats/", { params }).then(res => res.data),
   getAttendanceDashboard: (params) => api.get("/attendance/admin/dashboard/", { params }).then(res => res.data),
   getAttendanceAll: (params) => api.get("/attendance/admin/all/", { params }).then(res => res.data),
   getStaffAttendance: (userId, params) => api.get(`/attendance/admin/staff/${userId}/`, { params }).then(res => res.data),

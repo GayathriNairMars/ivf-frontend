@@ -8,6 +8,7 @@ import DoctorCalendar from "./doctor_calendar";
 import LeaveManagement from "./leave_management";
 import DoctorDashboard from "./doctor_dashboard";
 import DoctorPrescriptions from "./doctor_prescriptions";
+import DoctorAttendance from "./doctor_attendance";
 import Icon from "../../components/Icons";
 import { IoNotificationsOutline } from "react-icons/io5";
 import "../receptionist/receptionist.css"; // Reuse the layout CSS
@@ -17,6 +18,7 @@ const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "patients", label: "Patient Directory", icon: "patients" },
   { key: "calendar", label: "My Calendar", icon: "calendar", lucideIcon: <CalendarCheck size={17} /> },
+  { key: "attendance", label: "My Attendance", icon: "attendance" },
   { key: "leave", label: "Leave Management", icon: "leave", lucideIcon: <CalendarOff size={17} /> },
   { key: "departments", label: "Departments", icon: "departments" },
   { key: "prescriptions", label: "Prescriptions", icon: "prescriptions" },
@@ -78,6 +80,8 @@ export default function DoctorDashboardSection() {
         return <DoctorCalendar />;
       case "leave":
         return <LeaveManagement />;
+      case "attendance":
+        return <DoctorAttendance />;
       case "prescriptions":
         return <DoctorPrescriptions />;
 
