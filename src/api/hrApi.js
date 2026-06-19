@@ -26,11 +26,10 @@ export const hrApi = {
   updateShift: (id, payload) => api.put(`/hr/shifts/${id}/`, payload).then(res => res.data),
   deleteShift: (id) => api.delete(`/hr/shifts/${id}/`).then(res => res.data),
 
-  // Shift Assignments
-  getShiftAssignments: (params) => api.get("/hr/shift-assignments/", { params }).then(res => res.data),
-  assignShift: (payload) => api.post("/hr/shift-assignments/", payload).then(res => res.data),
-  bulkAssignShifts: (payload) => api.post("/hr/shift-assignments/bulk/", payload).then(res => res.data),
-  deleteShiftAssignment: (id) => api.delete(`/hr/shift-assignments/${id}/`).then(res => res.data),
+  // Shift Swaps
+  getShiftSwaps: (params) => api.get("/hr/shift-swaps/", { params }).then(res => res.data),
+  respondToShiftSwap: (id, payload) => api.post(`/hr/shift-swaps/${id}/`, payload).then(res => res.data),
+
   // Dashboard
   getDashboard: () => api.get("/hr/dashboard/").then(res => res.data),
 
