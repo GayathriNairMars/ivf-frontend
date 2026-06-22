@@ -6,8 +6,12 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import arathyAvatar from "../../assets/arathy_avatar.png";
 import PharmacistAttendance from "./pharmacist_attendance";
+import AddInventory from "./add_inventory";
 import PharmacistInventory from "./pharmacist_inventory";
 import PharmacistAlerts from "./pharmacist_alerts";
+import PharmacistSettings from "./pharmacist_settings";
+import StockAdjustment from "./stock_adjustment";
+
 
 const NAV = [
   {
@@ -28,7 +32,9 @@ const NAV = [
     icon: <Beaker size={16} />,
     children: [
       { key: "inventory_dashboard", label: "Dashboard" },
-      { key: "stock_alerts", label: "Stock Alerts" }
+      { key: "stock_alerts", label: "Stock Alerts" },
+      { key: "inventory", label: "Add Inventory" },
+      { key: "stock_adjustment", label: "Stock Adjustment" },
     ]
   },
   {
@@ -69,10 +75,12 @@ export default function PharmacistDashboardSection() {
     switch (active) {
       case "dashboard":  return <ComingSoon title="Pharmacy Dashboard" />;
       case "billing":      return <ComingSoon title="Billing" />;
+      case "inventory":  return <AddInventory />;
       case "inventory_dashboard":  return <PharmacistInventory />;
       case "stock_alerts": return <PharmacistAlerts />;
+      case "stock_adjustment": return <StockAdjustment />;
       case "attendance": return <PharmacistAttendance />;
-      case "settings":    return <ComingSoon title="Settings" />;
+      case "settings":    return <PharmacistSettings />;
       default:           return <ComingSoon title="Pharmacy Dashboard" />;
     }
   })();
