@@ -6,6 +6,7 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import arathyAvatar from "../../assets/arathy_avatar.png";
 import PharmacistAttendance from "./pharmacist_attendance";
+import AddInventory from "./add_inventory";
 
 const NAV = [
   {
@@ -50,8 +51,8 @@ export default function PharmacistDashboardSection() {
   const [expandedNav, setExpandedNav] = useState(null);
 
   const handleLogout = async () => {
-    await logout("lab/logout/");
-    window.location.href = "/lab-login";
+    await logout();
+    window.location.href = "/pharmacist-login";
   };
 
   const handleNavClick = (item) => {
@@ -63,7 +64,7 @@ export default function PharmacistDashboardSection() {
     switch (active) {
       case "dashboard":  return <ComingSoon title="Pharmacy Dashboard" />;
       case "billing":      return <ComingSoon title="Billing" />;
-      case "inventory":  return <ComingSoon title="Pharmacy Inventory" />;
+      case "inventory":  return <AddInventory />;
       case "attendance": return <PharmacistAttendance />;
       case "settings":    return <ComingSoon title="Settings" />;
       default:           return <ComingSoon title="Pharmacy Dashboard" />;
