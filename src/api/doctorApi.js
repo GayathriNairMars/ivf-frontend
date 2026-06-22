@@ -57,14 +57,13 @@ export const doctorApi = {
   },
   getCalendar: (start, end) => api.get(`/doctor/calendar/`, { params: { start_date: start, end_date: end } }).then(res => res.data),
 
-  getPrescriptions: async ({ patient_id, search, start_date, end_date, status } = {}) => {
+  getPrescriptions: async ({ search, start_date, end_date, status } = {}) => {
     let url = `/doctor/prescriptions/?`;
-    if (patient_id) url += `patient_id=${patient_id}&`;
     if (search) url += `search=${encodeURIComponent(search)}&`;
     if (start_date) url += `start_date=${start_date}&`;
     if (end_date) url += `end_date=${end_date}&`;
     if (status) url += `status=${encodeURIComponent(status)}&`;
-    
+
     // Remove trailing '&' or '?'
     url = url.endsWith('&') || url.endsWith('?') ? url.slice(0, -1) : url;
 
@@ -72,8 +71,31 @@ export const doctorApi = {
     return response.data;
   },
 
+  getPatientPrescriptions: async (patient_id) => {
+    const response = await api.get(`/doctor/prescriptions/?patient_id=${patient_id}`);
+    return response.data;
+  },
+
   createPrescription: async (data) => {
     const response = await api.post('/doctor/prescriptions/', data);
+    return response.data;
+  },
+
+  // ── Medicines ───────────────────────────────────────────────────────────
+  getMedicines: async ({ search = '', category = '', status = '', sort_by = '', page = 1, page_size = 20 } = {}) => {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('page_size', page_size);
+    if (search)    params.set('search',    search);
+    if (category)  params.set('category',  category);
+    if (status)    params.set('status',    status);
+    if (sort_by)   params.set('sort_by',   sort_by);
+    const response = await api.get(`/doctor/medicines/?${params.toString()}`);
+    return response.data;
+  },
+
+  getMedicineCategories: async () => {
+    const response = await api.get('/doctor/medicines/categories/');
     return response.data;
   },
 

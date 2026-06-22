@@ -7,6 +7,11 @@ import { ROLE_LABELS } from "../../constants/constants";
 import arathyAvatar from "../../assets/arathy_avatar.png";
 import PharmacistAttendance from "./pharmacist_attendance";
 import AddInventory from "./add_inventory";
+import PharmacistInventory from "./pharmacist_inventory";
+import PharmacistAlerts from "./pharmacist_alerts";
+import PharmacistSettings from "./pharmacist_settings";
+import StockAdjustment from "./stock_adjustment";
+
 
 const NAV = [
   {
@@ -25,6 +30,12 @@ const NAV = [
   {
     key: "inventory", label: "Inventory",
     icon: <Beaker size={16} />,
+    children: [
+      { key: "inventory_dashboard", label: "Dashboard" },
+      { key: "stock_alerts", label: "Stock Alerts" },
+      { key: "inventory", label: "Add Inventory" },
+      { key: "stock_adjustment", label: "Stock Adjustment" },
+    ]
   },
   {
     key:"attendance", label:"My Attendance", icon: <ClipboardCheck size={16} />, 
@@ -65,8 +76,11 @@ export default function PharmacistDashboardSection() {
       case "dashboard":  return <ComingSoon title="Pharmacy Dashboard" />;
       case "billing":      return <ComingSoon title="Billing" />;
       case "inventory":  return <AddInventory />;
+      case "inventory_dashboard":  return <PharmacistInventory />;
+      case "stock_alerts": return <PharmacistAlerts />;
+      case "stock_adjustment": return <StockAdjustment />;
       case "attendance": return <PharmacistAttendance />;
-      case "settings":    return <ComingSoon title="Settings" />;
+      case "settings":    return <PharmacistSettings />;
       default:           return <ComingSoon title="Pharmacy Dashboard" />;
     }
   })();
@@ -81,19 +95,46 @@ export default function PharmacistDashboardSection() {
 
         <nav className="sidebar-nav">
           {NAV.map((item) => {
-            const isParentActive = active === item.key;
-            const isExpanded = expandedNav === item.key;
+            const isParentActive = active === item.key || active.startsWith(item.key);
+            const isExpanded = expandedNav === item.key || (item.children && isParentActive);
 
             return (
               <div key={item.key} className="nav-group">
                 <button
-                  className={`nav-item ${isParentActive ? "nav-item-active" : ""}`}
-                  onClick={() => handleNavClick(item)}
+                  className={`nav-item ${isParentActive && !item.children ? "nav-item-active" : ""}`}
+                  onClick={() => {
+                    if (item.children) {
+                      setExpandedNav(isExpanded ? null : item.key);
+                    } else {
+                      handleNavClick(item);
+                    }
+                  }}
                 >
                   <div className="icon">{item.icon}</div>
                   <span>{item.label}</span>
-                  {isParentActive && <div className="nav-indicator" />}
+                  {item.children && (
+                    <ChevronDown
+                      size={16}
+                      className={`nav-chevron ${isExpanded ? "expanded" : ""}`}
+                      style={{ marginLeft: "auto", transition: "transform 0.2s", transform: isExpanded ? "rotate(180deg)" : "rotate(0)" }}
+                    />
+                  )}
+                  {isParentActive && !item.children && <div className="nav-indicator" />}
                 </button>
+
+                {item.children && isExpanded && (
+                  <div className="nav-sub">
+                    {item.children.map((child) => (
+                      <button
+                        key={child.key}
+                        className={`nav-sub-item ${active === child.key ? "active" : ""}`}
+                        onClick={() => handleNavClick(child)}
+                      >
+                        {child.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}

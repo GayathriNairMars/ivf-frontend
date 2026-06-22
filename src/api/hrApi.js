@@ -1,8 +1,8 @@
 import api from './axios';
 
 export const hrApi = {
-  getStaff: async () => {
-    const response = await api.get('/hr/staff/');
+  getStaff: async (params) => {
+    const response = await api.get('/hr/staff/', { params });
     return response.data;
   },
 
@@ -38,6 +38,14 @@ export const hrApi = {
   updateAttendance: (payload) => api.put("/attendance/mark/", payload).then(res => res.data),
   getAttendanceHistory: (params) => api.get("/attendance/history/", { params }).then(res => res.data),
   getAttendanceStats: (params) => api.get("/attendance/stats/", { params }).then(res => res.data),
+  getAttendanceDashboard: (params) => api.get("/attendance/admin/dashboard/", { params }).then(res => res.data),
+  getAttendanceAll: (params) => api.get("/attendance/admin/all/", { params }).then(res => res.data),
+  getStaffAttendance: (userId, params) => api.get(`/attendance/admin/staff/${userId}/`, { params }).then(res => res.data),
+  markAttendance: (payload) => api.post("/attendance/admin/mark/", payload).then(res => res.data),
+  getAttendanceRecord: (id) => api.get(`/attendance/admin/${id}/`).then(res => res.data),
+  updateAttendance: (id, payload) => api.put(`/attendance/admin/${id}/`, payload).then(res => res.data),
+  deleteAttendance: (id) => api.delete(`/attendance/admin/${id}/`).then(res => res.data),
+  bulkMarkAttendance: (payload) => api.post("/attendance/admin/bulk/", payload).then(res => res.data),
 };
 
 export default hrApi;
