@@ -11,6 +11,7 @@ import PharmacistInventory from "./pharmacist_inventory";
 import PharmacistAlerts from "./pharmacist_alerts";
 import PharmacistSettings from "./pharmacist_settings";
 import StockAdjustment from "./stock_adjustment";
+import PharmacistDashboard from "./pharmacist_dashboard";
 
 
 const NAV = [
@@ -73,7 +74,7 @@ export default function PharmacistDashboardSection() {
 
   const content = (() => {
     switch (active) {
-      case "dashboard":  return <ComingSoon title="Pharmacy Dashboard" />;
+      case "dashboard":  return <PharmacistDashboard />;
       case "billing":      return <ComingSoon title="Billing" />;
       case "inventory":  return <AddInventory />;
       case "inventory_dashboard":  return <PharmacistInventory />;
