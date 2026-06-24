@@ -612,6 +612,9 @@ export default function LoginPage() {
               <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
                 Are you a Pharmacist? <a href="/pharmacist-login" style={{ color: "#3b82f6", textDecoration: "none", fontWeight: "500" }}>Pharmacist login →</a>
               </p>
+              <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                Are you a Nurse? <a href="/nurse-login" style={{ color: "#3b82f6", textDecoration: "none", fontWeight: "500" }}>Nurse login →</a>
+              </p>
             </div>
           </div>
 
