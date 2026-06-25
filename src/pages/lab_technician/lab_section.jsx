@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import "./lab_section.css";
-import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck } from "lucide-react";
+import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck, Settings } from "lucide-react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import arathyAvatar from "../../assets/arathy_avatar.png";
 import LabAttendance from "./lab_attendance";
+import LabSettings from "./lab_settings";
 
 const NAV = [
   {
@@ -35,6 +36,10 @@ const NAV = [
   {
     key: "reports", label: "Reports",
     icon: <Activity size={16} />,
+  },
+  {
+    key: "settings", label: "Settings",
+    icon: <Settings size={16} />,
   },
 ];
 
@@ -71,6 +76,7 @@ export default function LabDashboardSection() {
       case "inventory":  return <ComingSoon title="Lab Inventory" />;
       case "attendance": return <LabAttendance />;
       case "reports":    return <ComingSoon title="Reports" />;
+      case "settings":   return <LabSettings />;
       default:           return <ComingSoon title="Lab Dashboard" />;
     }
   })();
@@ -126,6 +132,16 @@ export default function LabDashboardSection() {
               <IoNotificationsOutline size={17} />
               <span className="dot-red" />
             </button>
+            <button
+              className={`notification-btn-square ${active === "settings" ? "active" : ""}`}
+              onClick={() => {
+                setActive("settings");
+                setProfileOpen(false);
+              }}
+              title="Account Settings"
+            >
+              <Settings size={17} />
+            </button>
             <div className="topbar-profile-container">
               <div className="topbar-profile" onClick={() => setProfileOpen(!profileOpen)}>
                 <div className="profile-details">
@@ -147,6 +163,33 @@ export default function LabDashboardSection() {
                     <h4>{user?.full_name || "Lab Technician"}</h4>
                     <p>{ROLE_LABELS?.[user?.role] || user?.role || "Laboratory"}</p>
                   </div>
+
+                  <button
+                    className={`dropdown-item ${active === "settings" ? "dropdown-item-active" : ""}`}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      width: "100%",
+                      padding: "12px 20px",
+                      background: "none",
+                      border: "none",
+                      borderTop: "1px solid #f1f5f9",
+                      textAlign: "left",
+                      color: "#475569",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "background 0.2s"
+                    }}
+                    onClick={() => {
+                      setActive("settings");
+                      setProfileOpen(false);
+                    }}
+                  >
+                    <Settings size={16} />
+                    Settings
+                  </button>
 
                   <button className="dropdown-item logout-btn" onClick={handleLogout}>
                     Sign out
