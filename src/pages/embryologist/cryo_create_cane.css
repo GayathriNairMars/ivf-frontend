@@ -1,0 +1,120 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   CryoVault — Create Cane Page (cryo_create_cane.css)
+   Additional styles for the Cane Registration page.
+   Shared form styles (.cryo-page, .cryo-card, .cryo-input, etc.)
+   are inherited from cryo_create_canister.css.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Required asterisk */
+.cane-required {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* Availability hint under canister dropdown */
+.cane-avail-hint {
+  font-size: 11.5px;
+  color: #ea580c;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ── Registration Guide Sidebar ── */
+.cane-guide-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.cane-guide-header {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cane-guide-icon-box {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+
+.cane-guide-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e1b4b;
+  padding: 20px 20px 0;
+  margin: 0;
+}
+
+.cane-guide-items {
+  padding: 16px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cane-guide-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.cane-guide-check {
+  color: #0d9488;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.cane-guide-item strong {
+  color: #1e1b4b;
+}
+
+/* System Status */
+.cane-system-status {
+  margin: 0 20px 20px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cane-system-icon {
+  width: 36px;
+  height: 36px;
+  background: #0d9488;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.cane-system-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e1b4b;
+}
+
+.cane-system-sub {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 1px;
+}

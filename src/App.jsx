@@ -30,6 +30,14 @@ import PharmacistLoginPage from "./pages/pharmacist/auth/login";
 import PharmacistDashboardSection from "./pages/pharmacist/section";
 import NurseLoginPage from "./pages/nurse/auth/login";
 import NurseDashboardSection from "./pages/nurse/nurse_section";
+import EmbryologistLoginPage from "./pages/embryologist/auth/login";
+import EmbryologistDashboardSection from "./pages/embryologist/emb_section";
+
+import LabDashboard from "./pages/admin/lab/lab_dashboard";
+import LabStatistics from "./pages/admin/lab/lab_statistics";
+import TestTypesList from "./pages/admin/lab/test_types";
+import CreateTestType from "./pages/admin/lab/create_test_type";
+import EditTestType from "./pages/admin/lab/edit_test_type";
 
 
 const Placeholder = ({ title }) => {
@@ -76,6 +84,7 @@ export default function App() {
         <Route path="/lab-login" element={<LabLoginPage />} />
         <Route path="/pharmacist-login" element={<PharmacistLoginPage />} />
         <Route path="/nurse-login" element={<NurseLoginPage />} />
+        <Route path="/embryologist-login" element={<EmbryologistLoginPage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/*Super Admin*/}
@@ -99,6 +108,14 @@ export default function App() {
           <Route path="emr/patients/:patientId" element={<EMRSection />} />
           <Route path="/superadmin/emr/patients/:patientId/create" element={<EMRSection />} />
           <Route path="emr/records" element={<RecordManagement />} />
+          
+          {/* Lab Management */}
+          <Route path="lab" element={<Navigate to="/superadmin/lab/dashboard" replace />} />
+          <Route path="lab/dashboard" element={<LabDashboard />} />
+          <Route path="lab/create-test-type" element={<CreateTestType />} />
+          <Route path="lab/test-types" element={<TestTypesList />} />
+          <Route path="lab/test-types/edit/:id" element={<EditTestType />} />
+          <Route path="lab/statistics" element={<LabStatistics />} />
         </Route>
 
         {/* Receptionist */}
@@ -113,12 +130,15 @@ export default function App() {
             <HRDashboardSection />
           </ProtectedRoute>
         }/>
+        
+        {/* EMBRYOLOGIST */}
+        <Route path="/emb/" element={<ProtectedRoute requiredRole="EMB"><EmbryologistDashboardSection /></ProtectedRoute>} />
+        
         {/*Other roles-swap placeholder with real comp*/}
         <Route path="/cco/*" element={<ProtectedRoute requiredRole="CCO"><Placeholder title="Clinical Counsellor Dashboard" /></ProtectedRoute>} />
         <Route path="/fco/*" element={<ProtectedRoute requiredRole="FCO"><Placeholder title="Financial Counsellor Dashboard" /></ProtectedRoute>} />
         <Route path="/gyn/*" element={<ProtectedRoute requiredRole="GYN"><DoctorDashboardSection /></ProtectedRoute>} />
         <Route path="/ane/*" element={<ProtectedRoute requiredRole="ANE"><DoctorDashboardSection /></ProtectedRoute>} />
-        <Route path="/emb/*" element={<ProtectedRoute requiredRole="EMB"><Placeholder title="Embryologist Dashboard" /></ProtectedRoute>} />
         <Route path="/nur/*" element={<ProtectedRoute requiredRole="NUR"><NurseDashboardSection /></ProtectedRoute>} />
         <Route path="/pha/*" element={<ProtectedRoute requiredRole="PHA"><PharmacistDashboardSection/></ProtectedRoute>} />
         <Route path="/tec/*" element={<ProtectedRoute requiredRole="TEC"><LabDashboardSection /></ProtectedRoute>} />

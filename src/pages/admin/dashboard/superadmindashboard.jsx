@@ -16,11 +16,18 @@ import {
   BriefcaseMedical,
   User,
   Users,
-  UserPlus
+  UserPlus,
+  FlaskConical
 } from "lucide-react";
 
 const NAV=[
   {id:"dashboard",label:"Dashboard",icon:LayoutGrid, path:"/superadmin/"},
+  {id:"lab",label:"Lab Management",icon:FlaskConical,path:"/superadmin/lab/", subItems: [
+    {id: "lab-dashboard", label: "Dashboard", icon:LayoutGrid, path: "/superadmin/lab/dashboard"},
+    {id: "lab-create-test", label: "Create test type", icon:UserPlus, path: "/superadmin/lab/create-test-type"},
+    {id: "lab-test-types", label: "Test Types", icon:ClipboardList, path: "/superadmin/lab/test-types"},
+    {id: "lab-statistics", label: "Lab statistics", icon:Building2, path: "/superadmin/lab/statistics"}
+  ]},
   {id:"department",label:"Departments",icon:Building2,path:"/superadmin/department/"},
   {id:"emr",label:"EMR",icon:FolderOpen,path:"/superadmin/emr/", subItems: [
     {id: "emr-overview", label: "Overview", icon:FileSearch, path: "/superadmin/emr/"},

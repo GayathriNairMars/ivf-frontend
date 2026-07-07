@@ -270,6 +270,9 @@ export default function AdminLoginPage() {
                   <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
                     Are you a Nurse? <a href="/nurse-login" style={{ color: "#3b82f6", textDecoration: "none", fontWeight: "500" }}>Nurse login →</a>
                   </p>
+                  <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                    Are you an Embryologist? <a href="/embryologist-login" style={{ color: "#8b5cf6", textDecoration: "none", fontWeight: "500" }}>Embryologist login →</a>
+                  </p>
                 </div>
               </>
             )}

@@ -237,6 +237,41 @@
 
 /* TOPBAR DROPDOWN */
 
+.notification-btn-square {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.15s;
+}
+
+.notification-btn-square:hover {
+  background: #f3f4f6;
+}
+
+.notification-btn-square.active {
+  background: #f0fdf4 !important;
+  color: #0d9488 !important;
+  border-color: #ccfbf1 !important;
+}
+
+.dot-red {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+}
+
 .user-area {
   display: flex;
   align-items: center;

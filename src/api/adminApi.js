@@ -21,6 +21,14 @@ export const adminApi = {
   getDepartmentStaff: (deptId) => api.get(`/departments/${deptId}/staff/`).then(res => res.data),
   setDepartmentHead: (deptId, staffId) => api.post(`/departments/${deptId}/set-head/`, { staff_id: staffId }).then(res => res.data),
   clearDepartmentHead: (deptId) => api.post(`/departments/${deptId}/set-head/`, { staff_id: null }).then(res => res.data),
+
+  // Lab Management
+  getLabStatistics: () => api.get("/lab/statistics/").then(res => res.data),
+  getTestTypes: () => api.get("/lab/test-types/").then(res => res.data),
+  getTestTypeDetails: (id) => api.get(`/lab/test-types/${id}/`).then(res => res.data),
+  createTestType: (payload) => api.post("/lab/test-types/", payload).then(res => res.data),
+  updateTestType: (id, payload) => api.put(`/lab/test-types/${id}/`, payload).then(res => res.data),
+  toggleTestType: (id) => api.delete(`/lab/test-types/${id}/`).then(res => res.data),
 };
 
 export default adminApi;

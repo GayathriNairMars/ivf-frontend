@@ -1,0 +1,509 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   CryoVault — Create Canister Page (cryo_create_canister.css)
+   Matches embryologist portal palette: violet / indigo accent
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.cryo-page {
+  padding: 28px 32px 40px;
+  font-family: 'Inter', sans-serif;
+  min-height: 100%;
+  background: var(--emb-bg, #f8f7ff);
+}
+
+/* ── Breadcrumb ── */
+.cryo-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #6b7280;
+  margin-bottom: 18px;
+}
+
+.cryo-breadcrumb span { color: #9ca3af; }
+.cryo-breadcrumb button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-family: 'Inter', sans-serif;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.cryo-breadcrumb button:hover { color: #8b5cf6; }
+.cryo-breadcrumb .cryo-bc-current { color: #374151; font-weight: 500; }
+
+/* ── Page header ── */
+.cryo-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cryo-header-left h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e1b4b;
+  letter-spacing: -0.4px;
+  margin-bottom: 4px;
+}
+
+.cryo-header-left p {
+  font-size: 13.5px;
+  color: #6b7280;
+}
+
+/* ── Divider ── */
+.cryo-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin-bottom: 26px;
+}
+
+/* ── Main body grid ── */
+.cryo-body {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+}
+
+.cryo-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cryo-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Cards ── */
+.cryo-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 26px 28px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+.cryo-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #8b5cf6;
+  margin-bottom: 22px;
+}
+
+.cryo-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 16px 16px 0 0;
+}
+
+.cryo-card.info-card::before {
+  background: #8b5cf6;
+}
+
+.cryo-card.tracking-card::before {
+  background: #0d9488;
+}
+
+/* ── Form grid ── */
+.cryo-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 20px;
+}
+
+.cryo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cryo-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.2px;
+}
+
+.cryo-input,
+.cryo-select,
+.cryo-textarea {
+  padding: 10px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: #1f2937;
+  background: #fff;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  width: 100%;
+}
+
+.cryo-input:focus,
+.cryo-select:focus,
+.cryo-textarea:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+.cryo-input::placeholder,
+.cryo-textarea::placeholder {
+  color: #9ca3af;
+}
+
+.cryo-capacity-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.capacity-max-badge {
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-align: center;
+  min-width: 50px;
+}
+
+/* Asset Class Toggle Buttons */
+.asset-class-toggle-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.asset-class-btn {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.asset-class-btn:hover {
+  border-color: #cbd5e1;
+}
+
+.asset-class-btn.active {
+  background: var(--emb-accent-light, #ede9fe);
+  border-color: var(--emb-accent, #8b5cf6);
+  color: var(--emb-accent-dark, #7c3aed);
+}
+
+/* ── RFID scan ── */
+.cryo-rfid-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cryo-rfid-row .cryo-input {
+  flex: 1;
+}
+
+.cryo-btn-scan {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: #0d9488;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  transition: all 0.15s;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25);
+}
+.cryo-btn-scan:hover {
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.4);
+  transform: translateY(-1px);
+}
+
+.cryo-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+/* ── Asset Visualization Panel (Right Card) ── */
+.cryo-preview-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.preview-graphic-box {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.preview-canister-icon {
+  width: 72px;
+  height: 130px;
+  border: 2px solid #8b5cf6;
+  border-radius: 8px;
+  background: #f5f3ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.preview-canister-icon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: #8b5cf6;
+}
+
+.preview-canister-fluid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(139, 92, 246, 0.15);
+  border-top: 1px dashed #8b5cf6;
+  transition: height 0.3s ease;
+}
+
+.preview-dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 12px;
+  z-index: 2;
+}
+
+.preview-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+}
+
+.preview-dot.active {
+  background: #8b5cf6;
+}
+
+.preview-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e1b4b;
+  text-align: center;
+  word-break: break-all;
+}
+
+.preview-live-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.preview-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+}
+
+.row-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.row-value {
+  color: #1e1b4b;
+  font-weight: 700;
+}
+
+.validation-badge {
+  background: #ecfdf5;
+  color: #059669;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.form-tip-box {
+  background: #ffedd5;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.form-tip-icon {
+  color: #ea580c;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.form-tip-text {
+  font-size: 12px;
+  color: #c2410c;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* ── Footer actions bar ── */
+.form-footer-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+  grid-column: 1 / -1;
+}
+
+.cryo-btn-cancel {
+  padding: 12px 30px;
+  border: 1.5px solid #fca5a5;
+  background: #fff;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #dc2626;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  min-width: 140px;
+  text-align: center;
+}
+
+.cryo-btn-cancel:hover {
+  background: #fef2f2;
+}
+
+.cryo-btn-deploy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 12px rgba(139, 92, 246, 0.35);
+  transition: all 0.18s;
+  min-width: 180px;
+}
+
+.cryo-btn-deploy:hover:not(:disabled) {
+  box-shadow: 0 4px 18px rgba(139, 92, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.cryo-btn-deploy:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Toast ── */
+.cryo-toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  animation: cryoToastIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 360px;
+}
+
+.cryo-toast-success { background: #059669; color: #fff; }
+.cryo-toast-error   { background: #dc2626; color: #fff; }
+
+@keyframes cryoToastIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .cryo-body { grid-template-columns: 1fr; }
+  .cryo-right-col { order: -1; }
+}
+
+@media (max-width: 600px) {
+  .cryo-page { padding: 16px; }
+  .cryo-header-left h1 { font-size: 20px; }
+  .cryo-form-grid { grid-template-columns: 1fr; }
+  .form-footer-actions { flex-direction: column; width: 100%; }
+  .cryo-btn-cancel, .cryo-btn-deploy { width: 100%; }
+}
