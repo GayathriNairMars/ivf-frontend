@@ -1,0 +1,490 @@
+/* ── Lab Records CSS ──────────────────────────────────────── */
+
+.lab-records-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Page Header */
+.lab-records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.lab-records-header h2 {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.lab-records-header p {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-lab-outline {
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-lab-outline:hover {
+  background: #f9fafb;
+}
+
+.btn-lab-primary {
+  background: #0d9488; /* Lab teal */
+  border: 1px solid #0d9488;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-lab-primary:hover {
+  background: #0f766e;
+  border-color: #0f766e;
+}
+
+/* Filter Card Panel */
+.lab-filter-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.lab-filters-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.lab-filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.lab-filter-item label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.lab-filter-item select,
+.lab-filter-item input {
+  height: 38px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 0.875rem;
+  outline: none;
+  background: #fff;
+  color: #374151;
+}
+
+.date-range-connector {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.lab-filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* Records List Table */
+.records-table-panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.records-table th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.records-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  vertical-align: middle;
+  color: #374151;
+}
+
+.records-table tr:last-child td {
+  border-bottom: none;
+}
+
+.patient-avatar-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.patient-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #1d4ed8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.patient-name-text {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Detail View Layout */
+.record-detail-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.detail-actions-row {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.btn-detail-delete {
+  background: #fff;
+  border: 1px solid #fecaca;
+  color: #ef4444;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-detail-delete:hover {
+  background: #fef2f2;
+}
+
+.detail-columns-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.detail-panel-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.detail-panel-card h3 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Patient info widget */
+.patient-info-widget {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.patient-large-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.patient-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  flex: 1;
+}
+
+.patient-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-lbl {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.info-val {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Value Display card */
+.value-display-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.val-left-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.val-title-lbl {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.val-large-text {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.val-right-wrap {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.val-badge-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.val-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Real-Time Live card */
+.live-feed-card {
+  position: relative;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 12px;
+  padding: 24px;
+  color: #fff;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.live-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.live-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Modals */
+.lab-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.lab-modal-content {
+  background: #fff;
+  padding: 32px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  text-align: left;
+}
+
+.lab-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.lab-modal-header h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Pill Option Selectors */
+.pill-option-group {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.pill-option-btn {
+  flex: 1;
+  height: 40px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pill-option-btn:hover {
+  background: #f8fafc;
+}
+
+.pill-option-btn.active {
+  background: #0d9488;
+  color: #fff;
+  border-color: #0d9488;
+}
+
+.help-text-small {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.compliance-info-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.compliance-info-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 12px;
+  text-align: left;
+}
+
+.compliance-info-card-icon {
+  background: rgba(13, 148, 136, 0.08);
+  color: #0d9488;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.compliance-info-card-details h4 {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.compliance-info-card-details p {
+  font-size: 0.75rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
