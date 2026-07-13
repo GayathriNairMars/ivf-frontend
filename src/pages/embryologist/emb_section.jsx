@@ -16,7 +16,13 @@ import CryoCreateCanister from "./cryo_create_canister";
 import CryoCanesList from "./cryo_canes_list";
 import CryoCreateCane from "./cryo_create_cane";
 import CryoCaneDetails from "./cryo_cane_details";
+import CryoGobletsList from "./cryo_goblets_list";
+import CryoCreateGoblet from "./cryo_create_goblet";
+import CryoGobletDetails from "./cryo_goblet_details";
 import EmbryologistSettings from "./settings";
+import CryoStoreSample from "./cryo_store_sample";
+import CryoStoredSamplesList from "./cryo_stored_samples_list";
+import CryoSampleDetails from "./cryo_sample_details";
 
 
 const NAV = [
@@ -40,8 +46,11 @@ const NAV = [
     label: "Inventory",
     icon: <Container size={16} />,
     children: [
+      { key: "cryo_store_sample", label: "Store New Sample" },
+      { key: "cryo_stored_samples_list", label: "Stored Samples" },
       { key: "cryo_canisters_list", label: "Canisters Management" },
       { key: "cryo_canes_list", label: "Canes Management" },
+      { key: "cryo_goblets_list", label: "Goblets Management" },
       { key: "cryo_tanks_list", label: "Tanks" },
     ],
   },
@@ -64,6 +73,9 @@ export default function EmbryologistDashboardSection() {
   const [active, setActive] = useState("dashboard");
   const [selectedTankId, setSelectedTankId] = useState(null);
   const [selectedCaneId, setSelectedCaneId] = useState(null);
+  const [selectedGobletId, setSelectedGobletId] = useState(null);
+  const [selectedSampleId, setSelectedSampleId] = useState(null);
+  const [caneRedirectFrom, setCaneRedirectFrom] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [expandedNav, setExpandedNav] = useState(null);
 
@@ -127,12 +139,72 @@ export default function EmbryologistDashboardSection() {
           />
         );
       case "cryo_create_cane":
-        return <CryoCreateCane onBack={() => setActive("cryo_canes_list")} />;
+        return (
+          <CryoCreateCane
+            onBack={() => {
+              if (caneRedirectFrom) {
+                setActive(caneRedirectFrom);
+                setCaneRedirectFrom(null);
+              } else {
+                setActive("cryo_canes_list");
+              }
+            }}
+          />
+        );
       case "cryo_cane_details":
         return (
           <CryoCaneDetails
             caneId={selectedCaneId}
             onBack={() => setActive("cryo_canes_list")}
+          />
+        );
+      case "cryo_goblets_list":
+        return (
+          <CryoGobletsList
+            onViewGoblet={(id) => {
+              setSelectedGobletId(id);
+              setActive("cryo_goblet_details");
+            }}
+            onCreateGoblet={() => setActive("cryo_create_goblet")}
+          />
+        );
+      case "cryo_create_goblet":
+        return (
+          <CryoCreateGoblet
+            onBack={() => setActive("cryo_goblets_list")}
+            onAddCane={() => {
+              setCaneRedirectFrom("cryo_create_goblet");
+              setActive("cryo_create_cane");
+            }}
+          />
+        );
+      case "cryo_goblet_details":
+        return (
+          <CryoGobletDetails
+            gobletId={selectedGobletId}
+            onBack={() => setActive("cryo_goblets_list")}
+          />
+        );
+      case "cryo_store_sample":
+        return (
+          <CryoStoreSample
+            onBack={() => setActive("cryo_tanks_list")}
+          />
+        );
+      case "cryo_stored_samples_list":
+        return (
+          <CryoStoredSamplesList
+            onViewSample={(id) => {
+              setSelectedSampleId(id);
+              setActive("cryo_sample_details");
+            }}
+          />
+        );
+      case "cryo_sample_details":
+        return (
+          <CryoSampleDetails
+            sampleId={selectedSampleId}
+            onBack={() => setActive("cryo_stored_samples_list")}
           />
         );
 
@@ -153,7 +225,7 @@ export default function EmbryologistDashboardSection() {
 
         <nav className="emb-sidebar-nav">
           {NAV.map((item) => {
-            const isChildActive = item.children?.some(c => active === c.key) || (item.key === "inventory" && ["cryo_create_canister", "cryo_create_cane", "cryo_cane_details"].includes(active));
+            const isChildActive = item.children?.some(c => active === c.key) || (item.key === "inventory" && ["cryo_create_canister", "cryo_create_cane", "cryo_cane_details", "cryo_create_goblet", "cryo_goblet_details", "cryo_sample_details"].includes(active));
             const isActive = active === item.key || 
                              isChildActive || 
                              (item.key === "cryo_tanks_list" && (active === "cryo_create_tank" || active === "cryo_tank_details"));
