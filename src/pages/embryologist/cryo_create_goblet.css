@@ -1,0 +1,295 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   CryoVault — Create Goblet Page (cryo_create_goblet.css)
+   Additional styles for the Goblet Registration page.
+   Shared form styles are inherited from cryo_create_canister.css.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Required label mark */
+.goblet-required {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* Parent Cane Selector Dropdown Row */
+.parent-cane-dropdown-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Link/button to add a new cane if not exists */
+.add-cane-link-btn {
+  background: none;
+  border: none;
+  color: var(--emb-accent, #8b5cf6);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.add-cane-link-btn:hover {
+  background: var(--emb-accent-light, #ede9fe);
+  color: var(--emb-accent-dark, #7c3aed);
+}
+
+/* Orange Alert block for Cane capacity */
+.cane-capacity-warning-block {
+  grid-column: span 2;
+  background: #fff7ed;
+  border: 1px solid #ffedd5;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #c2410c;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.cane-capacity-warning-block.error {
+  background: #fef2f2;
+  border-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ── Color Swatch Selector ── */
+.color-designation-section {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.color-designation-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #374151;
+  letter-spacing: 0.2px;
+}
+
+.color-swatches-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.color-swatch-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.color-bubble-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.color-bubble-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+
+.color-bubble-btn.selected {
+  border-color: var(--emb-accent, #8b5cf6);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18);
+}
+
+.color-bubble-inner {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.12);
+  transition: transform 0.15s;
+}
+
+.color-bubble-btn.selected .color-bubble-inner {
+  transform: scale(1.1);
+}
+
+.color-bubble-btn.selected::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* White bubble selected should use a dark indicator dot instead */
+.color-swatch-item.white-swatch .color-bubble-btn.selected::after {
+  background: #475569;
+}
+
+.color-swatch-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: capitalize;
+}
+
+.color-swatch-item:hover .color-swatch-name {
+  color: #334155;
+}
+
+.color-swatch-item.selected .color-swatch-name {
+  color: var(--emb-accent-dark, #7c3aed);
+  font-weight: 700;
+}
+
+/* ── Status Select Option Cards ── */
+.status-designation-section {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 18px;
+}
+
+.status-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.status-option-card {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  background: #fff;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.status-option-card:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.status-option-card.selected {
+  border-color: var(--emb-accent, #8b5cf6);
+  background: var(--emb-accent-light, #ede9fe);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
+}
+
+.status-card-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.status-option-card.selected .status-card-icon-box {
+  background: var(--emb-accent, #8b5cf6);
+  color: #fff;
+}
+
+.status-card-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.status-option-card.selected .status-card-label {
+  color: var(--emb-accent-dark, #7c3aed);
+}
+
+/* ── Live Preview Graphic Box ── */
+.preview-goblet-graphic {
+  position: relative;
+  width: 60px;
+  height: 90px;
+  margin: 16px auto;
+  border: 3.5px solid #64748b;
+  border-radius: 4px 4px 16px 16px;
+  background: rgba(226, 232, 240, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.preview-goblet-fluid {
+  width: 100%;
+  transition: height 0.3s, background-color 0.3s;
+}
+
+.preview-goblet-cap {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 68px;
+  height: 8px;
+  background: #475569;
+  border-radius: 4px;
+}
+
+/* Toast */
+.goblet-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 14px 20px;
+  border-radius: 10px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  animation: slideUpToast 0.3s ease-out;
+}
+
+.goblet-toast-success {
+  border-left: 4px solid #10b981;
+}
+
+.goblet-toast-error {
+  border-left: 4px solid #ef4444;
+}
+
+@media(max-width: 768px) {
+  .status-cards-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

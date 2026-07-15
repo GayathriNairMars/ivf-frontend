@@ -29,7 +29,7 @@
   padding: 22px 20px 18px;
   border-bottom: 1px solid #f3f4f6;
 }
-.lab-brand h2 { font-size: 15px; font-weight: 800; color: #0d9488; line-height: 1.2; }
+.lab-brand h2 { font-size: 15px; font-weight: 800; color: #7c3aed; line-height: 1.2; }
 .lab-brand p  { font-size: 11px; color: #9ca3af; margin-top: 2px; }
 
 .lab-nav { flex: 1; padding: 16px 10px; display: flex; flex-direction: column; gap: 4px; }
@@ -40,8 +40,8 @@
   cursor: pointer; border: none; background: none;
   width: 100%; text-align: left; transition: all 0.15s;
 }
-.lab-nav-item:hover { background: #f0fdf4; color: #0d9488; }
-.lab-nav-item.active { background: #0d9488; color: #fff; font-weight: 600; }
+.lab-nav-item:hover { background: #ede9fe; color: #7c3aed; }
+.lab-nav-item.active { background: #7c3aed; color: #fff; font-weight: 600; }
 .lab-nav-item svg { flex-shrink: 0; }
 
 .lab-sidebar-footer {
@@ -50,7 +50,7 @@
 }
 .lab-new-btn {
   width: 100%; padding: 10px;
-  background: #0d9488; color: #fff;
+  background: #7c3aed; color: #fff;
   border: none; border-radius: 10px;
   font-size: 13px; font-weight: 600; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -93,18 +93,18 @@
 }
 
 .nav-item:hover {
-  background: #f0fdf4;
-  color: #0d9488;
+  background: #ede9fe;
+  color: #7c3aed;
 }
 
 .nav-item-active {
-  background: #0d9488;
+  background: #7c3aed;
   color: #fff;
   font-weight: 600;
 }
 
 .nav-item-active:hover {
-  background: #0d9488;
+  background: #7c3aed;
   color: #fff;
 }
 
@@ -142,7 +142,7 @@
   transform: translateY(-50%);
   width: 4px;
   height: 60%;
-  background: #0d9488;
+  background: #7c3aed;
   border-radius: 4px 0 0 4px;
 }
 
@@ -174,13 +174,13 @@
 }
 
 .sub-nav-item:hover {
-  background: #f0fdf4;
-  color: #0d9488;
+  background: #ede9fe;
+  color: #7c3aed;
 }
 
 .sub-nav-item.active {
-  background: #f0fdf4;
-  color: #0d9488;
+  background: #ede9fe;
+  color: #7c3aed;
   font-weight: 600;
 }
 
@@ -191,7 +191,7 @@
   transform: translateY(-50%);
   width: 4px;
   height: 16px;
-  background: #0d9488;
+  background: #7c3aed;
   border-radius: 2px;
 }
 /* ── Main ── */
@@ -227,7 +227,7 @@
 .lab-user-role { font-size: 11px; color: #9ca3af; }
 .lab-avatar {
   width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, #0d9488, #065f46);
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
   display: flex; align-items: center; justify-content: center;
   color: #fff; font-size: 13px; font-weight: 700;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./patient_detail.css";
 import { FiChevronRight, FiEdit2, FiPrinter, FiFileText, FiPlusSquare, FiUser, FiActivity, FiLink, FiAlertTriangle, FiPlus } from "react-icons/fi";
 import api from "../../api/axios";
@@ -37,12 +37,22 @@ export default function PatientDetail({ patientId, onBack }) {
   // Prescription Modal State
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
   const [medications, setMedications] = useState([
-    { id: 1, name: "Gonal-F 450 IU", dosage: "150 IU", frequency: "OD", duration: "10" },
-    { id: 2, name: "Fertilaid 450", dosage: "150 IU", frequency: "OD", duration: "10" }
+    { id: 1, name: "Gonal-F 450 IU", dosage: "150 IU", frequency: "OD", duration: "10", medicine_id: null },
+    { id: 2, name: "Fertilaid 450", dosage: "150 IU", frequency: "OD", duration: "10", medicine_id: null }
   ]);
   const [prescriptionNotes, setPrescriptionNotes] = useState("");
   const [nextFollowUp, setNextFollowUp] = useState("2026-06-05");
   const [isSubmittingRx, setIsSubmittingRx] = useState(false);
+
+  // Medicine Search (autocomplete) State
+  const [medicineSearchState, setMedicineSearchState] = useState({
+    activeMedId: null,
+    query: "",
+    results: [],
+    loading: false,
+    showDropdown: false,
+  });
+  const searchDebounceRef = useRef(null);
 
   const fetchPatientDetails = async () => {
     setLoading(true);
@@ -93,6 +103,13 @@ export default function PatientDetail({ patientId, onBack }) {
     }
   }, [patientId]);
 
+  // Clean up any pending debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, []);
+
   const handleNoteChange = (e) => {
     const { name, value } = e.target;
     setNoteForm(prev => ({ ...prev, [name]: value }));
@@ -127,11 +144,76 @@ export default function PatientDetail({ patientId, onBack }) {
     setMedications(meds => meds.map(m => m.id === id ? { ...m, [field]: value } : m));
   };
   const addMedication = () => {
-    setMedications(meds => [...meds, { id: Date.now(), name: "", dosage: "", frequency: "OD", duration: "" }]);
+    setMedications(meds => [...meds, { id: Date.now(), name: "", dosage: "", frequency: "OD", duration: "", medicine_id: null }]);
   };
   const removeMedication = (id) => {
     setMedications(meds => meds.filter(m => m.id !== id));
+    // If the dropdown was open for this row, close it
+    setMedicineSearchState(prev => prev.activeMedId === id ? { ...prev, activeMedId: null, showDropdown: false } : prev);
   };
+
+  // ── Medicine search (autocomplete) ─────────────────────────────────────
+  const searchMedicines = async (query) => {
+    if (!query || query.trim().length < 2) {
+      setMedicineSearchState(prev => ({ ...prev, results: [], loading: false }));
+      return;
+    }
+    setMedicineSearchState(prev => ({ ...prev, loading: true }));
+    try {
+      const res = await api.get(`doctor/medicines/?search=${encodeURIComponent(query.trim())}&status=AVAILABLE`);
+      let results = [];
+      if (res.data?.success) {
+        results = res.data.data || res.data.medicines || res.data.results || [];
+      } else {
+        results = res.data?.results || res.data || [];
+      }
+      setMedicineSearchState(prev => ({ ...prev, results, loading: false }));
+    } catch (error) {
+      console.error("Error searching medicines:", error);
+      setMedicineSearchState(prev => ({ ...prev, results: [], loading: false }));
+    }
+  };
+
+  const handleDrugNameInput = (medId, value) => {
+    // Clear any previously linked medicine_id since the user is typing freely
+    setMedications(meds => meds.map(m => m.id === medId ? { ...m, name: value, medicine_id: null } : m));
+    setMedicineSearchState(prev => ({ ...prev, activeMedId: medId, query: value, showDropdown: true }));
+
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => {
+      searchMedicines(value);
+    }, 300);
+  };
+
+  const handleDrugNameFocus = (medId, currentValue) => {
+    setMedicineSearchState(prev => ({ ...prev, activeMedId: medId, query: currentValue, showDropdown: true }));
+    if (currentValue && currentValue.trim().length >= 2) {
+      searchMedicines(currentValue);
+    }
+  };
+
+  const handleSelectMedicine = (medId, medicine) => {
+    setMedications(meds => meds.map(m =>
+      m.id === medId
+        ? {
+            ...m,
+            name: medicine.name,
+            medicine_id: medicine.id || medicine.medication_id || null,
+            // Only prefill dosage if the field is still empty
+            dosage: m.dosage && m.dosage.trim() ? m.dosage : (medicine.strength || medicine.dosage || "")
+          }
+        : m
+    ));
+    setMedicineSearchState({ activeMedId: null, query: "", results: [], loading: false, showDropdown: false });
+  };
+
+  const closeDropdownDelayed = () => {
+    // Delay so a click on a dropdown option registers before the input's onBlur closes it
+    setTimeout(() => {
+      setMedicineSearchState(prev => ({ ...prev, showDropdown: false }));
+    }, 150);
+  };
+
   const handlePrescriptionSubmit = async (e) => {
     e.preventDefault();
     setIsSubmittingRx(true);
@@ -143,6 +225,7 @@ export default function PatientDetail({ patientId, onBack }) {
         const payload = {
           patient_id: patientData.id,
           medication_name: med.name,
+          ...(med.medicine_id ? { medicine_id: med.medicine_id } : {}),
           dosage: med.dosage,
           frequency: med.frequency,
           duration: med.duration,
@@ -155,7 +238,7 @@ export default function PatientDetail({ patientId, onBack }) {
       alert("Prescription saved successfully");
       setIsPrescriptionModalOpen(false);
       // Reset form
-      setMedications([{ id: Date.now(), name: "", dosage: "", frequency: "OD", duration: "" }]);
+      setMedications([{ id: Date.now(), name: "", dosage: "", frequency: "OD", duration: "", medicine_id: null }]);
       setPrescriptionNotes("");
       setNextFollowUp("");
     } catch (error) {
@@ -530,14 +613,89 @@ export default function PatientDetail({ patientId, onBack }) {
                   <tbody>
                     {medications.map(med => (
                       <tr key={med.id}>
-                        <td>
-                          <input 
-                            className="pd-rx-input" 
-                            value={med.name} 
-                            onChange={(e) => handleMedicationChange(med.id, 'name', e.target.value)} 
-                            placeholder="Drug name"
+                        <td style={{ position: 'relative' }}>
+                          <input
+                            className="pd-rx-input"
+                            value={med.name}
+                            onChange={(e) => handleDrugNameInput(med.id, e.target.value)}
+                            onFocus={() => handleDrugNameFocus(med.id, med.name)}
+                            onBlur={closeDropdownDelayed}
+                            placeholder="Search drug name..."
+                            autoComplete="off"
                             required
                           />
+                          {med.medicine_id && (
+                            <span
+                              title="Linked to inventory medicine"
+                              style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                width: '8px',
+                                height: '8px',
+                                borderRadius: '50%',
+                                background: '#10b981'
+                              }}
+                            />
+                          )}
+                          {medicineSearchState.activeMedId === med.id && medicineSearchState.showDropdown && (
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: '100%',
+                                left: 0,
+                                right: 0,
+                                zIndex: 50,
+                                background: '#fff',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '8px',
+                                boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+                                maxHeight: '220px',
+                                overflowY: 'auto',
+                                marginTop: '4px',
+                                textAlign: 'left'
+                              }}
+                            >
+                              {medicineSearchState.loading ? (
+                                <div style={{ padding: '10px 12px', fontSize: '13px', color: '#6b7280' }}>Searching...</div>
+                              ) : medicineSearchState.results.length > 0 ? (
+                                medicineSearchState.results.map((medicine) => (
+                                  <div
+                                    key={medicine.id || medicine.medication_id}
+                                    onMouseDown={(e) => { e.preventDefault(); handleSelectMedicine(med.id, medicine); }}
+                                    style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f3f4f6' }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = '#f9fafb')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
+                                  >
+                                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#111827' }}>
+                                      {medicine.name}
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: '#6b7280', display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '2px' }}>
+                                      {medicine.generic_name && <span>{medicine.generic_name}</span>}
+                                      {medicine.medication_id && <span>• {medicine.medication_id}</span>}
+                                      {medicine.status && (
+                                        <span
+                                          style={{
+                                            color:
+                                              medicine.status === 'AVAILABLE' ? '#10b981' :
+                                              medicine.status === 'LOW_STOCK' ? '#f59e0b' : '#ef4444',
+                                            fontWeight: 500
+                                          }}
+                                        >
+                                          • {String(medicine.status).replace('_', ' ')}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))
+                              ) : medicineSearchState.query.trim().length >= 2 ? (
+                                <div style={{ padding: '10px 12px', fontSize: '13px', color: '#6b7280' }}>No medicines found</div>
+                              ) : (
+                                <div style={{ padding: '10px 12px', fontSize: '13px', color: '#6b7280' }}>Type at least 2 characters</div>
+                              )}
+                            </div>
+                          )}
                         </td>
                         <td>
                           <input 

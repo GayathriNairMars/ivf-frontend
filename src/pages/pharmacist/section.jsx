@@ -12,6 +12,8 @@ import PharmacistAlerts from "./pharmacist_alerts";
 import PharmacistSettings from "./pharmacist_settings";
 import StockAdjustment from "./stock_adjustment";
 import PharmacistDashboard from "./pharmacist_dashboard";
+import PharmacistPrescriptions from "./pharmacist_prescriptions";
+import PharmacistPrescriptionDetails from "./pharmacist_prescription_details";
 
 
 const NAV = [
@@ -23,6 +25,10 @@ const NAV = [
         <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
       </svg>
     ),
+  },
+  {
+    key: "prescriptions", label: "Prescriptions",
+    icon: <FileText size={16} />,
   },
   {
     key: "billing", label: "Billing",
@@ -61,6 +67,7 @@ export default function PharmacistDashboardSection() {
   const [active, setActive] = useState("dashboard");
   const [profileOpen, setProfileOpen] = useState(false);
   const [expandedNav, setExpandedNav] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const handleLogout = async () => {
     await logout();
@@ -76,6 +83,8 @@ export default function PharmacistDashboardSection() {
     switch (active) {
       case "dashboard":  return <PharmacistDashboard />;
       case "billing":      return <ComingSoon title="Billing" />;
+      case "prescriptions": return <PharmacistPrescriptions onSelectOrder={(id) => { setSelectedOrderId(id); setActive("prescription_details"); }} />;
+      case "prescription_details": return <PharmacistPrescriptionDetails orderId={selectedOrderId} onBack={() => setActive("prescriptions")} />;
       case "inventory":  return <AddInventory />;
       case "inventory_dashboard":  return <PharmacistInventory />;
       case "stock_alerts": return <PharmacistAlerts />;
