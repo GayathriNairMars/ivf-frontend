@@ -11,15 +11,14 @@ import LabDashboard from "./lab_dashboard";
 import AllRecords from "./all_records";
 import RecordDetail from "./record_detail";
 import TestTypeRecords from "./test_type_records";
+import LabOrders from "./lab_orders";
 import labApi from "../../api/labApi";
 
 const NAV = [
   { key: "dashboard", label: "Dashboard", icon: <LayoutGrid size={16} /> },
-  { key: "records", label: "All Records", icon: <FileText size={16} /> },
-  { key: "patients", label: "Patients", icon: <Users size={16} /> },
-  { key: "schedule", label: "Lab Schedule", icon: <Calendar size={16} /> },
-  { key: "inventory", label: "Inventory", icon: <Beaker size={16} /> },
-  { key: "tests", label: "Test Types", icon: <FlaskConical size={16} /> },
+  { key: "pending_tests", label: "Pending Tests", icon: <ClipboardCheck size={16} /> },
+  { key: "in_progress", label: "In Progress", icon: <Beaker size={16} /> },
+  { key: "completed", label: "Completed", icon: <FileText size={16} /> },
   { key: "reports", label: "Analytics", icon: <Activity size={16} /> },
 ];
 
@@ -91,12 +90,11 @@ export default function LabDashboardSection() {
 
     switch (active) {
       case "dashboard":     return <LabDashboard testTypes={testTypes} onViewRecord={(id) => { setSelectedRecordId(id); setActive("record_detail"); }} />;
+      case "pending_tests": return <LabOrders filterStatus="ORDERED" testTypes={testTypes} onViewRecord={(id) => { setSelectedRecordId(id); setActive("record_detail"); }} />;
+      case "in_progress":   return <LabOrders filterStatus="IN_PROGRESS" testTypes={testTypes} onViewRecord={(id) => { setSelectedRecordId(id); setActive("record_detail"); }} />;
+      case "completed":     return <LabOrders filterStatus="COMPLETED" testTypes={testTypes} onViewRecord={(id) => { setSelectedRecordId(id); setActive("record_detail"); }} />;
       case "records":       return <AllRecords testTypes={testTypes} onViewRecord={(id) => { setSelectedRecordId(id); setActive("record_detail"); }} />;
-      case "record_detail": return <RecordDetail recordId={selectedRecordId} onBack={() => setActive("records")} />;
-      case "patients":      return <ComingSoon title="Patients Directory" />;
-      case "schedule":      return <ComingSoon title="Lab Schedule" />;
-      case "tests":         return <ComingSoon title="Test Types" />;
-      case "inventory":     return <ComingSoon title="Lab Inventory" />;
+      case "record_detail": return <RecordDetail recordId={selectedRecordId} onBack={() => setActive("pending_tests")} />;
       case "attendance":    return <LabAttendance />;
       case "reports":       return <ComingSoon title="Analytics" />;
       case "settings":      return <LabSettings />;

@@ -23,6 +23,12 @@ export const labApi = {
   updateRecord: (id, payload) => api.put(`/lab/records/${id}/`, payload).then(res => res.data),
   deleteRecord: (id) => api.delete(`/lab/records/${id}/`).then(res => res.data),
   getPatientHistory: (patientId) => api.get("/lab/records/", { params: { patient: patientId } }).then(res => res.data),
+
+  // Lab Orders
+  getLabOrders: (params) => api.get("/lab/orders/", { params }).then(res => res.data),
+  getLabOrderDetails: (id) => api.get(`/lab/orders/${id}/`).then(res => res.data),
+  updateLabOrder: (id, payload) => api.put(`/lab/orders/${id}/`, payload).then(res => res.data),
+  cancelLabOrder: (id) => api.post(`/lab/orders/${id}/cancel/`).then(res => res.data),
 };
 
 export default labApi;

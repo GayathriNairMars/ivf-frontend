@@ -1,148 +1,145 @@
-/* Pharmacist Prescriptions List CSS */
+/* ============================================================
+   Pharmacist Prescriptions — layout
+   Key fix: the table body scrolls INSIDE a fixed-height card
+   with a sticky header, instead of pushing the whole page down.
+   ============================================================ */
 
 .rx-container {
-  padding: 24px;
-  background-color: #f8fafc;
-  color: #0f172a;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  font-family: 'Inter', sans-serif;
-  height: 100%;
-  overflow-y: auto;
+  padding: 20px 24px 32px;
+  box-sizing: border-box;
+  gap: 16px;
+  /* No fixed/100vh height here — the page is allowed to scroll normally.
+     Only the table body below gets its own internal scrollbar. */
 }
 
-/* Header */
+/* ── Header ─────────────────────────────────────────────── */
+
 .rx-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
-.rx-title-area .rx-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
+.rx-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rx-title {
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f2937;
   margin: 0;
 }
 
 .rx-title-icon {
   color: #7c3aed;
-  width: 28px;
-  height: 28px;
 }
 
 .rx-subtitle {
-  color: #64748b;
-  font-size: 14px;
-  margin-top: 4px;
-  margin-bottom: 0;
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
 }
 
 .rx-btn-refresh {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #475569;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s;
 }
 
 .rx-btn-refresh:hover {
-  background: #f1f5f9;
-  color: #7c3aed;
-  border-color: #ede9fe;
+  background: #f9fafb;
 }
 
-.rx-btn-refresh svg.spin {
-  animation: spin 1s linear infinite;
+.spin {
+  animation: rx-spin 0.9s linear infinite;
 }
 
-@keyframes spin {
+@keyframes rx-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-/* Stats Cards Grid */
+/* ── Stat cards ─────────────────────────────────────────── */
+
 .rx-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .rx-stat-card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+  border: 1px solid #eef0f3;
+  border-top: 3px solid transparent;
+  border-radius: 10px;
+  padding: 12px 14px;
 }
 
-.rx-stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-}
-
-/* Stat card top color bars */
-.card-total { border-top: 4px solid #7c3aed; }
-.card-pending { border-top: 4px solid #f59e0b; }
-.card-processing { border-top: 4px solid #3b82f6; }
-.card-fulfilled { border-top: 4px solid #10b981; }
-.card-oos { border-top: 4px solid #ef4444; }
+.card-total     { border-top-color: #7c3aed; }
+.card-pending   { border-top-color: #f59e0b; }
+.card-processing{ border-top-color: #3b82f6; }
+.card-fulfilled { border-top-color: #10b981; }
+.card-oos       { border-top-color: #ef4444; }
 
 .rx-stat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .rx-stat-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: #6b7280;
 }
 
 .rx-stat-icon {
-  color: #94a3b8;
+  color: #9ca3af;
 }
 
 .rx-stat-value {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
-  color: #0f172a;
+  color: #111827;
+  line-height: 1;
 }
 
-/* Filters Card */
+/* ── Filters card ───────────────────────────────────────── */
+
 .rx-filters-card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  background: #fff;
+  border: 1px solid #eef0f3;
+  border-radius: 10px;
+  padding: 14px 16px;
+  flex-shrink: 0;
 }
 
 .rx-search-row {
   display: flex;
-  gap: 12px;
-  width: 100%;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .rx-search-input-wrapper {
@@ -152,37 +149,35 @@
 
 .rx-search-icon {
   position: absolute;
-  left: 14px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: #9ca3af;
 }
 
 .rx-search-input {
   width: 100%;
-  padding: 10px 16px 10px 42px;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  font-size: 14px;
+  box-sizing: border-box;
+  padding: 9px 12px 9px 38px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
   outline: none;
-  transition: all 0.2s;
 }
 
 .rx-search-input:focus {
   border-color: #7c3aed;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
 .rx-btn-search {
-  padding: 10px 24px;
+  padding: 0 22px;
   background: #7c3aed;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
-  font-size: 14px;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
 .rx-btn-search:hover {
@@ -191,41 +186,36 @@
 
 .rx-advanced-filters {
   display: flex;
-  flex-wrap: wrap;
   align-items: flex-end;
-  gap: 16px;
-  border-top: 1px dashed #e2e8f0;
-  padding-top: 16px;
+  gap: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed #eef0f3;
+  flex-wrap: wrap;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  min-width: 150px;
+  gap: 5px;
 }
 
 .filter-group label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #475569;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9ca3af;
 }
 
-.rx-filter-select, .rx-date-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 13.5px;
-  outline: none;
-  background-color: white;
-  transition: all 0.2s;
-  color: #334155;
-}
-
-.rx-filter-select:focus, .rx-date-input:focus {
-  border-color: #7c3aed;
+.rx-filter-select,
+.rx-date-input {
+  padding: 7px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
+  min-width: 150px;
 }
 
 .rx-date-input-wrapper {
@@ -236,217 +226,228 @@
 
 .rx-date-icon {
   position: absolute;
-  right: 12px;
-  color: #94a3b8;
+  left: 9px;
+  color: #9ca3af;
   pointer-events: none;
+}
+
+.rx-date-input {
+  padding-left: 28px;
+  min-width: 140px;
 }
 
 .rx-btn-reset {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 16px;
-  background: #f1f5f9;
-  border: none;
-  border-radius: 8px;
+  padding: 8px 14px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: #4b5563;
   cursor: pointer;
-  transition: all 0.2s;
+  margin-left: auto;
 }
 
 .rx-btn-reset:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: #e5e7eb;
 }
 
-/* Table styling */
+/* ── Table container: this is the piece that scrolls ─────── */
+
 .rx-table-container {
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #eef0f3;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  flex-shrink: 0;
 }
 
 .rx-table-wrapper {
-  overflow-x: auto;
+  /* Sized to show roughly 8-9 rows comfortably before it needs to scroll.
+     5 rows (or fewer) fit with no scrollbar at all; up to a full page of
+     10 rows scrolls internally instead of pushing the pagination footer
+     off-screen. */
+  max-height: 560px;
+  overflow: auto; /* both vertical AND horizontal scroll live here */
 }
 
 .rx-table {
   width: 100%;
+  min-width: 980px; /* forces horizontal scroll on narrow screens instead of squashing columns unreadably */
   border-collapse: collapse;
+  font-size: 13px;
+}
+
+.rx-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f5f3ff;
+  color: #6d28d9;
   text-align: left;
-}
-
-.rx-table th {
-  background: #ede9fe; /* premium light purple header */
-  color: #5b21b6; /* dark purple text */
-  padding: 14px 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid #ddd6fe;
+  padding: 10px 14px;
+  border-bottom: 1px solid #ede9fe;
+  white-space: nowrap;
 }
 
-.rx-table td {
-  padding: 16px 20px;
-  border-bottom: 1px solid #f1f5f9;
-  font-size: 14px;
+.rx-table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #1f2937;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .rx-table-row {
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background 0.12s;
 }
 
 .rx-table-row:hover {
-  background-color: #fdfcff; /* very soft purple tint */
+  background: #faf9ff;
 }
 
-/* Cell sub-structures */
-.rx-patient-cell, .rx-medication-cell {
+.rx-table-row:last-child td {
+  border-bottom: none;
+}
+
+.font-mono { font-family: "SFMono-Regular", Consolas, monospace; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.text-center { text-align: center; }
+.text-gray-500 { color: #6b7280; }
+.text-gray-700 { color: #374151; }
+
+.rx-patient-cell,
+.rx-medication-cell {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  white-space: normal;
 }
 
-.rx-patient-name {
+.rx-patient-name,
+.rx-med-name {
   font-weight: 600;
-  color: #0f172a;
+  color: #111827;
+  font-size: 13px;
 }
 
 .rx-patient-mrn {
-  font-size: 12px;
-  color: #64748b;
-  font-family: monospace;
-  margin-top: 2px;
-}
-
-.rx-med-name {
-  font-weight: 600;
-  color: #334155;
+  font-size: 11px;
+  color: #9ca3af;
 }
 
 .rx-med-notes {
-  font-size: 12px;
-  color: #7c3aed;
-  background: #ede9fe;
-  padding: 2px 6px;
-  border-radius: 4px;
   display: inline-block;
-  align-self: flex-start;
-  margin-top: 4px;
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 11px;
+  color: #6d28d9;
+  background: #f5f3ff;
+  border-radius: 5px;
+  padding: 2px 6px;
+  width: fit-content;
 }
 
-.rx-qty-fulfilled {
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.rx-qty-divider {
-  color: #cbd5e1;
-  margin: 0 4px;
-}
-
-.rx-qty-remaining {
-  font-weight: 600;
-  color: #64748b;
-}
+.rx-qty-fulfilled { color: #059669; font-weight: 600; }
+.rx-qty-remaining { color: #9ca3af; }
+.rx-qty-divider { color: #d1d5db; margin: 0 3px; }
 
 /* Status badges */
+
 .rx-status {
+  display: inline-block;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 999px;
   font-size: 11px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  display: inline-block;
 }
 
-.rx-status-pending { background-color: #fef3c7; color: #d97706; }
-.rx-status-processing { background-color: #dbeafe; color: #2563eb; }
-.rx-status-fulfilled { background-color: #d1fae5; color: #059669; }
-.rx-status-partial { background-color: #e0f2fe; color: #0284c7; }
-.rx-status-oos { background-color: #fee2e2; color: #dc2626; }
-.rx-status-cancelled { background-color: #f1f5f9; color: #475569; }
-.rx-status-default { background-color: #f1f5f9; color: #475569; }
+.rx-status-pending    { background: #fef3c7; color: #b45309; }
+.rx-status-processing { background: #dbeafe; color: #1d4ed8; }
+.rx-status-fulfilled   { background: #d1fae5; color: #047857; }
+.rx-status-partial     { background: #e0e7ff; color: #4338ca; }
+.rx-status-oos          { background: #fee2e2; color: #b91c1c; }
+.rx-status-cancelled    { background: #f3f4f6; color: #6b7280; }
+.rx-status-default      { background: #f3f4f6; color: #6b7280; }
 
-/* Buttons */
 .rx-btn-action {
   padding: 6px 16px;
   background: #7c3aed;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 12.5px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
 .rx-btn-action:hover {
   background: #6d28d9;
-  box-shadow: 0 2px 4px rgba(124, 58, 237, 0.2);
 }
 
-/* Loader */
+.rx-action-none {
+  color: #d1d5db;
+  font-size: 14px;
+}
+
+.rx-error-msg {
+  color: #b91c1c;
+}
+
 .loader-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  color: #64748b;
+  gap: 8px;
+  color: #6b7280;
+  padding: 20px 0;
 }
 
 .rx-loader-icon {
   color: #7c3aed;
 }
 
-.rx-error-msg {
-  color: #dc2626;
-  font-weight: 500;
-}
+.py-5 { padding-top: 20px; padding-bottom: 20px; }
 
-/* Pagination Footer */
+/* ── Pagination footer ──────────────────────────────────── */
+
 .rx-pagination {
-  padding: 16px 20px;
-  background: #fdfcff;
-  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.rx-page-info {
-  font-size: 13.5px;
-  color: #475569;
+  padding: 10px 16px;
+  border-top: 1px solid #eef0f3;
+  background: #fff;
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .rx-page-controls {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
-.rx-page-buttons {
+.rx-page-buttons,
+.rx-page-size {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .rx-page-label {
   font-size: 12px;
-  font-weight: 700;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: #9ca3af;
 }
 
 .rx-page-btn-group {
@@ -456,22 +457,16 @@
 }
 
 .rx-page-arrow {
-  width: 32px;
-  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  background-color: white;
-  color: #475569;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+  color: #4b5563;
   cursor: pointer;
-  transition: all 0.2s;
-}
-
-.rx-page-arrow:hover:not(:disabled) {
-  background-color: #f1f5f9;
-  border-color: #94a3b8;
 }
 
 .rx-page-arrow:disabled {
@@ -480,33 +475,41 @@
 }
 
 .rx-page-current {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background-color: #7c3aed;
-  color: white;
+  min-width: 20px;
+  text-align: center;
   font-weight: 700;
-}
-
-.rx-page-size {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-left: 1px solid #e2e8f0;
-  padding-left: 20px;
+  color: #1f2937;
 }
 
 .rx-page-size-select {
-  background: transparent;
-  border: 1px solid #cbd5e1;
+  padding: 5px 8px;
+  border: 1px solid #e5e7eb;
   border-radius: 6px;
-  padding: 4px 8px;
-  font-weight: 600;
-  color: #334155;
-  font-size: 13px;
-  cursor: pointer;
-  outline: none;
+  font-size: 12px;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 1280px) {
+  .rx-stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .rx-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rx-advanced-filters {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .rx-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .rx-search-row {
+    flex-direction: column;
+  }
 }
