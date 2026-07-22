@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import "./section.css";
-import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck } from "lucide-react";
+import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck, ShoppingBag } from "lucide-react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import arathyAvatar from "../../assets/arathy_avatar.png";
@@ -14,6 +14,7 @@ import StockAdjustment from "./stock_adjustment";
 import PharmacistDashboard from "./pharmacist_dashboard";
 import PharmacistPrescriptions from "./pharmacist_prescriptions";
 import PharmacistPrescriptionDetails from "./pharmacist_prescription_details";
+import DirectDispensing from "./direct_dispensing";
 
 
 const NAV = [
@@ -31,8 +32,8 @@ const NAV = [
     icon: <FileText size={16} />,
   },
   {
-    key: "billing", label: "Billing",
-    icon: <FlaskConical size={16} />,
+    key: "direct_dispense", label: "Direct Dispensing",
+    icon: <ShoppingBag size={16} />,
   },
   {
     key: "inventory", label: "Inventory",
@@ -82,7 +83,7 @@ export default function PharmacistDashboardSection() {
   const content = (() => {
     switch (active) {
       case "dashboard":  return <PharmacistDashboard />;
-      case "billing":      return <ComingSoon title="Billing" />;
+      case "direct_dispense": return <DirectDispensing />;
       case "prescriptions": return <PharmacistPrescriptions onSelectOrder={(id) => { setSelectedOrderId(id); setActive("prescription_details"); }} />;
       case "prescription_details": return <PharmacistPrescriptionDetails orderId={selectedOrderId} onBack={() => setActive("prescriptions")} />;
       case "inventory":  return <AddInventory />;

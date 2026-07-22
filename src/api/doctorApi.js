@@ -105,4 +105,33 @@ export const doctorApi = {
   updateAttendance: (payload) => api.put("/attendance/mark/", payload).then(res => res.data),
   getAttendanceHistory: (params) => api.get("/attendance/history/", { params }).then(res => res.data),
   getAttendanceStats: (params) => api.get("/attendance/stats/", { params }).then(res => res.data),
+
+  // ── Lab Orders ──────────────────────────────────────────────────────────
+  getLabOrders: async ({ status = '', priority = '', search = '', page = 1, page_size = 10 } = {}) => {
+    const params = new URLSearchParams();
+    params.set('page', page);
+    params.set('page_size', page_size);
+    if (status)   params.set('status',   status);
+    if (priority) params.set('priority', priority);
+    if (search)   params.set('search',   search);
+    const response = await api.get(`/doctor/lab-orders/?${params.toString()}`);
+    return response.data;
+  },
+
+  getAvailableTests: async ({ search = '' } = {}) => {
+    const params = new URLSearchParams();
+    if (search) params.set('search', search);
+    const response = await api.get(`/doctor/available-tests/?${params.toString()}`);
+    return response.data;
+  },
+
+  createLabOrder: async (data) => {
+    const response = await api.post('/doctor/lab-orders/', data);
+    return response.data;
+  },
+
+  getLabOrderDetail: async (id) => {
+    const response = await api.get(`/doctor/lab-orders/${id}/`);
+    return response.data;
+  },
 };

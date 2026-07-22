@@ -12,16 +12,18 @@ import DoctorAttendance from "./doctor_attendance";
 import Icon from "../../components/Icons";
 import { IoNotificationsOutline } from "react-icons/io5";
 import "../receptionist/receptionist.css"; // Reuse the layout CSS
-import { CalendarCheck, CalendarOff } from "lucide-react";
+import { CalendarCheck, CalendarOff,Pill,Building2,ClipboardCheck,User2Icon,LayoutGrid } from "lucide-react";
+import DoctorLabManagement from "./doctor_lab";
 
 const NAV_TOP = [
-  { key: "dashboard", label: "Dashboard", icon: "dashboard" },
-  { key: "patients", label: "Patient Directory", icon: "patients" },
-  { key: "calendar", label: "My Calendar", icon: "calendar", lucideIcon: <CalendarCheck size={17} /> },
-  { key: "attendance", label: "My Attendance", icon: "attendance" },
-  { key: "leave", label: "Leave Management", icon: "leave", lucideIcon: <CalendarOff size={17} /> },
-  { key: "departments", label: "Departments", icon: "departments" },
-  { key: "prescriptions", label: "Prescriptions", icon: "prescriptions" },
+  { key: "dashboard", label: "Dashboard", lucideIcon: <LayoutGrid size={17} /> },
+  { key: "patients", label: "Patient Directory", lucideIcon: <User2Icon size={17} /> },
+  { key: "calendar", label: "My Calendar", lucideIcon: <CalendarCheck size={17} /> },
+  { key: "attendance", label: "My Attendance", lucideIcon: <ClipboardCheck size={17} /> },
+  { key: "leave", label: "Leave Management", lucideIcon: <CalendarOff size={17} /> },
+  { key: "departments", label: "Departments", lucideIcon: <Building2 size={17} />},
+  { key: "prescriptions", label: "Prescriptions", lucideIcon: <Pill size={17} /> },
+  { key: "lab_management", label: "Lab Management", lucideIcon: <Pill size={17} /> },
 ];
 
 const DOCTOR_CHILDREN = [
@@ -84,7 +86,8 @@ export default function DoctorDashboardSection() {
         return <DoctorAttendance />;
       case "prescriptions":
         return <DoctorPrescriptions />;
-
+      case "lab_management":
+        return <DoctorLabManagement />;
       case "profile":
         return <DoctorProfile />;
       default:

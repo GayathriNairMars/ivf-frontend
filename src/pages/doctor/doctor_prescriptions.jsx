@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Search,
   Plus,
@@ -25,6 +25,7 @@ const CreatePrescriptionModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     patient_id: "",
     medicine: "",
+    medicine_id: null,
     dosage: "",
     duration: "",
     frequency: "",
@@ -33,19 +34,171 @@ const CreatePrescriptionModal = ({ isOpen, onClose, onSuccess }) => {
   });
   const [loading, setLoading] = useState(false);
 
+  // ── Patient search (autocomplete) ─────────────────────────────────────
+  const [patientQuery, setPatientQuery] = useState("");
+  const [patientResults, setPatientResults] = useState([]);
+  const [patientLoading, setPatientLoading] = useState(false);
+  const [showPatientDropdown, setShowPatientDropdown] = useState(false);
+  const patientDebounceRef = useRef(null);
+
+  // ── Medicine search (autocomplete) ────────────────────────────────────
+  const [medicineQuery, setMedicineQuery] = useState("");
+  const [medicineResults, setMedicineResults] = useState([]);
+  const [medicineLoading, setMedicineLoading] = useState(false);
+  const [showMedicineDropdown, setShowMedicineDropdown] = useState(false);
+  const medicineDebounceRef = useRef(null);
+
+  useEffect(() => {
+    // Clean up any pending debounce timers on unmount / close
+    return () => {
+      if (patientDebounceRef.current) clearTimeout(patientDebounceRef.current);
+      if (medicineDebounceRef.current) clearTimeout(medicineDebounceRef.current);
+    };
+  }, []);
+
   if (!isOpen) return null;
+
+  const resetForm = () => {
+    setFormData({
+      patient_id: "",
+      medicine: "",
+      medicine_id: null,
+      dosage: "",
+      duration: "",
+      frequency: "",
+      route: "",
+      instructions: "",
+    });
+    setPatientQuery("");
+    setPatientResults([]);
+    setMedicineQuery("");
+    setMedicineResults([]);
+  };
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // ── Patient search handlers ───────────────────────────────────────────
+  const searchPatients = async (query) => {
+    if (!query || query.trim().length < 2) {
+      setPatientResults([]);
+      setPatientLoading(false);
+      return;
+    }
+    setPatientLoading(true);
+    try {
+      const res = await doctorApi.getPatients({ search: query.trim(), page_size: 10 });
+      const list = res?.patients || res?.data || res?.results || (Array.isArray(res) ? res : []);
+      setPatientResults(list);
+    } catch (err) {
+      console.error("Failed to search patients", err);
+      setPatientResults([]);
+    } finally {
+      setPatientLoading(false);
+    }
+  };
+
+  const handlePatientInput = (value) => {
+    setPatientQuery(value);
+    setFormData((prev) => ({ ...prev, patient_id: "" })); // clear link until a result is picked
+    setShowPatientDropdown(true);
+    if (patientDebounceRef.current) clearTimeout(patientDebounceRef.current);
+    patientDebounceRef.current = setTimeout(() => searchPatients(value), 300);
+  };
+
+  const handlePatientFocus = () => {
+    setShowPatientDropdown(true);
+    if (patientQuery.trim().length >= 2) searchPatients(patientQuery);
+  };
+
+  const handleSelectPatient = (patient) => {
+    const name = patient.name || patient.patient_name || "Unknown patient";
+    const mrn = patient.patient_id || patient.mrn || "";
+    setFormData((prev) => ({ ...prev, patient_id: patient.id }));
+    setPatientQuery(mrn ? `${name} (${mrn})` : name);
+    setPatientResults([]);
+    setShowPatientDropdown(false);
+  };
+
+  const closePatientDropdownDelayed = () => {
+    setTimeout(() => setShowPatientDropdown(false), 150);
+  };
+
+  // ── Medicine search handlers ──────────────────────────────────────────
+  const searchMedicines = async (query) => {
+    if (!query || query.trim().length < 2) {
+      setMedicineResults([]);
+      setMedicineLoading(false);
+      return;
+    }
+    setMedicineLoading(true);
+    try {
+      const res = await doctorApi.getMedicines({ search: query.trim(), status: "AVAILABLE", page_size: 10 });
+      const list = res?.data || res?.medicines || res?.results || (Array.isArray(res) ? res : []);
+      setMedicineResults(list);
+    } catch (err) {
+      console.error("Failed to search medicines", err);
+      setMedicineResults([]);
+    } finally {
+      setMedicineLoading(false);
+    }
+  };
+
+  const handleMedicineInput = (value) => {
+    setMedicineQuery(value);
+    setFormData((prev) => ({ ...prev, medicine: value, medicine_id: null }));
+    setShowMedicineDropdown(true);
+    if (medicineDebounceRef.current) clearTimeout(medicineDebounceRef.current);
+    medicineDebounceRef.current = setTimeout(() => searchMedicines(value), 300);
+  };
+
+  const handleMedicineFocus = () => {
+    setShowMedicineDropdown(true);
+    if (medicineQuery.trim().length >= 2) searchMedicines(medicineQuery);
+  };
+
+  const handleSelectMedicine = (med) => {
+    setFormData((prev) => ({
+      ...prev,
+      medicine: med.name,
+      medicine_id: med.id || med.medication_id || null,
+      dosage: prev.dosage && prev.dosage.trim() ? prev.dosage : (med.strength || med.dosage || ""),
+    }));
+    setMedicineQuery(med.name);
+    setMedicineResults([]);
+    setShowMedicineDropdown(false);
+  };
+
+  const closeMedicineDropdownDelayed = () => {
+    setTimeout(() => setShowMedicineDropdown(false), 150);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.patient_id) {
+      alert("Please select a patient from the search results.");
+      return;
+    }
+    if (!formData.medicine) {
+      alert("Please select a medicine from the search results.");
+      return;
+    }
     try {
       setLoading(true);
-      await doctorApi.createPrescription(formData);
+      const payload = {
+        patient_id: formData.patient_id,
+        medication_name: formData.medicine,
+        ...(formData.medicine_id ? { medicine_id: formData.medicine_id } : {}),
+        dosage: formData.dosage,
+        duration: formData.duration,
+        frequency: formData.frequency,
+        route: formData.route,
+        instructions: formData.instructions,
+      };
+      await doctorApi.createPrescription(payload);
       onSuccess();
       onClose();
-      setFormData({ patient_id: "", medicine: "", dosage: "", duration: "", frequency: "", route: "", instructions: "" });
+      resetForm();
     } catch (error) {
       console.error("Failed to create prescription", error);
       alert("Failed to create prescription");
@@ -65,14 +218,87 @@ const CreatePrescriptionModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
-            <div className="form-group">
-              <label>Patient ID</label>
-              <input type="text" name="patient_id" value={formData.patient_id} onChange={handleChange} required placeholder="e.g. 1" />
+            {/* ── Patient search ──────────────────────────────────── */}
+            <div className="form-group" style={{ position: "relative" }}>
+              <label>Patient</label>
+              <input
+                type="text"
+                value={patientQuery}
+                onChange={(e) => handlePatientInput(e.target.value)}
+                onFocus={handlePatientFocus}
+                onBlur={closePatientDropdownDelayed}
+                placeholder="Search patient by name or MRN…"
+                autoComplete="off"
+                required={!formData.patient_id}
+              />
+              {showPatientDropdown && (
+                <div className="search-dropdown">
+                  {patientLoading ? (
+                    <div className="search-dropdown__msg">Searching…</div>
+                  ) : patientResults.length > 0 ? (
+                    patientResults.map((p) => (
+                      <div
+                        key={p.id}
+                        className="search-dropdown__item"
+                        onMouseDown={(e) => { e.preventDefault(); handleSelectPatient(p); }}
+                      >
+                        <div className="search-dropdown__title">{p.name || p.patient_name}</div>
+                        <div className="search-dropdown__subtitle">
+                          {p.patient_id || p.mrn || ""}
+                          {p.phone ? ` · ${p.phone}` : ""}
+                        </div>
+                      </div>
+                    ))
+                  ) : patientQuery.trim().length >= 2 ? (
+                    <div className="search-dropdown__msg">No patients found</div>
+                  ) : (
+                    <div className="search-dropdown__msg">Type at least 2 characters</div>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="form-group">
+
+            {/* ── Medicine search ─────────────────────────────────── */}
+            <div className="form-group" style={{ position: "relative" }}>
               <label>Medicine</label>
-              <input type="text" name="medicine" value={formData.medicine} onChange={handleChange} required placeholder="e.g. Gonal-F" />
+              <input
+                type="text"
+                value={medicineQuery}
+                onChange={(e) => handleMedicineInput(e.target.value)}
+                onFocus={handleMedicineFocus}
+                onBlur={closeMedicineDropdownDelayed}
+                placeholder="Search medicine name, generic, ID…"
+                autoComplete="off"
+                required
+              />
+              {showMedicineDropdown && (
+                <div className="search-dropdown">
+                  {medicineLoading ? (
+                    <div className="search-dropdown__msg">Searching…</div>
+                  ) : medicineResults.length > 0 ? (
+                    medicineResults.map((med) => (
+                      <div
+                        key={med.id || med.medication_id}
+                        className="search-dropdown__item"
+                        onMouseDown={(e) => { e.preventDefault(); handleSelectMedicine(med); }}
+                      >
+                        <div className="search-dropdown__title">{med.name}</div>
+                        <div className="search-dropdown__subtitle">
+                          {med.generic_name || ""}
+                          {med.medication_id ? ` · ${med.medication_id}` : ""}
+                          {med.availability ? ` · ${med.availability}` : ""}
+                        </div>
+                      </div>
+                    ))
+                  ) : medicineQuery.trim().length >= 2 ? (
+                    <div className="search-dropdown__msg">No medicines found</div>
+                  ) : (
+                    <div className="search-dropdown__msg">Type at least 2 characters</div>
+                  )}
+                </div>
+              )}
             </div>
+
             <div className="form-group">
               <label>Dosage</label>
               <input type="text" name="dosage" value={formData.dosage} onChange={handleChange} required placeholder="e.g. 300 IU" />
