@@ -39,6 +39,9 @@ import TestTypesList from "./pages/admin/lab/test_types";
 import CreateTestType from "./pages/admin/lab/create_test_type";
 import EditTestType from "./pages/admin/lab/edit_test_type";
 
+import AndrologistLoginPage from "./pages/andrology/auth/login";
+import AndrologistDashboardSection from "./pages/andrology/section";
+
 
 const Placeholder = ({ title }) => {
   const { logout } = useAuth();
@@ -85,6 +88,7 @@ export default function App() {
         <Route path="/pharmacist-login" element={<PharmacistLoginPage />} />
         <Route path="/nurse-login" element={<NurseLoginPage />} />
         <Route path="/embryologist-login" element={<EmbryologistLoginPage />} />
+        <Route path="/andrologist-login" element={<AndrologistLoginPage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/*Super Admin*/}
@@ -134,6 +138,7 @@ export default function App() {
         {/* EMBRYOLOGIST */}
         <Route path="/emb/" element={<ProtectedRoute requiredRole="EMB"><EmbryologistDashboardSection /></ProtectedRoute>} />
         
+        <Route path="/and/" element={<ProtectedRoute requiredRole="AND"><AndrologistDashboardSection /></ProtectedRoute>} />
         {/*Other roles-swap placeholder with real comp*/}
         <Route path="/cco/*" element={<ProtectedRoute requiredRole="CCO"><Placeholder title="Clinical Counsellor Dashboard" /></ProtectedRoute>} />
         <Route path="/fco/*" element={<ProtectedRoute requiredRole="FCO"><Placeholder title="Financial Counsellor Dashboard" /></ProtectedRoute>} />
@@ -142,7 +147,6 @@ export default function App() {
         <Route path="/nur/*" element={<ProtectedRoute requiredRole="NUR"><NurseDashboardSection /></ProtectedRoute>} />
         <Route path="/pha/*" element={<ProtectedRoute requiredRole="PHA"><PharmacistDashboardSection/></ProtectedRoute>} />
         <Route path="/tec/*" element={<ProtectedRoute requiredRole="TEC"><LabDashboardSection /></ProtectedRoute>} />
-        <Route path="/and/*" element={<ProtectedRoute requiredRole="AND"><Placeholder title="Andrology Tech Dashboard" /></ProtectedRoute>} />
         <Route path="/pat/*" element={<ProtectedRoute requiredRole="PAT"><Placeholder title="Patient Dashboard" /></ProtectedRoute>} />
         <Route path="/end/*" element={<ProtectedRoute requiredRole="END"><DoctorDashboardSection /></ProtectedRoute>} />
 

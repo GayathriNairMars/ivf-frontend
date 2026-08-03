@@ -1,0 +1,768 @@
+/* Billing Overview Styling - Violet-themed */
+
+.billing-overview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.billing-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  gap: 12px;
+  color: #64748b;
+  font-family: 'Inter', sans-serif;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: #7c3aed;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.billing-overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 16px;
+}
+
+.billing-overview-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.billing-overview-header .subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.timeframe-selector {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  gap: 2px;
+  border: 1px solid #e2e8f0;
+}
+
+.time-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-btn.active {
+  background: #ffffff;
+  color: #7c3aed;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.metric-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.05);
+}
+
+.metric-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.metric-card .card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.card-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sales-icon { background: #ede9fe; color: #7c3aed; }
+.month-icon { background: #ecfdf5; color: #10b981; }
+.pending-icon { background: #fef2f2; color: #ef4444; }
+.partial-icon { background: #eff6ff; color: #3b82f6; }
+
+.metric-card .card-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+  font-feature-settings: "tnum";
+}
+
+.metric-card .card-value.text-red {
+  color: #dc2626;
+}
+
+.metric-card .card-subtext {
+  font-size: 12px;
+}
+
+.text-green { color: #16a34a; }
+.text-gray { color: #64748b; }
+.text-red-bold { color: #dc2626; font-weight: 600; }
+.text-blue { color: #2563eb; }
+
+.trend-badge {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* Main Grid */
+.billing-main-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 20px;
+}
+
+/* Left Column */
+.billing-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Fast Billing Card */
+.fast-billing-card {
+  position: relative;
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+  border-radius: 12px;
+  padding: 24px;
+  color: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+}
+
+.fast-billing-bg {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+}
+
+.fast-billing-content {
+  position: relative;
+  zIndex: 1;
+}
+
+.fast-billing-content h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.fast-billing-content p {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.btn-new-bill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #7c3aed;
+  border: none;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-new-bill:hover {
+  background: #f8fafc;
+  transform: scale(1.02);
+}
+
+.btn-new-bill:active {
+  transform: scale(0.98);
+}
+
+/* System Tools */
+.system-tools-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.system-tools-card h4 {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tool-btn:hover {
+  background: #ede9fe;
+  color: #7c3aed;
+  border-color: #ede9fe;
+}
+
+/* Low Stock Alert */
+.low-stock-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.low-stock-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.low-stock-header h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.text-orange { color: #f97316; }
+
+.low-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.low-stock-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  padding: 6px 8px;
+  background: #fffaf8;
+  border-radius: 6px;
+  border: 1px solid #ffebe3;
+}
+
+.low-stock-item .med-name {
+  color: #475569;
+}
+
+.low-stock-item .med-qty {
+  font-weight: 600;
+  color: #ef4444;
+}
+
+.low-stock-empty {
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* Right Column: Recent Bills Table */
+.recent-bills-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.recent-bills-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.recent-bills-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recent-bills-title h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.latest-badge {
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-bar-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  width: 220px;
+}
+
+.search-bar-inline input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 12px;
+  color: #334155;
+  width: 100%;
+}
+
+.search-bar-inline svg {
+  color: #94a3b8;
+}
+
+.filter-dropdown-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.filter-icon {
+  color: #94a3b8;
+}
+
+.filter-select {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 12px;
+  color: #334155;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-icon-btn:hover {
+  background: #ede9fe;
+  color: #7c3aed;
+  border-color: #ede9fe;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow-x: auto;
+}
+
+.bills-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.bills-table th {
+  background: #f8fafc;
+  padding: 12px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bills-table td {
+  padding: 14px 20px;
+  font-size: 13px;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bill-row:hover {
+  background: #fafafa;
+}
+
+.invoice-id {
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+.patient-avatar-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.patient-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ede9fe;
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.badge-paid {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.badge-pending {
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.badge-partial {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.badge-cancelled {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.bill-amount {
+  font-feature-settings: "tnum";
+}
+
+.bill-actions {
+  text-align: right;
+}
+
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f5f3ff;
+  color: #7c3aed;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn:hover {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.table-loader, .empty-table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: #94a3b8;
+  font-size: 13px;
+  gap: 8px;
+}
+
+/* Pagination */
+.table-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.pagination-text {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn:not(:disabled):hover {
+  background: #ede9fe;
+  color: #7c3aed;
+  border-color: #ede9fe;
+}
+
+.page-number {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Bottom Grid */
+.billing-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+}
+
+.dashboard-chart-card, .stock-summary-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.chart-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-dot.this-week { background: #7c3aed; }
+.legend-dot.last-week { background: #94a3b8; opacity: 0.5; }
+
+.chart-content-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.velocity-svg {
+  width: 100%;
+  max-height: 180px;
+}
+
+.axis-label {
+  font-size: 10px;
+  font-weight: 600;
+  fill: #94a3b8;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Stock Summary Card */
+.stock-summary-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.stock-summary-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+
+.stock-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.stock-progress-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #475569;
+}
+
+.progress-bar-container {
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.fill-purple { background: #7c3aed; }
+.fill-blue { background: #3b82f6; }
+.fill-red { background: #ef4444; }
+
+.manage-inventory-link {
+  margin-top: auto;
+  border: none;
+  background: transparent;
+  color: #7c3aed;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  padding: 8px 0 0 0;
+  display: inline-block;
+  transition: color 0.2s;
+}
+
+.manage-inventory-link:hover {
+  color: #5b21b6;
+}
