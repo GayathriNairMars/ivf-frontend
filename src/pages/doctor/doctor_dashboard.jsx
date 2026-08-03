@@ -241,7 +241,7 @@ export default function DoctorDashboard({ onViewPatient, onNavigate }) {
 
       {/* Quick Actions Grid */}
       <section className="quick-actions-grid">
-        <div className="action-card" onClick={() => setIsRxModalOpen(true)}>
+        <div className="action-card" onClick={() => onNavigate('prescriptions')}>
           <div className="action-card-left">
             <div className="action-icon-wrapper">
               <LuFilePlus size={20} />
@@ -251,7 +251,7 @@ export default function DoctorDashboard({ onViewPatient, onNavigate }) {
           <LuArrowUpRight className="action-arrow" />
         </div>
 
-        <div className="action-card" onClick={() => setIsLabModalOpen(true)}>
+        <div className="action-card" onClick={() => onNavigate('lab_management')}>
           <div className="action-card-left">
             <div className="action-icon-wrapper">
               <LuHeartHandshake size={20} />

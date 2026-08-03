@@ -59,6 +59,14 @@ export default function PharmacistPrescriptionDetails({ orderId, onBack }) {
     }
   }, [orderId]);
 
+  // Go back to the prescription orders list, giving the person a brief
+  // moment to see the success banner first.
+  const returnToList = (delay = 1100) => {
+    setTimeout(() => {
+      if (onBack) onBack();
+    }, delay);
+  };
+
   const handleCancelOrder = async () => {
     if (!window.confirm("Are you sure you want to cancel this prescription order?")) {
       return;
@@ -70,7 +78,7 @@ export default function PharmacistPrescriptionDetails({ orderId, onBack }) {
       const res = await pharmacistApi.updatePrescriptionStatus(orderId, { status: "CANCELLED" });
       if (res.success) {
         setMessage("Order cancelled successfully");
-        fetchOrderDetails();
+        returnToList();
       } else {
         setError(res.message || "Failed to cancel order");
       }
@@ -115,7 +123,7 @@ export default function PharmacistPrescriptionDetails({ orderId, onBack }) {
       
       if (patchRes.success) {
         setMessage("Prescription updated successfully");
-        fetchOrderDetails();
+        returnToList();
       } else {
         setError(patchRes.message || "Failed to save order updates.");
       }

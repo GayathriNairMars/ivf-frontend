@@ -21,7 +21,6 @@ const NAV_TOP = [
   { key: "calendar", label: "My Calendar", lucideIcon: <CalendarCheck size={17} /> },
   { key: "attendance", label: "My Attendance", lucideIcon: <ClipboardCheck size={17} /> },
   { key: "leave", label: "Leave Management", lucideIcon: <CalendarOff size={17} /> },
-  { key: "departments", label: "Departments", lucideIcon: <Building2 size={17} />},
   { key: "prescriptions", label: "Prescriptions", lucideIcon: <Pill size={17} /> },
   { key: "lab_management", label: "Lab Management", lucideIcon: <Pill size={17} /> },
 ];

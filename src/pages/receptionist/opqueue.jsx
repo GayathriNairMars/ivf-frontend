@@ -215,13 +215,13 @@ export default function OPQueue({ onNewTicket }) {
     <div className="opq-root">
 
       {/* ── Page header ──────────────────────────────────────────── */}
-      <div className="opq-page-header">
-        <div>
-          <h2 className="opq-title">OP tickets</h2>
-          <p className="opq-subtitle">Create a consultation ticket for an existing patient.</p>
+      <div className="rec-page-header">
+        <div className="rec-page-header-text">
+          <h2>OP Queue & Ticket Management</h2>
+          <p>Real-time patient queue monitoring, token tracking, and consultation status management.</p>
         </div>
-        <button className="opq-btn-generate" onClick={onNewTicket}>
-          <span>+</span> Generate new ticket
+        <button className="btn-primary" onClick={onNewTicket}>
+          <span>+</span> Generate New Ticket
         </button>
       </div>
 

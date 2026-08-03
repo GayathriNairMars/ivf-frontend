@@ -1,7 +1,22 @@
+// Lab Dashboard – layout matched to Receptionist HIMS sidebar nav + Test Types group
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import "./lab_section.css";
-import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck, Settings, Users, Calendar, LayoutGrid, LogOut } from "lucide-react";
+import {
+  FlaskConical,
+  Beaker,
+  FileText,
+  Activity,
+  ChevronDown,
+  ClipboardCheck,
+  Settings,
+  Calendar,
+  LayoutGrid,
+  LogOut,
+  Search,
+  Menu,
+  Building2,
+} from "lucide-react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import arathyAvatar from "../../assets/arathy_avatar.png";
@@ -14,12 +29,13 @@ import TestTypeRecords from "./test_type_records";
 import LabOrders from "./lab_orders";
 import labApi from "../../api/labApi";
 
-const NAV = [
-  { key: "dashboard", label: "Dashboard", icon: <LayoutGrid size={16} /> },
-  { key: "pending_tests", label: "Pending Tests", icon: <ClipboardCheck size={16} /> },
-  { key: "in_progress", label: "In Progress", icon: <Beaker size={16} /> },
-  { key: "completed", label: "Completed", icon: <FileText size={16} /> },
-  { key: "reports", label: "Analytics", icon: <Activity size={16} /> },
+const NAV_TOP = [
+  { key: "dashboard", label: "Dashboard", icon: <LayoutGrid size={18} /> },
+  { key: "pending_tests", label: "Pending Tests", icon: <ClipboardCheck size={18} /> },
+  { key: "in_progress", label: "In Progress", icon: <Beaker size={18} /> },
+  { key: "completed", label: "Completed", icon: <FileText size={18} /> },
+  { key: "attendance", label: "My Attendance", icon: <Calendar size={18} /> },
+  { key: "reports", label: "Analytics", icon: <Activity size={18} /> },
 ];
 
 function ComingSoon({ title }) {
@@ -34,7 +50,10 @@ function ComingSoon({ title }) {
 export default function LabDashboardSection() {
   const { user, logout } = useAuth();
   const [active, setActive] = useState("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [testTypesOpen, setTestTypesOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState("");
   const [testTypes, setTestTypes] = useState([]);
   const [selectedRecordId, setSelectedRecordId] = useState(null);
 
@@ -74,16 +93,21 @@ export default function LabDashboardSection() {
     window.location.href = "/lab-login";
   };
 
+  const handleNavClick = (key) => setActive(key);
+
+  const testTypesGroupActive = active.startsWith("test_type_");
+  const avatarSrc = arathyAvatar;
+
   const content = (() => {
     if (active.startsWith("test_type_")) {
       const typeId = parseInt(active.replace("test_type_", ""), 10);
       return (
-        <TestTypeRecords 
-          testTypeId={typeId} 
-          onViewRecord={(id) => { 
-            setSelectedRecordId(id); 
-            setActive("record_detail"); 
-          }} 
+        <TestTypeRecords
+          testTypeId={typeId}
+          onViewRecord={(id) => {
+            setSelectedRecordId(id);
+            setActive("record_detail");
+          }}
         />
       );
     }
@@ -103,143 +127,214 @@ export default function LabDashboardSection() {
   })();
 
   return (
-    <div className="lab-root">
+    <div className={`lab-root ${sidebarOpen ? "sidebar-open" : "sidebar-collapsed"}`}>
+
+      {/* ══ Sidebar ══════════════════════════════════════════════════════════ */}
       <aside className="lab-sidebar">
-        <div className="lab-brand" style={{ display: "flex", alignItems: "center", gap: "10px", padding: "20px 16px" }}>
-          <div style={{ background: "#0f172a", color: "#fff", padding: "8px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+
+        <div className="lab-brand" onClick={() => setActive("dashboard")}>
+          <div className="lab-brand-logo">
             <FlaskConical size={18} />
           </div>
-          <div style={{ textAlign: "left" }}>
-            <h2 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", margin: 0 }}>IVF Clinical Lab</h2>
-            <p style={{ fontSize: "10px", color: "#9ca3af", margin: 0 }}>Precision Management</p>
-          </div>
+          {sidebarOpen && (
+            <div className="lab-brand-info">
+              <span className="lab-brand-name">IVF Clinical Lab</span>
+              <span className="lab-brand-tag">Precision Management</span>
+            </div>
+          )}
         </div>
 
         <nav className="sidebar-nav">
-          {NAV.map((item) => {
-            const isActiveItem = active === item.key;
-            const isTestsParent = item.key === "tests";
-            const isAnySubActive = active.startsWith("test_type_");
-
+          <div className="nav-section-label">{sidebarOpen ? "MAIN MENU" : "•••"}</div>
+          {NAV_TOP.map((item) => {
+            const isActive = active === item.key;
             return (
-              <div key={item.key} className="nav-group">
-                <button
-                  className={`nav-item ${(isActiveItem || (isTestsParent && isAnySubActive)) ? "nav-item-active" : ""}`}
-                  onClick={() => {
-                    if (isTestsParent) {
-                      if (testTypes.length > 0) {
-                        setActive(`test_type_${testTypes[0].id}`);
-                      } else {
-                        setActive("tests");
-                      }
-                    } else {
-                      setActive(item.key);
-                    }
-                  }}
-                >
-                  <div className="icon">{item.icon}</div>
-                  <span>{item.label}</span>
-                  {(isActiveItem || (isTestsParent && isAnySubActive)) && <div className="nav-indicator" />}
-                </button>
-
-                {/* Dynamic Test Types Nested Subitems */}
-                {isTestsParent && (
-                  <div className="sub-nav">
-                    {testTypes.map((type) => {
-                      const isTypeActive = active === `test_type_${type.id}`;
-                      return (
-                        <button 
-                          key={type.id} 
-                          className={`sub-nav-item ${isTypeActive ? "active" : ""}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActive(`test_type_${type.id}`);
-                          }}
-                        >
-                          {isTypeActive && <span className="sub-nav-indicator" />}
-                          <span>{type.name}</span>
-                          <span style={{ 
-                            fontSize: "10px", 
-                            background: isTypeActive ? "#0d9488" : "#f3f4f6", 
-                            color: isTypeActive ? "#fff" : "#6b7280", 
-                            padding: "1px 6px", 
-                            borderRadius: "10px", 
-                            fontWeight: "600",
-                            marginLeft: "auto"
-                          }}>
-                            {type.record_count ?? type.field_count ?? 0}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+              <button
+                key={item.key}
+                className={`nav-item ${isActive ? "active" : ""}`}
+                onClick={() => handleNavClick(item.key)}
+                title={!sidebarOpen ? item.label : ""}
+              >
+                {isActive && <div className="nav-active-bar" />}
+                <div className="nav-icon-wrap">{item.icon}</div>
+                {sidebarOpen && <span className="nav-label">{item.label}</span>}
+              </button>
             );
           })}
-        </nav>
 
-        {/* Sidebar Footer */}
-        <div className="lab-sidebar-footer" style={{ borderTop: "1px solid #f3f4f6", padding: "16px 14px", display: "flex", flexDirection: "column", gap: "6px" }}>
-          {/* User profile row */}
-          <div className="lab-user" style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 6px" }}>
-            <img src={arathyAvatar} alt="Profile" className="profile-img" style={{ width: "32px", height: "32px", borderRadius: "50%", border: "1.5px solid #0d9488" }} />
-            <div className="lab-user-info" style={{ textAlign: "left" }}>
-              <span className="lab-user-name" style={{ fontSize: "12px", fontWeight: "700", color: "#1f2937" }}>
-                {user?.full_name || "Lab Tech"}
-              </span>
-              <span className="lab-user-role" style={{ fontSize: "10px", color: "#9ca3af" }}>
-                {user?.email || "dr.smith@ivfcenter.com"}
-              </span>
-            </div>
+          <div className="nav-section-label" style={{ marginTop: "12px" }}>
+            {sidebarOpen ? "TEST TYPES" : "•••"}
           </div>
 
-          {/* Settings option */}
-          <button 
-            className={`nav-item ${active === "settings" ? "nav-item-active" : ""}`} 
-            onClick={() => setActive("settings")}
-            style={{ height: "36px", padding: "8px 12px" }}
-          >
-            <div className="icon"><Settings size={15} /></div>
-            <span>Settings</span>
-          </button>
+          <div className="nav-group">
+            <button
+              className={`nav-item ${testTypesGroupActive ? "active" : ""}`}
+              onClick={() => {
+                if (sidebarOpen) {
+                  setTestTypesOpen((o) => !o);
+                } else {
+                  setSidebarOpen(true);
+                  setTestTypesOpen(true);
+                }
+              }}
+              title={!sidebarOpen ? "Test Types" : ""}
+            >
+              {testTypesGroupActive && <div className="nav-active-bar" />}
+              <div className="nav-icon-wrap">
+                <Beaker size={18} />
+              </div>
+              {sidebarOpen && (
+                <>
+                  <span className="nav-label" style={{ flex: 1, textAlign: "left" }}>Test Types</span>
+                  <ChevronDown
+                    size={14}
+                    className="nav-chevron"
+                    style={{ transform: testTypesOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                  />
+                </>
+              )}
+            </button>
 
-          {/* Logout option */}
-          <button 
-            className="nav-item" 
-            onClick={handleLogout}
-            style={{ height: "36px", padding: "8px 12px", color: "#ef4444" }}
-          >
-            <div className="icon"><LogOut size={15} /></div>
-            <span>Logout</span>
-          </button>
+            {sidebarOpen && testTypesOpen && (
+              <div className="nav-sub">
+                {testTypes.map((type) => {
+                  const isTypeActive = active === `test_type_${type.id}`;
+                  return (
+                    <button
+                      key={type.id}
+                      className={`nav-sub-item ${isTypeActive ? "active" : ""}`}
+                      onClick={() => handleNavClick(`test_type_${type.id}`)}
+                    >
+                      {isTypeActive && <div className="nav-active-bar" />}
+                      <span>{type.name}</span>
+                      <span className="nav-sub-count">
+                        {type.record_count ?? type.field_count ?? 0}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {!sidebarOpen && (
+              <div className="nav-collapsed-sub">
+                {testTypes.map((type) => {
+                  const isTypeActive = active === `test_type_${type.id}`;
+                  return (
+                    <button
+                      key={type.id}
+                      className={`nav-item ${isTypeActive ? "active" : ""}`}
+                      onClick={() => handleNavClick(`test_type_${type.id}`)}
+                      title={type.name}
+                    >
+                      {isTypeActive && <div className="nav-active-bar" />}
+                      <Beaker size={16} />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </nav>
+
+        <div className="sidebar-footer">
+          {sidebarOpen ? (
+            <div className="organization-info">
+              <div className="org-avatar">
+                <Building2 size={16} color="#ffffff" />
+              </div>
+              <div className="org-text">
+                <span className="org-name">IVF Fertility Center</span>
+                <span className="org-district">Central Branch • Diagnostics Lab</span>
+              </div>
+            </div>
+          ) : (
+            <div className="org-avatar" style={{ margin: "0 auto" }}>
+              <Building2 size={16} color="#ffffff" />
+            </div>
+          )}
         </div>
       </aside>
 
+      {/* ══ Main area ════════════════════════════════════════════════════════ */}
       <div className="lab-main">
         <header className="lab-topbar">
+          <button
+            className="collapse-btn"
+            onClick={() => setSidebarOpen((o) => !o)}
+            title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+          >
+            <Menu size={18} />
+          </button>
+
           <div className="lab-search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input type="text" placeholder="Search patients, tests, or records..." />
+            <Search size={16} />
+            <input
+              type="text"
+              placeholder="Search patients, tests, or records..."
+              value={globalSearch}
+              onChange={(e) => setGlobalSearch(e.target.value)}
+            />
+            {globalSearch && (
+              <button
+                onClick={() => setGlobalSearch("")}
+                style={{ background: "transparent", border: "none", cursor: "pointer", color: "#94a3b8", fontSize: 12 }}
+              >
+                ✕
+              </button>
+            )}
           </div>
+
           <div className="user-area">
-            <button className="notification-btn-square">
-              <IoNotificationsOutline size={17} />
+            <button className="notification-btn-square" title="Notifications">
+              <IoNotificationsOutline size={18} />
               <span className="dot-red" />
             </button>
-            <button 
-              className="btn-primary" 
-              style={{ padding: "8px 16px", borderRadius: "8px", display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", height: "38px", background: "#0f172a", color: "#fff", border: "none", cursor: "pointer" }}
-              onClick={() => setActive("tests")}
-            >
-              <span style={{ fontSize: "16px", fontWeight: "700" }}>+</span> New Lab Order
-            </button>
+
+            <div className="topbar-profile-container">
+              <div className="topbar-profile" onClick={() => setProfileOpen(!profileOpen)}>
+                <img src={avatarSrc} alt="Profile" className="profile-img" />
+                <div className="profile-details">
+                  <span className="profile-name">{user?.full_name || "Lab Tech"}</span>
+                  <span className="profile-role">{ROLE_LABELS?.[user?.role] || "Lab Technician"}</span>
+                </div>
+                <ChevronDown
+                  size={14}
+                  className="profile-chevron"
+                  style={{ transform: profileOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                />
+              </div>
+
+              {profileOpen && (
+                <div className="topbar-dropdown">
+                  <div className="dropdown-user-info">
+                    <img src={avatarSrc} alt="Profile" className="dropdown-avatar" />
+                    <h4>{user?.full_name || "Lab Tech"}</h4>
+                    <p>{user?.email || "dr.smith@ivfcenter.com"}</p>
+                    <span className="dropdown-status-pill">
+                      <span className="dot-green" /> On Duty
+                    </span>
+                  </div>
+                  <div className="dropdown-menu-list">
+                    <button className="dropdown-item" onClick={() => { setProfileOpen(false); setActive("attendance"); }}>
+                      <Calendar size={15} /> My Attendance
+                    </button>
+                    <button className="dropdown-item" onClick={() => { setProfileOpen(false); setActive("settings"); }}>
+                      <Settings size={15} /> Settings
+                    </button>
+                    <button className="dropdown-item logout-btn" onClick={handleLogout}>
+                      <LogOut size={15} /> Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
-        <main className="lab-body">{content}</main>
+        <main className="lab-body">
+          <div className="section-content">{content}</div>
+        </main>
       </div>
     </div>
   );

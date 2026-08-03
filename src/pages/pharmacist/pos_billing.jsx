@@ -54,6 +54,29 @@ export default function POSBilling({ onBillCreated, onCancel }) {
   const [exactAmountChecked, setExactAmountChecked] = useState(true);
   const [showMetadata, setShowMetadata] = useState(false);
 
+  // ---- Helpers to normalize API response shapes ----
+  // Some endpoints return a bare array, others return { success, data }
+  // or { results }. This helper handles all three so the UI doesn't
+  // silently render empty lists when the shape doesn't match.
+  const extractList = (data) => {
+    if (Array.isArray(data)) return data;
+    if (data && data.success) return data.data || [];
+    if (data && data.results) return data.results || [];
+    return [];
+  };
+
+  // Some patient records carry name/contact fields nested under `user`
+  // (e.g. { user: { full_name, email, phone } }) instead of at the top
+  // level. These helpers fall back gracefully either way.
+  const getPatientName = (p) =>
+    p.full_name ||
+    p.user?.full_name ||
+    `${p.first_name || p.user?.first_name || ""} ${p.last_name || p.user?.last_name || ""}`.trim();
+
+  const getPatientPhone = (p) => p.phone || p.user?.phone || "";
+  const getPatientEmail = (p) => p.email || p.user?.email || "";
+  const getPatientId = (p) => p.patient_id || p.slug || `PAT-${p.id}`;
+
   // No pre-filled patient — user must search
 
   // Search Patients API
@@ -66,13 +89,7 @@ export default function POSBilling({ onBillCreated, onCancel }) {
       setPatientLoading(true);
       try {
         const res = await api.get(`/patients/?search=${encodeURIComponent(patientSearch)}`);
-        if (res.data && res.data.success) {
-          setPatientsList(res.data.data || []);
-        } else if (res.data && res.data.results) {
-          setPatientsList(res.data.results || []);
-        } else {
-          setPatientsList([]);
-        }
+        setPatientsList(extractList(res.data));
       } catch (err) {
         setPatientsList([]);
       } finally {
@@ -93,11 +110,7 @@ export default function POSBilling({ onBillCreated, onCancel }) {
       setMedLoading(true);
       try {
         const res = await api.get(`/pharmacy/inventory/?search=${encodeURIComponent(medSearch)}`);
-        if (res.data && res.data.success) {
-          setMedsList(res.data.data || []);
-        } else if (res.data && res.data.results) {
-          setMedsList(res.data.results || []);
-        }
+        setMedsList(extractList(res.data));
       } catch (err) {
         setMedsList([]);
       } finally {
@@ -351,25 +364,29 @@ export default function POSBilling({ onBillCreated, onCancel }) {
                   ) : patientsList.length === 0 ? (
                     <div className="dropdown-empty">No patient matching query.</div>
                   ) : (
-                    patientsList.map((p) => (
-                      <div 
-                        key={p.id} 
-                        className="suggestion-item" 
-                        onClick={() => {
-                          setSelectedPatient(p);
-                          setShowPatientDropdown(false);
-                          setPatientSearch("");
-                        }}
-                      >
-                        <div className="suggest-avatar">
-                          {p.full_name ? p.full_name[0].toUpperCase() : "P"}
+                    patientsList.map((p) => {
+                      const name = getPatientName(p);
+                      const phone = getPatientPhone(p);
+                      return (
+                        <div 
+                          key={p.id} 
+                          className="suggestion-item" 
+                          onClick={() => {
+                            setSelectedPatient(p);
+                            setShowPatientDropdown(false);
+                            setPatientSearch("");
+                          }}
+                        >
+                          <div className="suggest-avatar">
+                            {name ? name[0].toUpperCase() : "P"}
+                          </div>
+                          <div className="suggest-info">
+                            <span className="suggest-name">{name}</span>
+                            <span className="suggest-sub">{getPatientId(p)} • {phone}</span>
+                          </div>
                         </div>
-                        <div className="suggest-info">
-                          <span className="suggest-name">{p.full_name || `${p.first_name || ""} ${p.last_name || ""}`}</span>
-                          <span className="suggest-sub">{p.patient_id || `ID: ${p.id}`} • {p.phone}</span>
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               )}
@@ -379,24 +396,26 @@ export default function POSBilling({ onBillCreated, onCancel }) {
             {selectedPatient && (
               <div className="patient-profile-card">
                 <div className="patient-avatar-box">
-                  {selectedPatient.full_name ? selectedPatient.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) : "PT"}
+                  {getPatientName(selectedPatient)
+                    ? getPatientName(selectedPatient).split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
+                    : "PT"}
                 </div>
                 <div className="patient-details-grid">
                   <div className="detail-item">
                     <span className="detail-label">NAME</span>
-                    <span className="detail-val text-purple font-bold">{selectedPatient.full_name || `${selectedPatient.first_name || ""} ${selectedPatient.last_name || ""}`}</span>
+                    <span className="detail-val text-purple font-bold">{getPatientName(selectedPatient)}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">PATIENT ID</span>
-                    <span className="detail-val">{selectedPatient.patient_id || `PAT-${selectedPatient.id}`}</span>
+                    <span className="detail-val">{getPatientId(selectedPatient)}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">EMAIL</span>
-                    <span className="detail-val text-ellipsis">{selectedPatient.email || "N/A"}</span>
+                    <span className="detail-val text-ellipsis">{getPatientEmail(selectedPatient) || "N/A"}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">PHONE</span>
-                    <span className="detail-val">{selectedPatient.phone}</span>
+                    <span className="detail-val">{getPatientPhone(selectedPatient)}</span>
                   </div>
                 </div>
                 <button className="remove-patient-btn" onClick={() => setSelectedPatient(null)} title="Deselect Patient">

@@ -1,9 +1,9 @@
 .doc-attendance-container {
-  padding: 24px;
-  background-color: #f8fafc;
-  min-height: 100vh;
-  font-family: 'Inter', sans-serif;
-  color: #334155;
+  padding: 0;
+  background-color: transparent;
+  min-height: 100%;
+  font-family: var(--rec-font, 'Inter', sans-serif);
+  color: var(--rec-text-main, #0f172a);
 }
 
 .da-header {
@@ -11,32 +11,40 @@
 }
 
 .da-header h2 {
-  font-size: 28px;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 4px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--rec-text-main, #0f172a);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.4px;
 }
 
 .da-header p {
-  color: #64748b;
+  color: var(--rec-text-sub, #475569);
   margin: 0;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
 /* Top KPI Cards */
 .da-top-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
 .da-card {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  border: 1px solid #e2e8f0;
-  padding: 20px;
+  background-color: #ffffff;
+  border-radius: var(--rec-radius-lg, 16px);
+  box-shadow: var(--rec-shadow-card);
+  border: 1px solid var(--rec-border, #e2e8f0);
+  padding: 20px 22px;
+  transition: all 0.22s ease;
+}
+
+.da-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--rec-shadow-hover);
+  border-color: #c7d2fe;
 }
 
 .top-kpi {
@@ -46,7 +54,7 @@
   border-top: 3px solid transparent;
 }
 
-.top-kpi:nth-child(1) { border-top-color: #3b82f6; }
+.top-kpi:nth-child(1) { border-top-color: var(--rec-primary, #4f46e5); }
 .top-kpi:nth-child(2) { border-top-color: #8b5cf6; }
 .top-kpi:nth-child(3) { border-top-color: #10b981; }
 .top-kpi:nth-child(4) { border-top-color: #f59e0b; }
@@ -58,22 +66,22 @@
 }
 
 .kpi-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--rec-text-muted, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
 }
 
 .kpi-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #0f172a;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--rec-text-main, #0f172a);
 }
 
 .kpi-subtext {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--rec-text-muted, #64748b);
 }
 
 .kpi-icon {

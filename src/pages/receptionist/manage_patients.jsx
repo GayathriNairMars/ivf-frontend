@@ -68,65 +68,91 @@ export default function ManagePatients({ onAddPatient }) {
   }
 
   return (
-    <div className="manage-patient-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100%" }}>
+    <div className="manage-patient-container" style={{ padding: "28px", background: "var(--rec-bg, #f8fafc)", minHeight: "100%" }}>
 
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px" }}>
-        <div>
-          <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#0f172a", margin: "0 0 8px 0" }}>Manage patient details</h1>
-          <p style={{ color: "#64748b", margin: 0, fontSize: "14px" }}>Manage and register patient details.</p>
+      {/* Page Header */}
+      <div className="rec-page-header">
+        <div className="rec-page-header-text">
+          <h2>Patient Directory</h2>
+          <p>Search, manage, and register patient medical records and treatment profiles.</p>
         </div>
-        <button
-          onClick={onAddPatient}
-          style={{ background: "#3b82f6", color: "white", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "14px", fontWeight: "500", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
-        >
-          <span>+</span> Register patient
+        <button className="btn-primary" onClick={onAddPatient}>
+          <span>+</span> Register New Patient
         </button>
       </div>
 
-      {/* Stats Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "32px" }}>
-        {[
-          { label: "Total patients", value: stats?.total || 0 },
-          { label: "Active treatments", value: stats?.by_status?.ACT || 0 },
-          { label: "Pending treatments", value: stats?.by_status?.PEN || 0 },
-          { label: "Completed", value: stats?.by_status?.COM || 0 },
-        ].map((stat, idx) => (
-          <div key={idx} style={{ background: "white", padding: "24px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-            <div style={{ color: "#64748b", fontSize: "14px", fontWeight: "500", marginBottom: "12px" }}>{stat.label}</div>
-            <div style={{ color: "#0f172a", fontSize: "32px", fontWeight: "600" }}>{stat.value}</div>
+      {/* Stats Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+        <div className="rec-stat-card">
+          <div className="rec-stat-icon-box indigo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
-        ))}
+          <div className="rec-stat-info">
+            <span className="rec-stat-value">{stats?.total || 0}</span>
+            <span className="rec-stat-label">Total Registered Patients</span>
+          </div>
+        </div>
+
+        <div className="rec-stat-card">
+          <div className="rec-stat-icon-box emerald">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div className="rec-stat-info">
+            <span className="rec-stat-value" style={{ color: "#059669" }}>{stats?.by_status?.ACT || 0}</span>
+            <span className="rec-stat-label">Active Treatments</span>
+          </div>
+        </div>
+
+        <div className="rec-stat-card">
+          <div className="rec-stat-icon-box amber">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div className="rec-stat-info">
+            <span className="rec-stat-value" style={{ color: "#d97706" }}>{stats?.by_status?.PEN || 0}</span>
+            <span className="rec-stat-label">Pending Consultations</span>
+          </div>
+        </div>
+
+        <div className="rec-stat-card">
+          <div className="rec-stat-icon-box blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div className="rec-stat-info">
+            <span className="rec-stat-value" style={{ color: "#2563eb" }}>{stats?.by_status?.COM || 0}</span>
+            <span className="rec-stat-label">Completed Cycles</span>
+          </div>
+        </div>
       </div>
 
-      {/* Filters Bar */}
-      <div style={{ display: "flex", gap: "16px", marginBottom: "24px", alignItems: "center", flexWrap: "wrap" }}>
-        <div style={{ position: "relative", flex: 1, minWidth: "250px" }}>
-          <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+      {/* Filter & Search Toolbar */}
+      <div className="rec-toolbar">
+        <div style={{ position: "relative", flex: 1, minWidth: "260px" }}>
+          <Search size={16} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "var(--rec-text-muted)" }} />
           <input
             type="text"
-            placeholder="Search by name, MRN, or diagnosis code..."
+            className="rec-toolbar-input"
+            placeholder="Search patient by name, MRN, phone, diagnosis..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            style={{ width: "100%", padding: "10px 12px 10px 36px", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
+            style={{ width: "100%", paddingLeft: "38px" }}
           />
         </div>
 
         <select
+          className="rec-toolbar-select"
           value={treatment}
           onChange={(e) => { setTreatment(e.target.value); setPage(1); }}
-          style={{ padding: "10px 32px 10px 16px", background: "white", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", color: "#334155", appearance: "none", outline: "none", cursor: "pointer" }}
         >
-          <option value="">Treatment (All)</option>
+          <option value="">Treatment Type (All)</option>
           {TREATMENT_TYPES.map(t => (
             <option key={t.value} value={t.value}>{t.label}</option>
           ))}
         </select>
 
         <select
+          className="rec-toolbar-select"
           value={status}
           onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-          style={{ padding: "10px 32px 10px 16px", background: "white", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", color: "#334155", appearance: "none", outline: "none", cursor: "pointer" }}
         >
           <option value="">Status (All)</option>
           {PATIENT_STATUSES.map(s => (
@@ -134,94 +160,103 @@ export default function ManagePatients({ onAddPatient }) {
           ))}
         </select>
 
-        <div style={{ position: "relative" }}>
-          <input
-            type="date"
-            value={dateFilter}
-            onChange={(e) => { setDateFilter(e.target.value); setPage(1); }}
-            style={{ padding: "10px 12px", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px", outline: "none", color: dateFilter ? "#0f172a" : "#94a3b8", background: "white" }}
-          />
-        </div>
+        <input
+          type="date"
+          className="rec-toolbar-input"
+          value={dateFilter}
+          onChange={(e) => { setDateFilter(e.target.value); setPage(1); }}
+          style={{ color: dateFilter ? "var(--rec-text-main)" : "var(--rec-text-muted)" }}
+        />
 
-        <button
-          style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", color: "#3b82f6", fontSize: "14px", fontWeight: "500", cursor: "pointer" }}
-        >
-          More filters
-        </button>
+        {(search || treatment || status || dateFilter) && (
+          <button
+            onClick={() => { setSearch(""); setTreatment(""); setStatus(""); setDateFilter(""); setPage(1); }}
+            className="btn-secondary"
+            style={{ padding: "8px 14px", fontSize: "12.5px" }}
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
 
-      {/* Table */}
-      <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+      {/* Table Panel */}
+      <div className="rec-table-card">
         {loading ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "#64748b" }}>Loading patients...</div>
+          <div style={{ padding: "60px", textAlign: "center", color: "var(--rec-text-muted)" }}>Loading patients...</div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+          <div className="rec-table-wrap">
+            <table className="rec-table">
               <thead>
-                <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Patient ID</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Patient name</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Doctor</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Treatment</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Registered date</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Status</th>
-                  <th style={{ padding: "16px 24px", fontSize: "13px", fontWeight: "500", color: "#64748b" }}>Action</th>
+                <tr>
+                  <th>Patient ID / MRN</th>
+                  <th>Patient Name</th>
+                  <th>Assigned Doctor</th>
+                  <th>Treatment Type</th>
+                  <th>Registration Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {paginated.length > 0 ? paginated.map((p) => {
                   const sc = STATUS_COLORS[p.status] || STATUS_COLORS.PEN;
 
-                  // Extract color for the dot badge based on the UI screenshot styling
-                  // Green for Active, Blue for Completed, Yellow/Orange for Pending/On Hold
-                  let dotColor = "#10b981"; // default green
-                  let textColor = "#10b981";
-                  let bgColor = "#ecfdf5"; // default light green
-
-                  if (p.status === "ACT") {
-                    dotColor = "#10b981"; textColor = "#10b981"; bgColor = "#ecfdf5";
-                  } else if (p.status === "COM") {
-                    dotColor = "#3b82f6"; textColor = "#3b82f6"; bgColor = "#eff6ff";
-                  } else if (p.status === "PEN" || p.status === "HOL") {
-                    dotColor = "#f59e0b"; textColor = "#f59e0b"; bgColor = "#fffbeb";
-                  } else if (p.status === "CAN") {
-                    dotColor = "#ef4444"; textColor = "#ef4444"; bgColor = "#fef2f2";
-                  }
+                  let statusClass = "waiting";
+                  if (p.status === "ACT") statusClass = "completed";
+                  else if (p.status === "COM") statusClass = "consulting";
+                  else if (p.status === "PEN" || p.status === "HOL") statusClass = "waiting";
+                  else if (p.status === "CAN") statusClass = "cancelled";
 
                   return (
-                    <tr key={p.id} style={{ borderBottom: "1px solid #e2e8f0", background: "white" }}>
-                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#475569" }}>
-                        {p.patient_id || `PAT-${String(p.id).padStart(5, '0')}`}
+                    <tr key={p.id}>
+                      <td>
+                        <span style={{ fontWeight: 700, color: "var(--rec-primary)" }}>
+                          {p.patient_id || `PAT-${String(p.id).padStart(5, '0')}`}
+                        </span>
                       </td>
-                      <td style={{ padding: "16px 24px" }}>
-                        <div style={{ color: "#0f172a", fontSize: "14px", fontWeight: "500" }}>{p.user?.full_name}</div>
-                        <div style={{ color: "#94a3b8", fontSize: "12px", marginTop: "2px" }}>{p.user?.phone || "+91 98450 12345"}</div>
+                      <td>
+                        <div style={{ color: "var(--rec-text-main)", fontSize: "14px", fontWeight: 600 }}>{p.user?.full_name}</div>
+                        <div style={{ color: "var(--rec-text-muted)", fontSize: "11.5px", marginTop: "2px" }}>{p.user?.phone || "+91 98450 12345"}</div>
                       </td>
-                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#0f172a", fontWeight: "500" }}>
-                        {p.assigned_doctor?.full_name || "-"}
+                      <td>
+                        <div style={{ fontWeight: 600, color: "var(--rec-text-main)" }}>
+                          {p.assigned_doctor?.full_name ? `Dr. ${p.assigned_doctor.full_name}` : "Unassigned"}
+                        </div>
                       </td>
-                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#475569" }}>
-                        {TREATMENT_LABELS[p.treatment_type] || "-"}
+                      <td style={{ color: "var(--rec-text-sub)" }}>
+                        {TREATMENT_LABELS[p.treatment_type] || "General Consultation"}
                       </td>
-                      <td style={{ padding: "16px 24px", fontSize: "14px", color: "#475569" }}>
-                        {p.registered_on ? new Date(p.registered_on).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-"}
+                      <td style={{ color: "var(--rec-text-sub)" }}>
+                        {p.registered_on ? new Date(p.registered_on).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" }) : "-"}
                       </td>
-                      <td style={{ padding: "16px 24px" }}>
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: bgColor, color: textColor, padding: "4px 10px", borderRadius: "16px", fontSize: "12px", fontWeight: "500" }}>
-                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: dotColor }}></span>
+                      <td>
+                        <span className={`status-pill ${statusClass}`}>
+                          <span className="status-pill-dot"></span>
                           {sc.label}
                         </span>
                       </td>
-                      <td style={{ padding: "16px 24px" }}>
-                        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                          <button onClick={() => setEditingPatient(p)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="Edit">
-                            <Edit size={18} />
+                      <td>
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <button 
+                            className="rec-action-btn"
+                            onClick={() => setViewingPatient(p)} 
+                            title="View Patient Record"
+                          >
+                            <Eye size={16} />
                           </button>
-                          <button onClick={() => alert("Delete API will be integrated later")} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: 0 }} title="Delete">
-                            <Trash2 size={18} />
+                          <button 
+                            className="rec-action-btn"
+                            onClick={() => setEditingPatient(p)} 
+                            title="Edit Patient Details"
+                          >
+                            <Edit size={16} />
                           </button>
-                          <button onClick={() => setViewingPatient(p)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }} title="View">
-                            <Eye size={18} />
+                          <button 
+                            className="rec-action-btn delete"
+                            onClick={() => alert("Delete patient feature will be configured by administrator")} 
+                            title="Delete Patient"
+                          >
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </td>
@@ -229,8 +264,8 @@ export default function ManagePatients({ onAddPatient }) {
                   );
                 }) : (
                   <tr>
-                    <td colSpan="7" style={{ padding: "40px", textAlign: "center", color: "#64748b" }}>
-                      No patients found matching your criteria.
+                    <td colSpan="7" style={{ padding: "60px", textAlign: "center", color: "var(--rec-text-muted)" }}>
+                      No patients found matching your search criteria.
                     </td>
                   </tr>
                 )}
@@ -241,22 +276,24 @@ export default function ManagePatients({ onAddPatient }) {
 
         {/* Footer / Pagination */}
         {!loading && filteredByDate.length > 0 && (
-          <div style={{ padding: "16px 24px", borderTop: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", background: "white" }}>
-            <div style={{ fontSize: "13px", color: "#64748b" }}>
-              Showing {Math.min((page - 1) * PER_PAGE + 1, filteredByDate.length)} to {Math.min(page * PER_PAGE, filteredByDate.length)} of {filteredByDate.length} Patients
+          <div style={{ padding: "16px 24px", borderTop: "1px solid var(--rec-border-light)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#ffffff" }}>
+            <div style={{ fontSize: "13px", color: "var(--rec-text-muted)" }}>
+              Showing <strong>{Math.min((page - 1) * PER_PAGE + 1, filteredByDate.length)}</strong> to <strong>{Math.min(page * PER_PAGE, filteredByDate.length)}</strong> of <strong>{filteredByDate.length}</strong> Patients
             </div>
-            <div style={{ display: "flex", gap: "8px" }}>
+            <div style={{ display: "flex", gap: "6px" }}>
               <button
+                className="rec-action-btn"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                style={{ width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #e2e8f0", borderRadius: "6px", background: "white", color: page === 1 ? "#cbd5e1" : "#64748b", cursor: page === 1 ? "not-allowed" : "pointer" }}
+                style={{ opacity: page === 1 ? 0.4 : 1, cursor: page === 1 ? "not-allowed" : "pointer" }}
               >
                 &lt;
               </button>
               <button
+                className="rec-action-btn"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                style={{ width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #3b82f6", borderRadius: "6px", background: "white", color: "#3b82f6", cursor: page === totalPages ? "not-allowed" : "pointer" }}
+                style={{ opacity: page === totalPages ? 0.4 : 1, cursor: page === totalPages ? "not-allowed" : "pointer" }}
               >
                 &gt;
               </button>

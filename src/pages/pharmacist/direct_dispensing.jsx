@@ -15,7 +15,7 @@ function generateInvoiceNo() {
 }
 
 function formatCurrency(amount) {
-  return `$${Number(amount || 0).toFixed(2)}`;
+  return `₹${Number(amount || 0).toFixed(2)}`;
 }
 
 function StockBadge({ status, stock }) {
