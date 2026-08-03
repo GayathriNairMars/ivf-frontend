@@ -16,6 +16,14 @@ export const pharmacistApi = {
   getPrescriptionDetails: (id) => api.get(`/pharmacy/prescriptions/${id}/`).then(res => res.data),
   updatePrescriptionStatus: (id, payload) => api.patch(`/pharmacy/prescriptions/${id}/`, payload).then(res => res.data),
   fulfillPrescription: (id, payload) => api.post(`/pharmacy/prescriptions/${id}/fulfill/`, payload).then(res => res.data),
+
+  // Billing
+  getBillingDashboard: () => api.get("/pharmacy/billing/dashboard/").then(res => res.data),
+  getBillsList: (params) => api.get("/pharmacy/bills/", { params }).then(res => res.data),
+  getBillDetail: (id) => api.get(`/pharmacy/bills/${id}/`).then(res => res.data),
+  payBill: (id, payload) => api.post(`/pharmacy/bills/${id}/pay/`, payload).then(res => res.data),
+  cancelBill: (id) => api.delete(`/pharmacy/bills/${id}/`).then(res => res.data),
+  createBill: (payload) => api.post("/pharmacy/bills/", payload).then(res => res.data),
 };
 
 export default pharmacistApi;

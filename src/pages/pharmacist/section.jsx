@@ -15,6 +15,10 @@ import PharmacistDashboard from "./pharmacist_dashboard";
 import PharmacistPrescriptions from "./pharmacist_prescriptions";
 import PharmacistPrescriptionDetails from "./pharmacist_prescription_details";
 import DirectDispensing from "./direct_dispensing";
+import BillingOverview from "./billing_overview";
+import POSBilling from "./pos_billing";
+import BillDetail from "./bill_detail";
+import { CreditCard } from "lucide-react";
 
 
 const NAV = [
@@ -46,6 +50,14 @@ const NAV = [
     ]
   },
   {
+    key: "billing", label: "Billing",
+    icon: <CreditCard size={16} />,
+    children: [
+      { key: "billing_overview", label: "Overview" },
+      { key: "pos_billing", label: "POS Billing" },
+    ]
+  },
+  {
     key:"attendance", label:"My Attendance", icon: <ClipboardCheck size={16} />, 
   },
   {
@@ -69,6 +81,7 @@ export default function PharmacistDashboardSection() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [expandedNav, setExpandedNav] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedBillId, setSelectedBillId] = useState(null);
 
   const handleLogout = async () => {
     await logout();
@@ -90,6 +103,9 @@ export default function PharmacistDashboardSection() {
       case "inventory_dashboard":  return <PharmacistInventory />;
       case "stock_alerts": return <PharmacistAlerts />;
       case "stock_adjustment": return <StockAdjustment />;
+      case "billing_overview": return <BillingOverview onNewBill={() => setActive("pos_billing")} onViewBill={(id) => { setSelectedBillId(id); setActive("bill_detail"); }} />;
+      case "pos_billing": return <POSBilling onBillCreated={(id) => { setSelectedBillId(id); setActive("bill_detail"); }} onCancel={() => setActive("billing_overview")} />;
+      case "bill_detail": return <BillDetail billId={selectedBillId} onBack={() => setActive("billing_overview")} />;
       case "attendance": return <PharmacistAttendance />;
       case "settings":    return <PharmacistSettings />;
       default:           return <ComingSoon title="Pharmacy Dashboard" />;
