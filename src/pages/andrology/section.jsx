@@ -6,6 +6,7 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import andrologistAvatar from "../../assets/doctor_avatar.png";
 import AndrologySettings from "./settings";
+import MyAttendance from "./my_attendance";
 
 /* ── Nav items — mirrors Nurse section structure ── */
 const NAV = [
@@ -84,17 +85,6 @@ const NAV = [
         ),
       },
     ],
-  },
-  {
-    key: "history",
-    label: "History",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={16} height={16}>
-        <polyline points="12 8 12 12 14 14"/>
-        <path d="M3.05 11a9 9 0 1 0 .5-4.5"/>
-        <polyline points="3 3 3 7 7 7"/>
-      </svg>
-    ),
   },
   { key: "attendance", label: "My Attendance", icon: <ClipboardCheck size={17} /> },
   {
@@ -178,7 +168,8 @@ export default function AndrologistDashboardSection() {
       case "search_patient":    return <ComingSoon title="Search Patient" />;
       case "patient_list":      return <ComingSoon title="Patient List" />;
       case "test_results":      return <ComingSoon title="Test Results" />;
-      case "history":           return <ComingSoon title="History" />;
+      case "sample_collection":      return <ComingSoon title="Sample Collection" />;
+      case "attendance":        return <MyAttendance />;
       case "settings":          return <AndrologySettings />;
       default:                  return <AndrologySettings />;
     }
