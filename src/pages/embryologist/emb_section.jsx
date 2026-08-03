@@ -23,6 +23,7 @@ import EmbryologistSettings from "./settings";
 import CryoStoreSample from "./cryo_store_sample";
 import CryoStoredSamplesList from "./cryo_stored_samples_list";
 import CryoSampleDetails from "./cryo_sample_details";
+import MyAttendance from "./my_attendance";
 
 
 const NAV = [
@@ -97,7 +98,7 @@ export default function EmbryologistDashboardSection() {
       case "procedures": return <ComingSoon title="Procedures" />;
       case "genetics":   return <ComingSoon title="PGT / Genetics" />;
       case "records":    return <ComingSoon title="Patient Records" />;
-      case "attendance": return <ComingSoon title="My Attendance" />;
+      case "attendance": return <MyAttendance />;
       case "cryo_tanks_list":
         return (
           <CryoTanksList
