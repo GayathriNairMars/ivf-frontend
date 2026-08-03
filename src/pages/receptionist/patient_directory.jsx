@@ -7,46 +7,37 @@ import { UserPlus, Users } from "lucide-react";
 export default function PatientDirectory() {
   const [tab, setTab] = useState("manage"); // "manage" | "add"
 
-  const tabStyle = (key) => ({
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "10px 20px",
-    border: "none",
-    borderBottom: tab === key ? "2px solid #3b82f6" : "2px solid transparent",
-    background: "none",
-    color: tab === key ? "#3b82f6" : "#64748b",
-    fontWeight: tab === key ? "600" : "500",
-    fontSize: "14px",
-    cursor: "pointer",
-    transition: "all 0.15s",
-  });
-
   return (
     <div
       className="patient-directory-root"
       style={{ height: "100%", display: "flex", flexDirection: "column", marginTop: 0, paddingTop: 0 }}
     >
-      {/* Tab Bar — no borderTop, no margin */}
+      {/* Top Segmented Tab Bar */}
       <div style={{
-        background: "white",
+        background: "#ffffff",
         borderBottom: "1px solid #e2e8f0",
-        // borderTop removed — was causing the visible gap
         display: "flex",
-        padding: "0 24px",
-        gap: "8px",
+        alignItems: "center",
+        padding: "12px 28px",
         flexShrink: 0,
         margin: 0,
-        paddingTop: 0,
       }}>
-        <button style={tabStyle("manage")} onClick={() => setTab("manage")}>
-          <Users size={16} />
-          Manage Patients
-        </button>
-        <button style={tabStyle("add")} onClick={() => setTab("add")}>
-          <UserPlus size={16} />
-          Add Patient
-        </button>
+        <div className="rec-segmented-tabs">
+          <button 
+            className={`rec-segmented-tab ${tab === "manage" ? "active" : ""}`} 
+            onClick={() => setTab("manage")}
+          >
+            <Users size={16} />
+            Manage Patients
+          </button>
+          <button 
+            className={`rec-segmented-tab ${tab === "add" ? "active" : ""}`} 
+            onClick={() => setTab("add")}
+          >
+            <UserPlus size={16} />
+            Register Patient
+          </button>
+        </div>
       </div>
 
       {/* Tab Content */}
@@ -59,4 +50,4 @@ export default function PatientDirectory() {
       </div>
     </div>
   );
-}
+}

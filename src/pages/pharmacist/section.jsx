@@ -45,7 +45,7 @@ const NAV = [
     children: [
       { key: "inventory_dashboard", label: "Dashboard" },
       { key: "stock_alerts", label: "Stock Alerts" },
-      { key: "inventory", label: "Add Inventory" },
+      { key: "add_inventory", label: "Add Inventory" },
       { key: "stock_adjustment", label: "Stock Adjustment" },
     ]
   },
@@ -99,10 +99,10 @@ export default function PharmacistDashboardSection() {
       case "direct_dispense": return <DirectDispensing />;
       case "prescriptions": return <PharmacistPrescriptions onSelectOrder={(id) => { setSelectedOrderId(id); setActive("prescription_details"); }} />;
       case "prescription_details": return <PharmacistPrescriptionDetails orderId={selectedOrderId} onBack={() => setActive("prescriptions")} />;
-      case "inventory":  return <AddInventory />;
-      case "inventory_dashboard":  return <PharmacistInventory />;
+      case "inventory_dashboard":  return <PharmacistInventory onNavigate={setActive} />;
+      case "add_inventory":  return <AddInventory />;
       case "stock_alerts": return <PharmacistAlerts />;
-      case "stock_adjustment": return <StockAdjustment />;
+      case "stock_adjustment": return ( <StockAdjustment onSuccess={() => setActive("inventory_dashboard")} onCancel={() => setActive("inventory_dashboard")} />);      
       case "billing_overview": return <BillingOverview onNewBill={() => setActive("pos_billing")} onViewBill={(id) => { setSelectedBillId(id); setActive("bill_detail"); }} />;
       case "pos_billing": return <POSBilling onBillCreated={(id) => { setSelectedBillId(id); setActive("bill_detail"); }} onCancel={() => setActive("billing_overview")} />;
       case "bill_detail": return <BillDetail billId={selectedBillId} onBack={() => setActive("billing_overview")} />;

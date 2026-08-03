@@ -146,6 +146,14 @@ export default function LabOrders({ filterStatus, testTypes = [], onViewRecord }
     setPatientResults([]);
   };
 
+  // ── Field accessors ──────────────────────────────────────────────────
+  // The live API returns flat fields (patient_name, test_type_name, ...)
+  // while the mock/detail-endpoint data nests them under patient/test_type
+  // objects. These helpers work with either shape.
+  const getPatientName = (order) => order?.patient_name || order?.patient?.name || order?.patient?.full_name || "—";
+  const getPatientCode = (order) => order?.patient?.code || order?.patient?.patient_id || "";
+  const getTestTypeName = (order) => order?.test_type_name || order?.test_type?.name || "—";
+
   // Status visual formatters
   const getStatusBadge = (status) => {
     const s = String(status).toUpperCase();
@@ -201,6 +209,25 @@ export default function LabOrders({ filterStatus, testTypes = [], onViewRecord }
       }).replace(" at ", ", ");
     } catch {
       return "July 17, 14:45";
+    }
+  };
+
+  // Ordered date + time, converted to IST (Asia/Kolkata), for the orders table
+  const formatOrderedDateTime = (isoString) => {
+    if (!isoString) return "—";
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+    } catch {
+      return isoString;
     }
   };
 
@@ -577,7 +604,7 @@ export default function LabOrders({ filterStatus, testTypes = [], onViewRecord }
               <th>Test</th>
               <th>Status</th>
               <th>Priority</th>
-              <th>Ordered Time</th>
+              <th>Ordered Date & Time</th>
               <th style={{ width: "120px", textAlign: "center" }}>Action</th>
             </tr>
           </thead>
@@ -604,15 +631,15 @@ export default function LabOrders({ filterStatus, testTypes = [], onViewRecord }
                         width: "32px", height: "32px", borderRadius: "50%", background: "#eff6ff", color: "#1e4ed8",
                         display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "700"
                       }}>
-                        {getInitials(order.patient?.name)}
+                        {getInitials(getPatientName(order))}
                       </div>
-                      <span style={{ fontWeight: "600", color: "#0f172a" }}>{order.patient?.name}</span>
+                      <span style={{ fontWeight: "600", color: "#0f172a" }}>{getPatientName(order)}</span>
                     </div>
                   </td>
-                  <td>{order.test_type?.name}</td>
+                  <td>{getTestTypeName(order)}</td>
                   <td>{getStatusBadge(order.status)}</td>
                   <td>{getPriorityDisplay(order.priority)}</td>
-                  <td>{formatTime(order.ordered_time)}</td>
+                  <td>{formatOrderedDateTime(order.created_at || order.ordered_time || order.test_date)}</td>
                   <td style={{ textAlign: "center" }}>
                     {/* If ORDERED or IN PROGRESS, show play button to complete/edit results */}
                     {(order.status === "ORDERED" || order.status === "IN_PROGRESS" || order.status === "PENDING") && (
@@ -682,7 +709,7 @@ export default function LabOrders({ filterStatus, testTypes = [], onViewRecord }
                   {getStatusBadge(selectedOrder.status)}
                 </h3>
                 <p className="order-modal-subtitle">
-                  Order #{selectedOrder.id} • {selectedOrder.test_type?.name}
+                  Order #{selectedOrder.id} • {getTestTypeName(selectedOrder)}
                 </p>
               </div>
               <button className="order-modal-close" onClick={() => setIsDetailOpen(false)}>
@@ -699,15 +726,15 @@ export default function LabOrders({ filterStatus, testTypes = [], onViewRecord }
                   <div className="order-info-grid">
                     <div className="order-info-card">
                       <div className="order-info-lbl">Patient</div>
-                      <div className="order-info-val">{selectedOrder.patient?.name || "John Doe"}</div>
+                      <div className="order-info-val">{getPatientName(selectedOrder)}</div>
                     </div>
                     <div className="order-info-card">
                       <div className="order-info-lbl">Requesting Doctor</div>
-                      <div className="order-info-val">{selectedOrder.doctor_name || "Dr. Sarah Smith"}</div>
+                      <div className="order-info-val">{selectedOrder.doctor_name || selectedOrder.ordered_by_name || "Dr. Sarah Smith"}</div>
                     </div>
                     <div className="order-info-card">
-                      <div className="order-info-lbl">Completed Date</div>
-                      <div className="order-info-val">{formatDate(selectedOrder.ordered_time)}</div>
+                      <div className="order-info-lbl">Ordered Date & Time</div>
+                      <div className="order-info-val">{formatOrderedDateTime(selectedOrder.created_at || selectedOrder.ordered_time || selectedOrder.test_date)}</div>
                     </div>
                     <div className="order-info-card">
                       <div className="order-info-lbl">Lab Department</div>
@@ -819,9 +846,9 @@ export default function LabOrders({ filterStatus, testTypes = [], onViewRecord }
             <form onSubmit={handleSaveResults}>
               <div className="order-modal-header">
                 <div className="order-modal-title-area">
-                  <h3>Perform Lab Test: {actionOrder.test_type?.name}</h3>
+                  <h3>Perform Lab Test: {getTestTypeName(actionOrder)}</h3>
                   <p className="order-modal-subtitle">
-                    Order Ref: ORD-{actionOrder.id}-{actionOrder.test_type?.id}
+                    Order Ref: ORD-{actionOrder.id}-{actionOrder.test_type?.id || actionOrder.test_type}
                   </p>
                 </div>
                 <button type="button" className="order-modal-close" onClick={() => setIsActionOpen(false)}>
@@ -840,12 +867,12 @@ export default function LabOrders({ filterStatus, testTypes = [], onViewRecord }
                       <div className="order-info-grid">
                         <div>
                           <div className="order-info-lbl">Patient</div>
-                          <div style={{ fontSize: "13px", fontWeight: "700" }}>{actionOrder.patient?.name}</div>
-                          <div style={{ fontSize: "11px", color: "#64748b" }}>{actionOrder.patient?.code}</div>
+                          <div style={{ fontSize: "13px", fontWeight: "700" }}>{getPatientName(actionOrder)}</div>
+                          <div style={{ fontSize: "11px", color: "#64748b" }}>{getPatientCode(actionOrder)}</div>
                         </div>
                         <div>
                           <div className="order-info-lbl">Ordered By</div>
-                          <div style={{ fontSize: "13px", fontWeight: "700" }}>{actionOrder.doctor_name || "Dr. Sarah Smith"}</div>
+                          <div style={{ fontSize: "13px", fontWeight: "700" }}>{actionOrder.doctor_name || actionOrder.ordered_by_name || "Dr. Sarah Smith"}</div>
                         </div>
                         <div>
                           <div className="order-info-lbl">Priority</div>

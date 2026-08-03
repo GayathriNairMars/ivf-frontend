@@ -3,7 +3,7 @@ import api from "../../api/axios";
 import "./stock_adjustment.css";
 import { Search, Plus, Minus, Hash, Image as ImageIcon, CalendarX, ChevronDown, ChevronUp, CheckCircle2, AlertTriangle, FileText, Download, ExternalLink, Calculator, Snowflake, EyeOff } from "lucide-react";
 
-export default function StockAdjustment() {
+export default function StockAdjustment({ onSuccess, onCancel }) {
   const [medications, setMedications] = useState([]);
   const [selectedMedId, setSelectedMedId] = useState("");
   const [loadingList, setLoadingList] = useState(true);
@@ -70,6 +70,18 @@ export default function StockAdjustment() {
     return current; // Dummy for SET
   };
 
+  const goToInventoryDashboard = () => {
+    if (onSuccess) {
+      onSuccess();
+    } else {
+      // Fallback in case this component is ever rendered outside the
+      // pharmacist section's local view-switcher.
+      console.warn(
+        "StockAdjustment: no onSuccess handler was passed in — pass onSuccess={() => setActive('inventory_dashboard')} from the parent to enable redirect."
+      );
+    }
+  };
+
   const handleSave = async () => {
     if (!selectedMed) {
       setErrorMsg("Please select a medication first.");
@@ -111,6 +123,12 @@ export default function StockAdjustment() {
         setQuantity(1);
         setReference("");
         setNotes("");
+
+        // Give the person a beat to see the confirmation, then take them
+        // back to the inventory dashboard where the updated stock shows up.
+        setTimeout(() => {
+          goToInventoryDashboard();
+        }, 1200);
       } else {
         setErrorMsg("Failed to adjust stock.");
       }
@@ -120,6 +138,14 @@ export default function StockAdjustment() {
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setSuccessMsg(""), 5000);
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      goToInventoryDashboard();
     }
   };
 
@@ -320,7 +346,7 @@ export default function StockAdjustment() {
 
             {/* Actions */}
             <div className="sa-actions">
-              <button className="sa-btn-cancel">CANCEL ADJUSTMENT</button>
+              <button className="sa-btn-cancel" onClick={handleCancel}>CANCEL ADJUSTMENT</button>
               <button className="sa-btn-confirm" onClick={handleSave} disabled={isSubmitting || !selectedMed}>
                 {isSubmitting ? "SAVING..." : "CONFIRM & SAVE LOG"}
               </button>

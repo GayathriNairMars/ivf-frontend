@@ -93,21 +93,27 @@ export default function AddPatient({ onBack }) {
   const phoneInputStyle = { ...inputStyle, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 };
 
   return (
-    <div className="add-patient-container" style={{ padding: "32px", background: "#f8fafc", minHeight: "100%" }}>
-      <div style={{ marginBottom: "32px" }}>
-        <h1 style={{ fontSize: "24px", fontWeight: "600", color: "#0f172a", margin: "0 0 8px 0" }}>Register patient</h1>
-        <p style={{ color: "#64748b", margin: 0, fontSize: "14px" }}>Register a new patient and create a treatment-ready profile.</p>
+    <div className="add-patient-container" style={{ padding: "28px", background: "var(--rec-bg, #f8fafc)", minHeight: "100%" }}>
+      {/* Page Header */}
+      <div className="rec-page-header">
+        <div className="rec-page-header-text">
+          <h2>Register New Patient</h2>
+          <p>Create a comprehensive patient profile, record contact details, and assign treatment pathways.</p>
+        </div>
+        <button className="btn-secondary" onClick={onBack}>
+          &larr; Back to Directory
+        </button>
       </div>
 
-      {success && <div style={{ background: "#dcfce7", color: "#166534", padding: "12px 16px", borderRadius: "8px", marginBottom: "24px", fontSize: "14px", fontWeight: "500" }}>Patient registered successfully! Redirecting to profile...</div>}
-      {errors.general && <div style={{ background: "#fee2e2", color: "#991b1b", padding: "12px 16px", borderRadius: "8px", marginBottom: "24px", fontSize: "14px" }}>{errors.general}</div>}
+      {success && <div style={{ background: "#ecfdf5", color: "#047857", padding: "14px 20px", borderRadius: "12px", marginBottom: "24px", fontSize: "14px", fontWeight: "600", border: "1px solid #a7f3d0" }}>Patient registered successfully! Redirecting to directory...</div>}
+      {errors.general && <div style={{ background: "#fef2f2", color: "#dc2626", padding: "14px 20px", borderRadius: "12px", marginBottom: "24px", fontSize: "14px", fontWeight: "600", border: "1px solid #fecaca" }}>{errors.general}</div>}
 
       <form onSubmit={handleSubmit} noValidate>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: "24px", marginBottom: "80px", alignItems: "start" }}>
           
           <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             {/* Account Details */}
-            <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+            <div style={{ background: "white", borderRadius: "16px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "var(--rec-shadow-card)" }}>
               <SectionHeader icon={User} title="Account Details" />
               <div style={{ padding: "24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                 <FormField label="Full Name" error={errors.full_name}>

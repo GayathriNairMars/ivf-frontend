@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import "./pharmacist_inventory.css";
 
-export default function PharmacistInventory() {
+export default function PharmacistInventory( {onNavigate} ) {
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -135,7 +135,7 @@ export default function PharmacistInventory() {
       {/* Action Bar */}
       <div className="inv-actions">
         <div className="inv-action-buttons">
-          <button className="inv-btn inv-btn-primary">
+          <button className="inv-btn inv-btn-primary" onClick={() => onNavigate('add_inventory')}>
             <span className="material-symbols-outlined">add</span> Add Medication
           </button>
           <button className="inv-btn inv-btn-secondary">

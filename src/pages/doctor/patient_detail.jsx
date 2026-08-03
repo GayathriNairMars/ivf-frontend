@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./patient_detail.css";
 import { FiChevronRight, FiEdit2, FiPrinter, FiFileText, FiPlusSquare, FiUser, FiActivity, FiLink, FiAlertTriangle, FiPlus } from "react-icons/fi";
+import { FaFlask } from "react-icons/fa";
+import { doctorApi } from "../../api/doctorApi";
 import api from "../../api/axios";
 
 const getInitials = (name) => {
@@ -53,6 +55,15 @@ export default function PatientDetail({ patientId, onBack }) {
     showDropdown: false,
   });
   const searchDebounceRef = useRef(null);
+
+  // Order Lab Test Modal State
+  const [isLabModalOpen, setIsLabModalOpen] = useState(false);
+  const [labFormData, setLabFormData] = useState({ test_type_id: "", priority: "ROUTINE", notes: "" });
+  const [labTests, setLabTests] = useState([]);
+  const [labTestsLoading, setLabTestsLoading] = useState(false);
+  const [selectedLabTest, setSelectedLabTest] = useState(null);
+  const [isSubmittingLab, setIsSubmittingLab] = useState(false);
+  const [labError, setLabError] = useState("");
 
   const fetchPatientDetails = async () => {
     setLoading(true);
@@ -109,6 +120,16 @@ export default function PatientDetail({ patientId, onBack }) {
       if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     };
   }, []);
+
+  // Load available lab tests whenever the Order Lab Test modal opens
+  useEffect(() => {
+    if (!isLabModalOpen) return;
+    setLabTestsLoading(true);
+    doctorApi.getAvailableTests({})
+      .then(res => setLabTests(res?.tests || []))
+      .catch(() => setLabTests([]))
+      .finally(() => setLabTestsLoading(false));
+  }, [isLabModalOpen]);
 
   const handleNoteChange = (e) => {
     const { name, value } = e.target;
@@ -249,6 +270,45 @@ export default function PatientDetail({ patientId, onBack }) {
     }
   };
 
+  // ── Order Lab Test ──────────────────────────────────────────────────────
+  const handleLabTestChange = (e) => {
+    const id = parseInt(e.target.value, 10);
+    setLabFormData(f => ({ ...f, test_type_id: id }));
+    setSelectedLabTest(labTests.find(t => t.id === id) || null);
+  };
+
+  const closeLabModal = () => {
+    setIsLabModalOpen(false);
+    setLabFormData({ test_type_id: "", priority: "ROUTINE", notes: "" });
+    setSelectedLabTest(null);
+    setLabError("");
+  };
+
+  const handleLabSubmit = async () => {
+    setLabError("");
+    if (!labFormData.test_type_id) {
+      setLabError("Please select a test type.");
+      return;
+    }
+    setIsSubmittingLab(true);
+    try {
+      await doctorApi.createLabOrder({
+        patient_id: patientData.id,
+        test_type_id: labFormData.test_type_id,
+        priority: labFormData.priority,
+        notes: labFormData.notes.trim() || undefined,
+      });
+      alert("Lab test ordered successfully");
+      closeLabModal();
+    } catch (error) {
+      console.error("Failed to order lab test:", error);
+      const msg = error?.response?.data?.message || error?.response?.data?.error || "Failed to place order. Please try again.";
+      setLabError(msg);
+    } finally {
+      setIsSubmittingLab(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="doc-patient-detail-container loading">
@@ -298,6 +358,9 @@ export default function PatientDetail({ patientId, onBack }) {
           <div className="pd-header-actions">
             <button className="pd-btn-outline-green" onClick={() => setIsPrescriptionModalOpen(true)}>
               <FiPlusSquare /> Create Prescription
+            </button>
+            <button className="pd-btn-outline-green" onClick={() => setIsLabModalOpen(true)}>
+              <FaFlask size={14} /> Order Lab Test
             </button>
             <button className="pd-btn-outline" onClick={() => setIsNotesModalOpen(true)}>
               <FiFileText /> Add Notes
@@ -783,6 +846,114 @@ export default function PatientDetail({ patientId, onBack }) {
           </div>
         </div>
       )}
+
+      {/* Order Lab Test Modal */}
+      {isLabModalOpen && (
+        <div className="pd-modal-overlay">
+          <div className="pd-modal-content" style={{ maxWidth: '560px', width: '90%' }}>
+            <div className="pd-modal-header">
+              <h2>Order Lab Test</h2>
+              <p>Request a lab test for {patientData.name}</p>
+              <button className="pd-modal-close" onClick={closeLabModal}>&times;</button>
+            </div>
+
+            <div className="pd-modal-form" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {labError && (
+                <div style={{ background: '#fef2f2', color: '#dc2626', padding: '10px 14px', borderRadius: '6px', fontSize: '13px' }}>
+                  {labError}
+                </div>
+              )}
+
+              <div className="pd-form-group">
+                <label>Patient</label>
+                <div style={{ padding: '10px 12px', background: '#f9fafb', borderRadius: '6px', fontSize: '14px', fontWeight: 600, color: '#111827' }}>
+                  {patientData.name} ({patientData.patient_id})
+                </div>
+              </div>
+
+              <div className="pd-form-group">
+                <label>Test Type *</label>
+                {labTestsLoading ? (
+                  <div style={{ fontSize: '13px', color: '#6b7280' }}>Loading tests…</div>
+                ) : (
+                  <select
+                    value={labFormData.test_type_id}
+                    onChange={handleLabTestChange}
+                    style={{ padding: '10px 12px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', width: '100%' }}
+                  >
+                    <option value="">Select test type…</option>
+                    {labTests.map(t => (
+                      <option key={t.id} value={t.id}>{t.name} ({t.code})</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              <div className="pd-form-group">
+                <label>Priority Level</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {[
+                    { key: 'URGENT', label: 'Urgent' },
+                    { key: 'ROUTINE', label: 'Routine' },
+                    { key: 'STAT', label: 'STAT' },
+                  ].map(opt => (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => setLabFormData(f => ({ ...f, priority: opt.key }))}
+                      style={{
+                        flex: 1,
+                        padding: '8px 0',
+                        borderRadius: '6px',
+                        border: labFormData.priority === opt.key ? '1.5px solid #2563eb' : '1px solid #d1d5db',
+                        background: labFormData.priority === opt.key ? '#eff6ff' : '#fff',
+                        color: labFormData.priority === opt.key ? '#2563eb' : '#4b5563',
+                        fontWeight: 600,
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pd-form-group">
+                <label>Clinical Notes</label>
+                <textarea
+                  rows={3}
+                  value={labFormData.notes}
+                  onChange={(e) => setLabFormData(f => ({ ...f, notes: e.target.value }))}
+                  placeholder="Add clinical notes for the lab technician…"
+                />
+              </div>
+
+              {selectedLabTest && selectedLabTest.fields && selectedLabTest.fields.length > 0 && (
+                <div style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '12px 14px', background: '#f9fafb' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>
+                    Test Fields <span style={{ fontWeight: 400, color: '#6b7280' }}>(Will be filled by Lab)</span>
+                  </div>
+                  {selectedLabTest.fields.map((f, i) => (
+                    <div key={f.id || i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#4b5563', padding: '4px 0' }}>
+                      <span>{i + 1}. {f.label}</span>
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Waiting for lab results</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="pd-modal-footer">
+                <button type="button" className="pd-btn-outline" onClick={closeLabModal}>Cancel</button>
+                <button type="button" className="pd-btn-solid-green" onClick={handleLabSubmit} disabled={isSubmittingLab}>
+                  {isSubmittingLab ? "Ordering…" : "Order Test"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Note Details Modal */}
       {isSelectedNoteModalOpen && selectedNote && (
         <div className="pd-modal-overlay">
