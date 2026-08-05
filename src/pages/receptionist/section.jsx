@@ -10,6 +10,12 @@ import NewTicket from "./new_ticket";
 import PatientDirectory from "./patient_directory";
 import PhysicianCalendar from "./PhysicianCalendar";
 import ReceptionistAttendance from "./receptionist_attendance";
+import LabOrders from "./lab_orders";
+import LabOrderCreate from "./lab_order_create";
+import LabOrderDetail from "./lab_order_detail";
+import LabOrderOpticket from "./lab_order_opticket";
+import StaffDirectory from "./staff_directory";
+import StaffProfile from "./staff_profile";
 import Icon from "../../components/Icons";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { 
@@ -22,20 +28,29 @@ import {
   Sparkles,
   Ticket as TicketIcon,
   PlusCircle,
-  Activity
+  Activity,
+  FlaskConical,
+  Plus as PlusIcon,
+  List,
+  Users
 } from "lucide-react";
 import "./receptionist.css";
 
 const NAV_TOP = [
-  { key: "dashboard",    label: "Dashboard",        icon: "dashboard"    },
-  { key: "appointments", label: "Appointments",     icon: "appointments" },
-  { key: "directory",    label: "Patient Directory",icon: "staff"        },
-  { key: "attendance",   label: "My Attendance",    icon: "attendance"   },
+  { key: "dashboard",        label: "Dashboard",        icon: "dashboard"    },
+  { key: "appointments",    label: "Appointments",     icon: "appointments" },
+  { key: "directory",       label: "Patient Directory",icon: "staff"        },
+  { key: "staff_directory", label: "Staff Directory",  icon: "staff"        },
 ];
 
 const TICKETS_CHILDREN = [
   { key: "ticket", label: "Add Ticket",   icon: "add"      },
   { key: "queue",  label: "Today's Queue", icon: "activity" },
+];
+
+const LAB_CHILDREN = [
+  { key: "lab_orders",       label: "All Orders",    icon: "list"   },
+  { key: "lab_order_create", label: "Add New Test",  icon: "add"    },
 ];
 
 const ROLE_LABELS = {
@@ -45,7 +60,9 @@ const ROLE_LABELS = {
 };
 
 function SubIcon({ iconKey }) {
-  if (iconKey === "ticket") return <PlusCircle size={15} />;
+  if (iconKey === "ticket")           return <PlusCircle size={15} />;
+  if (iconKey === "lab_order_create") return <PlusIcon size={15} />;
+  if (iconKey === "lab_orders")       return <List size={15} />;
   return <Activity size={15} />;
 }
 
@@ -53,9 +70,19 @@ export default function ReceptionistDashboardSection() {
   const { user, logout } = useAuth();
   const [active,       setActive]       = useState("dashboard");
   const [sidebarOpen,  setSidebarOpen]  = useState(true);
-  const [ticketsOpen,  setTicketsOpen]  = useState(true);
+  const [ticketsOpen,  setTicketsOpen]  = useState(false);
+  const [labOpen,      setLabOpen]      = useState(false);
   const [profileOpen,  setProfileOpen]  = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
+
+  // Lab Orders sub-view state
+  const [labView,      setLabView]      = useState("list"); // list | create | detail | opticket
+  const [labOrderId,   setLabOrderId]   = useState(null);
+  const [labOrderData, setLabOrderData] = useState(null);
+
+  // Staff Directory sub-view state
+  const [staffView,    setStaffView]    = useState("list"); // list | profile
+  const [staffRecord,  setStaffRecord]  = useState(null);
 
   const rescheduleIdRef = useRef(null);
   const [, setRescheduleId] = useState(null);
@@ -72,6 +99,11 @@ export default function ReceptionistDashboardSection() {
   };
 
   const ticketsGroupActive = active === "ticket" || active === "queue";
+  const labGroupActive     = active === "lab_orders" || active === "lab_order_create";
+
+  // ── Lab navigation helpers ───────────────────────────────────────────────
+  const openLabOrders = () => { setLabView("list"); setLabOrderId(null); setLabOrderData(null); setActive("lab_orders"); setLabOpen(true); };
+  const openLabCreate = () => { setLabView("create"); setActive("lab_orders"); setLabOpen(true); };
 
   // ── Content router ─────────────────────────────────────────────────────────
   const renderContent = () => {
@@ -122,6 +154,65 @@ export default function ReceptionistDashboardSection() {
       case "attendance":
         return <ReceptionistAttendance />;
 
+      // ── Staff Directory ────────────────────────────────────────────────
+      case "staff_directory":
+        if (staffView === "profile" && staffRecord) {
+          return (
+            <StaffProfile
+              staff={staffRecord}
+              onBack={() => { setStaffView("list"); setStaffRecord(null); }}
+            />
+          );
+        }
+        return (
+          <StaffDirectory
+            onView={(s) => { setStaffRecord(s); setStaffView("profile"); }}
+          />
+        );
+
+      // ── Lab Orders ─────────────────────────────────────────────────────
+      case "lab_orders":
+      case "lab_order_create":
+        if (labView === "create") {
+          return (
+            <LabOrderCreate
+              onCancel={openLabOrders}
+              onSuccess={(order) => {
+                setLabOrderData(order);
+                setLabOrderId(order?.id ?? null);
+                setLabView("opticket");
+                setActive("lab_orders");
+              }}
+            />
+          );
+        }
+        if (labView === "detail") {
+          return (
+            <LabOrderDetail
+              orderId={labOrderId}
+              onBack={openLabOrders}
+              onOpticket={(order) => { setLabOrderData(order); setLabView("opticket"); }}
+            />
+          );
+        }
+        if (labView === "opticket") {
+          return (
+            <LabOrderOpticket
+              order={labOrderData}
+              orderId={labOrderId}
+              onBack={openLabOrders}
+            />
+          );
+        }
+        // default: list
+        return (
+          <LabOrders
+            onCreate={() => { setLabView("create"); setActive("lab_order_create"); }}
+            onView={(id) => { setLabOrderId(id); setLabView("detail"); setActive("lab_orders"); }}
+            onOpticket={(order) => { setLabOrderData(order); setLabView("opticket"); setActive("lab_orders"); }}
+          />
+        );
+
       default:
         return <RecDashboardHome onNavigate={setActive} />;
     }
@@ -163,7 +254,10 @@ export default function ReceptionistDashboardSection() {
               >
                 {isActive && <div className="nav-active-bar" />}
                 <div className="nav-icon-wrap">
-                  <Icon name={item.icon} />
+                  {item.key === "staff_directory"
+                    ? <Users size={18} />
+                    : <Icon name={item.icon} />
+                  }
                 </div>
                 {sidebarOpen && <span className="nav-label">{item.label}</span>}
               </button>
@@ -238,6 +332,93 @@ export default function ReceptionistDashboardSection() {
                       key={sub.key}
                       className={`nav-item ${isSubActive ? "active" : ""}`}
                       onClick={() => handleNavClick(sub.key)}
+                      title={sub.label}
+                    >
+                      {isSubActive && <div className="nav-active-bar" />}
+                      <SubIcon iconKey={sub.key} />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* ── Lab Orders nav group ──────────────────── */}
+          <div className="nav-section-label" style={{ marginTop: "12px" }}>
+            {sidebarOpen ? "LABORATORY" : "•••"}
+          </div>
+
+          <div className="nav-group">
+            <button
+              className={`nav-item nav-group-header ${labGroupActive ? "active" : ""}`}
+              onClick={() => {
+                if (sidebarOpen) {
+                  setLabOpen(o => !o);
+                } else {
+                  setSidebarOpen(true);
+                  setLabOpen(true);
+                }
+              }}
+              title={!sidebarOpen ? "Lab Orders" : ""}
+            >
+              {labGroupActive && <div className="nav-active-bar" />}
+              <div className="nav-icon-wrap">
+                <FlaskConical size={18} />
+              </div>
+              {sidebarOpen && (
+                <>
+                  <span className="nav-label" style={{ flex: 1, textAlign: "left" }}>Lab Orders</span>
+                  <ChevronDown
+                    size={14}
+                    className="nav-chevron"
+                    style={{
+                      transform: labOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                      opacity: 0.7,
+                      flexShrink: 0,
+                    }}
+                  />
+                </>
+              )}
+            </button>
+
+            {sidebarOpen && labOpen && (
+              <div className="nav-sub">
+                {LAB_CHILDREN.map(sub => {
+                  const isSubActive =
+                    (sub.key === "lab_orders"       && active === "lab_orders"       && labView === "list") ||
+                    (sub.key === "lab_order_create" && (active === "lab_order_create" || labView === "create"));
+                  return (
+                    <button
+                      key={sub.key}
+                      className={`nav-item nav-sub-item ${isSubActive ? "active" : ""}`}
+                      onClick={() => {
+                        if (sub.key === "lab_order_create") openLabCreate();
+                        else openLabOrders();
+                      }}
+                    >
+                      {isSubActive && <div className="nav-active-bar" />}
+                      <div className="nav-icon-wrap">
+                        <SubIcon iconKey={sub.key} />
+                      </div>
+                      <span className="nav-label">{sub.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {!sidebarOpen && (
+              <div className="nav-collapsed-sub">
+                {LAB_CHILDREN.map(sub => {
+                  const isSubActive =
+                    (sub.key === "lab_orders"       && active === "lab_orders"       && labView === "list") ||
+                    (sub.key === "lab_order_create" && labView === "create");
+                  return (
+                    <button
+                      key={sub.key}
+                      className={`nav-item ${isSubActive ? "active" : ""}`}
+                      onClick={() => sub.key === "lab_order_create" ? openLabCreate() : openLabOrders()}
                       title={sub.label}
                     >
                       {isSubActive && <div className="nav-active-bar" />}
@@ -326,7 +507,7 @@ export default function ReceptionistDashboardSection() {
                   </div>
                   <div className="dropdown-menu-list">
                     <button className="dropdown-item" onClick={() => { setProfileOpen(false); setActive("attendance"); }}>
-                      <UserIcon size={15} /> My Attendance
+                      <UserIcon size={15} /> Attendance
                     </button>
                     <button className="dropdown-item logout-btn" onClick={handleLogout}>
                       <LogOut size={15} /> Sign out
@@ -346,4 +527,4 @@ export default function ReceptionistDashboardSection() {
       </div>
     </div>
   );
-}
+}

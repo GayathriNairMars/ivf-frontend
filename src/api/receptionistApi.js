@@ -17,7 +17,8 @@ export const receptionistApi = {
   },
   createTicket: (payload) => api.post("/receptionist/tickets/", payload).then(res => res.data),
   updateTicketStatus: (ticketId, status) => api.patch(`/receptionist/tickets/${ticketId}/status/`, { status }).then(res => res.data),
-  
+  getStaffDetail: (id) => api.get(`/staff-management/${id}/staff-detail/`).then(res => res.data),
+  getStaffDirectory: (params = {}) => api.get("/staff-management/staff-directory/", { params }) .then(res => res.data),
   //Appointments
   getDailyAppointments: (params) => api.get("/receptionist/appointments/daily/", { params }).then(res => res.data),
   getDepartmentList: () => api.get("/departments/").then(res => res.data),
@@ -30,6 +31,14 @@ export const receptionistApi = {
   getAvailableSlots: (doctorId, date) => api.get('/receptionist/appointments/available-slots/', { params: { doctor_id: doctorId, date: date } }).then(res => res.data),
   getCalendar: (id, start, end) => api.get(`/receptionist/appointments/calendar/${id}/`, { params: { start_date: start, end_date: end } }).then(res => res.data),
   cancelAppointment: (id, payload) => api.patch(`/receptionist/appointments/cancel/${id}/`, payload).then(res => res.data),
+
+  // Lab Orders (Receptionist)
+  getLabOrders: (params) => api.get("/lab/orders/", { params }).then(res => res.data),
+  createLabOrder: (payload) => api.post("/lab/orders/create/", payload).then(res => res.data),
+  getLabOrderDetail: (id) => api.get(`/lab/orders/${id}/`).then(res => res.data),
+  cancelLabOrder: (id) => api.post(`/lab/orders/${id}/cancel/`).then(res => res.data),
+  getAvailableTests: (query = "") => api.get(`/lab/test-types/?simple=true${query}`).then(res => res.data),
+  getLabOrderOpticket: (id) => api.get(`/lab/orders/${id}/opticket/`).then(res => res.data),
 
   // Attendance
   getTodayAttendance: () => api.get("/attendance/my/").then(res => res.data),
