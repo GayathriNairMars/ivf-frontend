@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalBrand } from "../../components/HospitalBrand";
 import "./section.css";
 import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck, ShoppingBag } from "lucide-react";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -115,9 +117,8 @@ export default function PharmacistDashboardSection() {
   return (
     <div className="lab-root">
       <aside className="lab-sidebar">
-        <div className="lab-brand">
-          <h2>HIMS</h2>
-          <p>Pharmacist Portal</p>
+        <div className="lab-brand" style={{ cursor: "pointer" }} onClick={() => setActive("inventory_dashboard")}>
+          <HospitalBrand portal="Pharmacist Portal" logoSize={34} />
         </div>
 
         <nav className="sidebar-nav">

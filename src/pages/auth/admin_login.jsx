@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalLogo } from "../../components/HospitalBrand";
 import { Mail, Lock, Eye, EyeOff, Activity, Phone } from "lucide-react";
 
 export default function AdminLoginPage() {
   const { user, loading, login, logout } = useAuth();
+  const { hospital } = useHospital();
   const navigate = useNavigate();
 
   const [isSignUp, setIsSignUp] = useState(false);
@@ -84,11 +87,9 @@ export default function AdminLoginPage() {
         position: "relative"
       }}>
         <div style={{ position: "relative", zIndex: 1, maxWidth: "500px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
-            <div style={{ background: "#3b82f6", borderRadius: "8px", width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Activity size={28} color="white" />
-            </div>
-            <span style={{ fontSize: "36px", fontWeight: "700", letterSpacing: "2px" }}>HIMS</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
+            <HospitalLogo variant="light" size={48} />
+            <span style={{ fontSize: "28px", fontWeight: "700" }}>{hospital.hospital_name || "Hospital Management System"}</span>
           </div>
           <div style={{ display: "flex", gap: "6px", marginBottom: "40px" }}>
             <div style={{ height: "3px", width: "32px", background: "white", borderRadius: "2px" }}></div>

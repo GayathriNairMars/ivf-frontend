@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronRight, Printer, CheckCircle2, FlaskConical, X } from "lucide-react";
 import receptionistApi from "../../api/receptionistApi";
+import { useHospital } from "../../context/HospitalContext";
 import "./lab_orders.css";
 
 const STATUS_MAP = {
@@ -23,6 +24,7 @@ export default function LabOrderOpticket({ order: initialOrder, orderId: propOrd
   const [loading, setLoading] = useState(!initialOrder);
   const [error, setError]     = useState("");
   const ticketRef             = useRef(null);
+  const { hospital }          = useHospital();
 
   useEffect(() => {
     if (initialOrder) { setOrder(initialOrder); return; }
@@ -51,6 +53,7 @@ export default function LabOrderOpticket({ order: initialOrder, orderId: propOrd
   const handlePrint = () => {
     if (!order) return;
 
+    const hospitalName  = hospital.hospital_name || "HIMS";
     const token       = order.token_number ?? order.id;
     const dateStr      = formatDate(order.ordered_at || order.created_at);
     const priority      = order.priority || "ROUTINE";
@@ -134,7 +137,7 @@ export default function LabOrderOpticket({ order: initialOrder, orderId: propOrd
         <body>
           <div class="ticket">
             <div class="header">
-              <h3>IVF HIMS &middot; Laboratory Request</h3>
+              <h3>${hospitalName} · Laboratory Request</h3>
               <div class="token">#${token}</div>
               <div class="date">${dateStr}</div>
             </div>

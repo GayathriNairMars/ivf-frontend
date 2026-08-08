@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import "./receptionist.css";
 import receptionistApi from "../../api/receptionistApi";
+import { useHospital } from "../../context/HospitalContext";
 
 // ── Status config ─────────────────────────────────────────────────────────────
 const STATUS_CFG = {
@@ -144,6 +145,7 @@ export default function OPQueue({ onNewTicket }) {
   const [data,    setData]    = useState(null);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState(null);
+  const { hospital }          = useHospital();
 
   // filters
   const [filterStatus, setFilterStatus] = useState("");
@@ -441,7 +443,7 @@ function PrintTicketModal({ ticket, onClose }) {
             textAlign: "center", borderBottom: "2px dashed #ccc",
             paddingBottom: 16, marginBottom: 16,
           }}>
-            <h2 style={{ margin: 0, fontSize: "1.1rem", letterSpacing: 1 }}>IVF HIMS</h2>
+            <h2 style={{ margin: 0, fontSize: "1.1rem", letterSpacing: 1 }}>{hospital.hospital_name || "Hospital"}</h2>
             <p style={{ margin: "4px 0", fontSize: "0.75rem", color: "#666" }}>Outpatient Department</p>
           </div>
           <div style={{ textAlign: "center", margin: "16px 0" }}>

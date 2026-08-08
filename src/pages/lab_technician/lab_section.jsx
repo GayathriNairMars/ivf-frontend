@@ -1,6 +1,7 @@
-// Lab Dashboard – layout matched to Receptionist HIMS sidebar nav + Test Types group
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalBrand, HospitalLogo } from "../../components/HospitalBrand";
 import "./lab_section.css";
 import {
   FlaskConical,
@@ -132,16 +133,8 @@ export default function LabDashboardSection() {
       {/* ══ Sidebar ══════════════════════════════════════════════════════════ */}
       <aside className="lab-sidebar">
 
-        <div className="lab-brand" onClick={() => setActive("dashboard")}>
-          <div className="lab-brand-logo">
-            <FlaskConical size={18} />
-          </div>
-          {sidebarOpen && (
-            <div className="lab-brand-info">
-              <span className="lab-brand-name">IVF Clinical Lab</span>
-              <span className="lab-brand-tag">Precision Management</span>
-            </div>
-          )}
+        <div className="lab-brand" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>
+          <HospitalBrand portal="Laboratory Portal" logoSize={34} />
         </div>
 
         <nav className="sidebar-nav">

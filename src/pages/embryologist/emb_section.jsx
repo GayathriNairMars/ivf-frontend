@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalBrand } from "../../components/HospitalBrand";
 import "./emb_section.css";
 import {
   FlaskConical, Microscope, Dna, ClipboardList, BarChart2,
@@ -219,9 +221,8 @@ export default function EmbryologistDashboardSection() {
     <div className="emb-root">
       {/* ── Sidebar ── */}
       <aside className="emb-sidebar">
-        <div className="emb-brand">
-          <h2>HIMS</h2>
-          <p>Embryology Portal</p>
+        <div className="emb-brand" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>
+          <HospitalBrand portal="Embryology Portal" logoSize={34} />
         </div>
 
         <nav className="emb-sidebar-nav">

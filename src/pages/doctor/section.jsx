@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalBrand, HospitalLogo } from "../../components/HospitalBrand";
 import TodaysQueue from "./todays_queue";
 import PatientDetail from "./patient_detail";
 import DoctorProfile from "./doctor_profile";
@@ -50,6 +52,7 @@ export default function DoctorDashboardSection() {
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
+  const { hospital } = useHospital();
 
   const handleLogout = async () => {
     await logout();
@@ -95,6 +98,7 @@ export default function DoctorDashboardSection() {
   }, [active, selectedPatientId]);
 
   const handleNavClick = (key) => {
+    if (key !== "patient_detail") setSelectedPatientId(null);
     setActive(key);
   };
 
@@ -104,13 +108,8 @@ export default function DoctorDashboardSection() {
   return (
     <div className={`sad-root ${sidebarOpen ? "sidebar-open" : "sidebar-collapsed"}`}>
       <aside className="sad-sidebar">
-        <div className="sidebar-brand">
-          <div className="brand-logo" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-          </div>
-          {sidebarOpen && <span className="brand-name" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>HIMS</span>}
+        <div className="sidebar-brand" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>
+          <HospitalBrand portal="Doctor Portal" logoSize={34} />
         </div>
 
         <nav className="sidebar-nav">
@@ -143,29 +142,15 @@ export default function DoctorDashboardSection() {
         <div className="sidebar-footer">
           {sidebarOpen ? (
             <div className="organization-info">
-              <div className="org-avatar-container">
-                <div className="org-avatar">
-                  <div className="org-icon">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 5v14M5 12h14" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              <HospitalLogo size={32} />
               <div className="org-text">
-                <span className="org-name">City General</span>
-                <span className="org-district">Central District</span>
+                <span className="org-name">{hospital.hospital_short_name || hospital.hospital_name}</span>
+                <span className="org-district">{hospital.hospital_tagline || "Clinical Care"}</span>
               </div>
             </div>
           ) : (
             <div className="org-avatar-container" style={{ margin: "0 auto" }}>
-              <div className="org-avatar">
-                <div className="org-icon">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 5v14M5 12h14" />
-                  </svg>
-                </div>
-              </div>
+              <HospitalLogo size={28} />
             </div>
           )}
         </div>

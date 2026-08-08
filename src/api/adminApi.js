@@ -29,6 +29,13 @@ export const adminApi = {
   createTestType: (payload) => api.post("/lab/test-types/", payload).then(res => res.data),
   updateTestType: (id, payload) => api.put(`/lab/test-types/${id}/`, payload).then(res => res.data),
   toggleTestType: (id) => api.delete(`/lab/test-types/${id}/`).then(res => res.data),
+
+  // Hospital Settings
+  getPublicHospitalSettings: () => api.get("/hospital/settings/public/").then(res => res.data),
+  getHospitalSettings: () => api.get("/hospital/settings/").then(res => res.data),
+  getHospitalSettingsById: (id) => api.get(`/hospital/settings/${id}/`).then(res => res.data),
+  updateHospitalSettings: (id, payload, config = {}) => api.patch(`/hospital/settings/${id}/`, payload, config).then(res => res.data),
+  putHospitalSettings: (id, payload, config = {}) => api.put(`/hospital/settings/${id}/`, payload, config).then(res => res.data),
 };
 
 export default adminApi;

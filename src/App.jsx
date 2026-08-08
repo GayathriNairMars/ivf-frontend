@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
+import { HospitalProvider } from "./context/HospitalContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/auth/login";
 import SuperAdminDashboard from "./pages/admin/dashboard/superadmindashboard";
@@ -8,6 +9,7 @@ import AddStaff from "./pages/admin/staff/add_staff";
 import EditStaff from "./pages/admin/staff/edit_staff";
 import StaffList from "./pages/admin/staff/staff_list";
 import DepartmentSection from "./pages/admin/departments/departmentsection";
+import HospitalManagement from "./pages/admin/hospital/HospitalManagement";
 import PatientList from "./pages/admin/patients/patient_list";
 import AddPatient from "./pages/admin/patients/add_patient";
 import EditPatient from "./pages/admin/patients/edit_patient";
@@ -77,83 +79,86 @@ function Unauthorized() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        {/*Public*/}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin-login" element={<AdminLoginPage />} />
-        <Route path="/doctor-login" element={<DoctorLoginPage />} />
-        <Route path="/hr-login" element={<HRLoginPage />} />
-        <Route path="/lab-login" element={<LabLoginPage />} />
-        <Route path="/pharmacist-login" element={<PharmacistLoginPage />} />
-        <Route path="/nurse-login" element={<NurseLoginPage />} />
-        <Route path="/embryologist-login" element={<EmbryologistLoginPage />} />
-        <Route path="/andrologist-login" element={<AndrologistLoginPage />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
+    <HospitalProvider>
+      <AuthProvider>
+        <Routes>
+          {/*Public*/}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin-login" element={<AdminLoginPage />} />
+          <Route path="/doctor-login" element={<DoctorLoginPage />} />
+          <Route path="/hr-login" element={<HRLoginPage />} />
+          <Route path="/lab-login" element={<LabLoginPage />} />
+          <Route path="/pharmacist-login" element={<PharmacistLoginPage />} />
+          <Route path="/nurse-login" element={<NurseLoginPage />} />
+          <Route path="/embryologist-login" element={<EmbryologistLoginPage />} />
+          <Route path="/andrologist-login" element={<AndrologistLoginPage />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/*Super Admin*/}
-        <Route path="/superadmin" element={
-          <ProtectedRoute requiredRole="ADM">
-            <SuperAdminDashboard />
-          </ProtectedRoute>
-        }>
-          <Route index element={<DashboardHome />} />
-          <Route path="staff" element={<StaffList />} />
-          <Route path="staff/add" element={<AddStaff />} />
-          <Route path="staff/edit/:id" element={<EditStaff />} />
-          <Route path="department" element={<DepartmentSection />} />
-          <Route path="patients" element={<PatientList />} />
-          <Route path="patients/add" element={<AddPatient />} />
-          <Route path="patients/:id/edit" element={<EditPatient />} />
-          <Route path="patients/:id" element={<PatientProfile />} />
-          <Route path="emr" element={<EMROverview />} />
-          <Route path="emr/addemrrecord" element={<CreateEMRWrapper />} />
-          <Route path="emr/patients" element={<EMRSection />} />
-          <Route path="emr/patients/:patientId" element={<EMRSection />} />
-          <Route path="/superadmin/emr/patients/:patientId/create" element={<EMRSection />} />
-          <Route path="emr/records" element={<RecordManagement />} />
+          {/*Super Admin*/}
+          <Route path="/superadmin" element={
+            <ProtectedRoute requiredRole="ADM">
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          }>
+            <Route index element={<DashboardHome />} />
+            <Route path="hospital" element={<HospitalManagement />} />
+            <Route path="staff" element={<StaffList />} />
+            <Route path="staff/add" element={<AddStaff />} />
+            <Route path="staff/edit/:id" element={<EditStaff />} />
+            <Route path="department" element={<DepartmentSection />} />
+            <Route path="patients" element={<PatientList />} />
+            <Route path="patients/add" element={<AddPatient />} />
+            <Route path="patients/:id/edit" element={<EditPatient />} />
+            <Route path="patients/:id" element={<PatientProfile />} />
+            <Route path="emr" element={<EMROverview />} />
+            <Route path="emr/addemrrecord" element={<CreateEMRWrapper />} />
+            <Route path="emr/patients" element={<EMRSection />} />
+            <Route path="emr/patients/:patientId" element={<EMRSection />} />
+            <Route path="/superadmin/emr/patients/:patientId/create" element={<EMRSection />} />
+            <Route path="emr/records" element={<RecordManagement />} />
+            
+            {/* Lab Management */}
+            <Route path="lab" element={<Navigate to="/superadmin/lab/dashboard" replace />} />
+            <Route path="lab/dashboard" element={<LabDashboard />} />
+            <Route path="lab/create-test-type" element={<CreateTestType />} />
+            <Route path="lab/test-types" element={<TestTypesList />} />
+            <Route path="lab/test-types/edit/:id" element={<EditTestType />} />
+            <Route path="lab/statistics" element={<LabStatistics />} />
+          </Route>
+
+          {/* Receptionist */}
+          <Route path="/receptionist" element={
+            <ProtectedRoute requiredRole="REC">
+              <ReceptionistDashboardSection />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/hrm/" element={
+            <ProtectedRoute requiredRole="HRM">
+              <HRDashboardSection />
+            </ProtectedRoute>
+          }/>
           
-          {/* Lab Management */}
-          <Route path="lab" element={<Navigate to="/superadmin/lab/dashboard" replace />} />
-          <Route path="lab/dashboard" element={<LabDashboard />} />
-          <Route path="lab/create-test-type" element={<CreateTestType />} />
-          <Route path="lab/test-types" element={<TestTypesList />} />
-          <Route path="lab/test-types/edit/:id" element={<EditTestType />} />
-          <Route path="lab/statistics" element={<LabStatistics />} />
-        </Route>
+          {/* EMBRYOLOGIST */}
+          <Route path="/emb/" element={<ProtectedRoute requiredRole="EMB"><EmbryologistDashboardSection /></ProtectedRoute>} />
+          
+          <Route path="/and/" element={<ProtectedRoute requiredRole="AND"><AndrologistDashboardSection /></ProtectedRoute>} />
+          {/*Other roles-swap placeholder with real comp*/}
+          <Route path="/cco/*" element={<ProtectedRoute requiredRole="CCO"><Placeholder title="Clinical Counsellor Dashboard" /></ProtectedRoute>} />
+          <Route path="/fco/*" element={<ProtectedRoute requiredRole="FCO"><Placeholder title="Financial Counsellor Dashboard" /></ProtectedRoute>} />
+          <Route path="/gyn/*" element={<ProtectedRoute requiredRole="GYN"><DoctorDashboardSection /></ProtectedRoute>} />
+          <Route path="/ane/*" element={<ProtectedRoute requiredRole="ANE"><DoctorDashboardSection /></ProtectedRoute>} />
+          <Route path="/nur/*" element={<ProtectedRoute requiredRole="NUR"><NurseDashboardSection /></ProtectedRoute>} />
+          <Route path="/pha/*" element={<ProtectedRoute requiredRole="PHA"><PharmacistDashboardSection/></ProtectedRoute>} />
+          <Route path="/tec/*" element={<ProtectedRoute requiredRole="TEC"><LabDashboardSection /></ProtectedRoute>} />
+          <Route path="/pat/*" element={<ProtectedRoute requiredRole="PAT"><Placeholder title="Patient Dashboard" /></ProtectedRoute>} />
+          <Route path="/end/*" element={<ProtectedRoute requiredRole="END"><DoctorDashboardSection /></ProtectedRoute>} />
 
-        {/* Receptionist */}
-        <Route path="/receptionist" element={
-          <ProtectedRoute requiredRole="REC">
-            <ReceptionistDashboardSection />
-          </ProtectedRoute>
-        } />
-
-        <Route path="/hrm/" element={
-          <ProtectedRoute requiredRole="HRM">
-            <HRDashboardSection />
-          </ProtectedRoute>
-        }/>
-        
-        {/* EMBRYOLOGIST */}
-        <Route path="/emb/" element={<ProtectedRoute requiredRole="EMB"><EmbryologistDashboardSection /></ProtectedRoute>} />
-        
-        <Route path="/and/" element={<ProtectedRoute requiredRole="AND"><AndrologistDashboardSection /></ProtectedRoute>} />
-        {/*Other roles-swap placeholder with real comp*/}
-        <Route path="/cco/*" element={<ProtectedRoute requiredRole="CCO"><Placeholder title="Clinical Counsellor Dashboard" /></ProtectedRoute>} />
-        <Route path="/fco/*" element={<ProtectedRoute requiredRole="FCO"><Placeholder title="Financial Counsellor Dashboard" /></ProtectedRoute>} />
-        <Route path="/gyn/*" element={<ProtectedRoute requiredRole="GYN"><DoctorDashboardSection /></ProtectedRoute>} />
-        <Route path="/ane/*" element={<ProtectedRoute requiredRole="ANE"><DoctorDashboardSection /></ProtectedRoute>} />
-        <Route path="/nur/*" element={<ProtectedRoute requiredRole="NUR"><NurseDashboardSection /></ProtectedRoute>} />
-        <Route path="/pha/*" element={<ProtectedRoute requiredRole="PHA"><PharmacistDashboardSection/></ProtectedRoute>} />
-        <Route path="/tec/*" element={<ProtectedRoute requiredRole="TEC"><LabDashboardSection /></ProtectedRoute>} />
-        <Route path="/pat/*" element={<ProtectedRoute requiredRole="PAT"><Placeholder title="Patient Dashboard" /></ProtectedRoute>} />
-        <Route path="/end/*" element={<ProtectedRoute requiredRole="END"><DoctorDashboardSection /></ProtectedRoute>} />
-
-        {/*Fallback*/}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </AuthProvider>
+          {/*Fallback*/}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </AuthProvider>
+    </HospitalProvider>
   );
 }
