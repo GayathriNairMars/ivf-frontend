@@ -1,5 +1,7 @@
 import { Outlet,useNavigate,useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+import { useHospital } from "../../../context/HospitalContext";
+import { HospitalBrand, HospitalLogo } from "../../../components/HospitalBrand";
 import { useState,useEffect } from "react";
 import adminApi from "../../../api/adminApi";
 import "./superadmin.css";
@@ -22,6 +24,7 @@ import {
 
 const NAV=[
   {id:"dashboard",label:"Dashboard",icon:LayoutGrid, path:"/superadmin/"},
+  {id:"hospital",label:"Hospital Management",icon:Building2, path:"/superadmin/hospital/"},
   {id:"lab",label:"Lab Management",icon:FlaskConical,path:"/superadmin/lab/", subItems: [
     {id: "lab-dashboard", label: "Dashboard", icon:LayoutGrid, path: "/superadmin/lab/dashboard"},
     {id: "lab-create-test", label: "Create test type", icon:UserPlus, path: "/superadmin/lab/create-test-type"},
@@ -46,6 +49,7 @@ const NAV=[
 
 export default function SuperAdminDashboard() {
    const { user,logout } = useAuth();
+   const { hospital } = useHospital();
    const navigate = useNavigate();
    const location = useLocation();
    const [profileOpen, setProfileOpen] = useState(false);
@@ -76,13 +80,8 @@ export default function SuperAdminDashboard() {
      <div className="superadmin-root">
        {/* Sidebar */}
        <aside className="superadmin-sidebar">
-         <div className="sidebar-brand">
-           <div className="brand-logo">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-               <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-             </svg>
-           </div>
-           <span className="brand-name">HIMS</span>
+         <div className="sidebar-brand" style={{ cursor: "pointer" }} onClick={() => navigate("/superadmin/")}>
+           <HospitalBrand portal="Super Admin" logoSize={36} />
          </div>
          
          <nav className="sidebar-nav">
@@ -128,17 +127,11 @@ export default function SuperAdminDashboard() {
          </nav>
 
          <div className="sidebar-footer">
-           <div className="organization-info" >
-             <div className="org-avatar-container">
-               <div className="org-avatar">
-                 <div className="org-icon">
-                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-                 </div>
-               </div>
-             </div>
+           <div className="organization-info">
+             <HospitalLogo size={36} />
              <div className="org-text">
-               <span className="org-name">City General</span>
-               <span className="org-district">Central District</span>
+               <span className="org-name">{hospital.hospital_short_name || hospital.hospital_name}</span>
+               <span className="org-district">{hospital.hospital_tagline || "Super Admin Portal"}</span>
              </div>
            </div>
          </div>

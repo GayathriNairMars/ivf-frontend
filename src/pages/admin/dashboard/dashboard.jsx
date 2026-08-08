@@ -1,7 +1,8 @@
-import { useCallback, useState,useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import adminApi from "../../../api/adminApi";
 import { ROLE_LABELS } from "../../../constants/constants";
+import { useHospital } from "../../../context/HospitalContext";
 
 // Dashboard Home
 export default function DashboardHome() {
@@ -10,6 +11,7 @@ export default function DashboardHome() {
 	const [sessions, setSessions] = useState([]);
 	const [patients, setPatients] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const { hospital } = useHospital();
 
 	const load= useCallback(async () => {
 	 try{
@@ -34,7 +36,7 @@ export default function DashboardHome() {
 		<div className="dashboard-content">
 		  <div className="dashboard-header">
             <div>
-		          <h2>HIMS Overview</h2>
+		          <h2>{hospital.hospital_short_name || hospital.hospital_name || "HIMS"} Overview</h2>
               <p>Operational data and clinical performance monitoring</p>
             </div>
             <div className="header-actions">

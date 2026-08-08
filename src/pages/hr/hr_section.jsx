@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalBrand } from "../../components/HospitalBrand";
 import HRLeaveManagement from "./hr_leave";
 import HRSettings from "./hr_settings";
 import HRStaffManagement from "./hr_staff_management";
@@ -195,9 +197,8 @@ export default function HRDashboardSection() {
     <div className="hr-root">
       {/* ── Sidebar ── */}
       <aside className="hr-sidebar">
-        <div className="hr-brand">
-          <h2>IVF Speciality Clinic</h2>
-          <p>HR Administration Portal</p>
+        <div className="hr-brand" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>
+          <HospitalBrand portal="HR Administration Portal" logoSize={34} />
         </div>
 
         <nav className="sidebar-nav">

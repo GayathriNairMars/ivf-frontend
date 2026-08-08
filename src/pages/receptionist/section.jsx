@@ -1,6 +1,7 @@
-// Receptionist Dashboard – layout with modern HIMS sidebar nav + Tickets group
 import { useState, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalBrand, HospitalLogo } from "../../components/HospitalBrand";
 import RecDashboardHome from "./dashboard";
 import Appointments from "./appointments";
 import BookAppointment from "./book_appointment";
@@ -227,18 +228,8 @@ export default function ReceptionistDashboardSection() {
       {/* ══ Sidebar ══════════════════════════════════════════════════════════ */}
       <aside className="sad-sidebar">
 
-        <div className="sidebar-brand">
-          <div className="brand-logo" onClick={() => setActive("dashboard")}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-          </div>
-          {sidebarOpen && (
-            <div className="brand-info" onClick={() => setActive("dashboard")}>
-              <span className="brand-name">IVF HIMS</span>
-              <span className="brand-tag">Reception Portal</span>
-            </div>
-          )}
+        <div className="sidebar-brand" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>
+          <HospitalBrand portal="Reception" logoSize={34} />
         </div>
 
         <nav className="sidebar-nav">
@@ -434,17 +425,15 @@ export default function ReceptionistDashboardSection() {
         <div className="sidebar-footer">
           {sidebarOpen ? (
             <div className="organization-info">
-              <div className="org-avatar">
-                <Building2 size={16} color="#ffffff" />
-              </div>
+              <HospitalLogo size={32} />
               <div className="org-text">
-                <span className="org-name">City General Hospital</span>
-                <span className="org-district">Central Branch • OPD</span>
+                <span className="org-name">{hospital.hospital_short_name || hospital.hospital_name}</span>
+                <span className="org-district">{hospital.hospital_tagline || "Reception Portal"}</span>
               </div>
             </div>
           ) : (
             <div className="org-avatar" style={{ margin: "0 auto" }}>
-              <Building2 size={16} color="#ffffff" />
+              <HospitalLogo size={28} />
             </div>
           )}
         </div>

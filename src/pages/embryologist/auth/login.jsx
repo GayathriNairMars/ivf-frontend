@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+import { useHospital } from "../../../context/HospitalContext";
+import { HospitalLogo } from "../../../components/HospitalBrand";
 import { Mail, Lock, Eye, EyeOff, Microscope, FlaskConical } from "lucide-react";
 
 // Teal/Cyan accent for "Forgot password" and links (distinct from purple CTA)
@@ -11,6 +13,7 @@ const BADGE_FG = "#7c3aed";    // violet-600
 
 export default function EmbryologistLoginPage() {
   const { user, loading, login, logout } = useAuth();
+  const { hospital } = useHospital();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ email: "", password: "" });
@@ -122,18 +125,10 @@ export default function EmbryologistLoginPage() {
 
         {/* Top: Logo */}
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
-            <div style={{
-              background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
-              borderRadius: "10px",
-              width: "48px", height: "48px",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 4px 15px rgba(139,92,246,0.4)",
-            }}>
-              <FlaskConical size={26} color="white" />
-            </div>
-            <span style={{ fontSize: "32px", fontWeight: "800", letterSpacing: "3px", color: "white" }}>
-              HIMS
+          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "16px" }}>
+            <HospitalLogo variant="light" size={48} />
+            <span style={{ fontSize: "28px", fontWeight: "800", color: "white" }}>
+              {hospital.hospital_name || "Hospital Management System"}
             </span>
           </div>
 

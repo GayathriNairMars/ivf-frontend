@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalBrand } from "../../components/HospitalBrand";
 import "./section.css";
 import { Activity, ChevronDown, AlertTriangle, ClipboardCheck } from "lucide-react";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -179,9 +181,8 @@ export default function AndrologistDashboardSection() {
     <div className="andro-root">
       {/* ── Sidebar ── */}
       <aside className="andro-sidebar">
-        <div className="andro-brand">
-          <h2>IVF Speciality Clinic</h2>
-          <p>Andrologist Portal</p>
+        <div className="andro-brand" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")}>
+          <HospitalBrand portal="Andrologist Portal" logoSize={34} />
         </div>
 
         <nav className="sidebar-nav">

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useHospital } from "../../context/HospitalContext";
+import { HospitalBrand } from "../../components/HospitalBrand";
 import "./nurse_section.css";
 import { Activity, ChevronDown, AlertTriangle,ClipboardCheck } from "lucide-react";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -166,9 +168,8 @@ export default function NurseDashboardSection() {
     <div className="nur-root">
       {/* ── Sidebar ── */}
       <aside className="nur-sidebar">
-        <div className="nur-brand">
-          <h2>IVF Speciality Clinic</h2>
-          <p>Nurse Portal</p>
+        <div className="nur-brand" style={{ cursor: "pointer" }} onClick={() => setActive("vitals_entry")}>
+          <HospitalBrand portal="Nurse Portal" logoSize={34} />
         </div>
 
         <nav className="sidebar-nav">
