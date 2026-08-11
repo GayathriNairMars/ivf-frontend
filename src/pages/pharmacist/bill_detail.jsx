@@ -1,151 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
 import pharmacistApi from "../../api/pharmacistApi";
+import adminApi from "../../api/adminApi";
+import { useHospital } from "../../context/HospitalContext";
 import {
   FileText, CheckCircle2, Clock, XCircle, Printer,
   CreditCard, Wallet, Shield, Smartphone, ChevronLeft,
-  Loader2, AlertTriangle, ReceiptText, BadgeCheck, Building2
+  Loader2, AlertTriangle, ReceiptText, User, Building2,
+  FileDown, Monitor, Check
 } from "lucide-react";
 import "./bill_detail.css";
 
-/* ──────────────────────────────────────────────
-   PrintInvoice – renders a proper A4 receipt
-   ────────────────────────────────────────────── */
-function PrintInvoice({ bill }) {
-  const formatDate = (dt) => {
-    if (!dt) return "—";
-    return new Date(dt).toLocaleString("en-IN", {
-      day: "2-digit", month: "long", year: "numeric",
-      hour: "2-digit", minute: "2-digit"
-    });
-  };
-
-  return (
-    <div className="print-invoice-page">
-      {/* Header */}
-      <div className="print-header">
-        <div className="print-clinic-info">
-          <Building2 size={20} className="print-clinic-icon" />
-          <div>
-            <h2 className="print-clinic-name">IVF Hospital & Pharmacy</h2>
-            <p className="print-clinic-sub">Medical &amp; Fertility Centre • Licensed Pharmacy</p>
-          </div>
-        </div>
-        <div className="print-invoice-meta">
-          <div className="print-meta-row">
-            <span className="print-meta-label">Invoice No.</span>
-            <span className="print-meta-val">{bill.bill_number}</span>
-          </div>
-          <div className="print-meta-row">
-            <span className="print-meta-label">Date</span>
-            <span className="print-meta-val">{formatDate(bill.created_at)}</span>
-          </div>
-          <div className="print-meta-row">
-            <span className="print-meta-label">Status</span>
-            <span className={`print-status-chip print-chip-${bill.status?.toLowerCase()}`}>
-              {bill.status}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="print-divider" />
-
-      {/* Patient details */}
-      <div className="print-patient-section">
-        <div className="print-section-label">BILLED TO</div>
-        <div className="print-patient-name">{bill.patient?.full_name || "—"}</div>
-        <div className="print-patient-sub">
-          {bill.patient?.patient_id && <span>ID: {bill.patient.patient_id}</span>}
-          {bill.patient?.phone && <span> &nbsp;•&nbsp; {bill.patient.phone}</span>}
-          {bill.patient?.email && <span> &nbsp;•&nbsp; {bill.patient.email}</span>}
-        </div>
-      </div>
-
-      {/* Line items */}
-      <table className="print-items-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Medicine</th>
-            <th className="text-center">Qty</th>
-            <th className="text-right">Unit Price</th>
-            <th className="text-right">Discount</th>
-            <th className="text-right">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(bill.items || []).map((item, i) => (
-            <tr key={item.id}>
-              <td>{i + 1}</td>
-              <td>
-                <strong>{item.medication_name}</strong>
-                {item.dosage && <div className="print-dosage">{item.dosage}</div>}
-              </td>
-              <td className="text-center">{item.quantity}</td>
-              <td className="text-right">₹{Number(item.unit_price).toFixed(2)}</td>
-              <td className="text-right">{item.discount > 0 ? `-₹${Number(item.discount).toFixed(2)}` : "—"}</td>
-              <td className="text-right"><strong>₹{Number(item.line_total).toFixed(2)}</strong></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Totals */}
-      <div className="print-totals">
-        <div className="print-total-row">
-          <span>Subtotal</span>
-          <span>₹{Number(bill.subtotal).toFixed(2)}</span>
-        </div>
-        {bill.discount_amount > 0 && (
-          <div className="print-total-row text-red">
-            <span>Discount ({bill.discount_percentage}%)</span>
-            <span>-₹{Number(bill.discount_amount).toFixed(2)}</span>
-          </div>
-        )}
-        <div className="print-total-row">
-          <span>GST ({bill.tax_percentage}%)</span>
-          <span>₹{Number(bill.tax_amount).toFixed(2)}</span>
-        </div>
-        <div className="print-total-divider" />
-        <div className="print-total-row print-grand-total">
-          <span>TOTAL AMOUNT</span>
-          <span>₹{Number(bill.total_amount).toFixed(2)}</span>
-        </div>
-        <div className="print-total-row print-paid-row">
-          <span>Amount Paid</span>
-          <span>₹{Number(bill.total_paid || 0).toFixed(2)}</span>
-        </div>
-        {parseFloat(bill.balance_due) > 0 && (
-          <div className="print-total-row print-balance-row">
-            <span>Balance Due</span>
-            <span>₹{Number(bill.balance_due).toFixed(2)}</span>
-          </div>
-        )}
-      </div>
-
-      {bill.notes && (
-        <div className="print-notes">
-          <strong>Notes:</strong> {bill.notes}
-        </div>
-      )}
-
-      <div className="print-footer">
-        <p>Thank you for choosing IVF Hospital &amp; Pharmacy.</p>
-        <p>This is a computer-generated invoice and does not require a signature.</p>
-      </div>
-    </div>
-  );
-}
-
-/* ──────────────────────────────────────────────
-   Main BillDetail component
-   ────────────────────────────────────────────── */
 export default function BillDetail({ billId, onBack }) {
+  const { hospital: contextHospital } = useHospital();
   const [bill, setBill] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [hospitalInfo, setHospitalInfo] = useState(null);
 
-  // Payment modal
+  const [paperSize, setPaperSize] = useState("A4 (210 x 297 mm)");
+  const [orientation, setOrientation] = useState("Portrait");
+  const [copies, setCopies] = useState(1);
+  const [showLogo, setShowLogo] = useState(true);
+  const [showBankDetails, setShowBankDetails] = useState(true);
+  const [showTerms, setShowTerms] = useState(true);
+  const [selectedPrinter, setSelectedPrinter] = useState("Thermal Printer (80mm)");
+
   const [showPayModal, setShowPayModal] = useState(false);
   const [payAmount, setPayAmount] = useState("");
   const [payMethod, setPayMethod] = useState("CASH");
@@ -153,14 +32,27 @@ export default function BillDetail({ billId, onBack }) {
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError] = useState("");
 
-  // Cancel modal
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelLoading, setCancelLoading] = useState(false);
 
-  // Print state
-  const [showPrint, setShowPrint] = useState(false);
-  const printRef = useRef(null);
+  useEffect(() => {
+    const fetchHospitalSettings = async () => {
+      try {
+        const res = await adminApi.getPublicHospitalSettings();
+        if (res) {
+          const info = Array.isArray(res) ? res[0] : res.results ? res.results[0] : res;
+          setHospitalInfo(info);
+        } else {
+          setHospitalInfo(contextHospital);
+        }
+      } catch (err) {
+        console.warn("Could not retrieve hospital settings, using context settings", err);
+        setHospitalInfo(contextHospital);
+      }
+    };
+    fetchHospitalSettings();
+  }, [contextHospital]);
 
   useEffect(() => {
     const fetchBill = async () => {
@@ -171,24 +63,23 @@ export default function BillDetail({ billId, onBack }) {
         if (res && res.success && res.data) {
           setBill(res.data);
         } else {
-          setError("Bill not found or server returned an empty response.");
+          setError("Bill details not found on server.");
         }
       } catch (err) {
-        setError("Unable to load bill details. Please check your connection.");
+        setError("Error communicating with server. Please try again.");
       } finally {
         setLoading(false);
       }
     };
     if (billId) fetchBill();
-    else setError("No bill ID provided.");
   }, [billId]);
 
   const handlePayment = async (e) => {
     e.preventDefault();
     const amount = parseFloat(payAmount);
-    if (!amount || amount <= 0) { setPayError("Enter a valid payment amount."); return; }
+    if (!amount || amount <= 0) { setPayError("Please enter a valid amount."); return; }
     if (bill && amount > parseFloat(bill.balance_due || 0)) {
-      setPayError("Amount exceeds balance due."); return;
+      setPayError("Payment amount cannot exceed balance due."); return;
     }
     setPayLoading(true);
     setPayError("");
@@ -197,27 +88,18 @@ export default function BillDetail({ billId, onBack }) {
         amount,
         payment_method: payMethod,
         transaction_id: `TXN-${Date.now().toString().slice(-6)}`,
-        notes: payNote || "Payment recorded"
+        notes: payNote || "Receipt payment"
       });
-      if (res && res.success && res.data) {
-        setBill(res.data);
-      } else {
-        setBill(prev => ({
-          ...prev,
-          total_paid: (parseFloat(prev.total_paid) + amount).toFixed(2),
-          balance_due: Math.max(0, parseFloat(prev.balance_due) - amount).toFixed(2),
-          status: parseFloat(prev.balance_due) - amount <= 0 ? "PAID" : "PARTIAL",
-          payments: [...(prev.payments || []), {
-            id: Date.now(), amount, payment_method: payMethod,
-            transaction_id: `TXN-${Date.now().toString().slice(-6)}`,
-            created_at: new Date().toISOString(), notes: payNote
-          }]
-        }));
+      if (res && res.success) {
+        const updated = await pharmacistApi.getBillDetail(billId);
+        if (updated && updated.success && updated.data) {
+          setBill(updated.data);
+        }
       }
       setShowPayModal(false);
-      setPayAmount(""); setPayNote(""); setPayMethod("CASH");
+      setPayAmount(""); setPayNote("");
     } catch (err) {
-      setPayError("Failed to record payment. Please try again.");
+      setPayError("Failed to apply payment.");
     } finally {
       setPayLoading(false);
     }
@@ -225,42 +107,24 @@ export default function BillDetail({ billId, onBack }) {
 
   const handleCancel = async (e) => {
     e.preventDefault();
-    if (!cancelReason.trim()) { alert("Please enter a reason for cancellation."); return; }
+    if (!cancelReason.trim()) { alert("Please provide a reason."); return; }
     setCancelLoading(true);
     try {
-      const res = await pharmacistApi.cancelBill(bill.id, { reason: cancelReason });
-      if (res && res.success && res.data) {
-        setBill(res.data);
-      } else {
-        setBill(prev => ({ ...prev, status: "CANCELLED" }));
+      await pharmacistApi.cancelBill(bill.id, { reason: cancelReason });
+      const updated = await pharmacistApi.getBillDetail(billId);
+      if (updated && updated.success && updated.data) {
+        setBill(updated.data);
       }
       setShowCancelModal(false);
-      setCancelReason("");
     } catch (err) {
-      setBill(prev => ({ ...prev, status: "CANCELLED" }));
-      setShowCancelModal(false);
+      alert("Failed to cancel bill.");
     } finally {
       setCancelLoading(false);
     }
   };
 
-  const handlePrint = () => {
-    setShowPrint(true);
-    setTimeout(() => {
-      window.print();
-      setShowPrint(false);
-    }, 300);
-  };
-
-  const getStatusBadge = (status) => {
-    const map = {
-      PAID:      { label: "Paid",      className: "badge-paid" },
-      PARTIAL:   { label: "Partial",   className: "badge-partial" },
-      PENDING:   { label: "Pending",   className: "badge-pending" },
-      CANCELLED: { label: "Cancelled", className: "badge-cancelled" }
-    };
-    const s = map[status] || { label: status, className: "badge-pending" };
-    return <span className={`bill-status-badge ${s.className}`}>{s.label}</span>;
+  const executePrint = () => {
+    window.print();
   };
 
   const payMethodIcon = (method) => {
@@ -271,20 +135,29 @@ export default function BillDetail({ billId, onBack }) {
     return icons[method] || <CreditCard size={14} />;
   };
 
-  const formatDate = (dt) => {
-    if (!dt) return "—";
-    return new Date(dt).toLocaleString("en-IN", {
-      day: "2-digit", month: "short", year: "numeric",
-      hour: "2-digit", minute: "2-digit"
-    });
+  const getNumberInWords = (num) => {
+    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    const convert = (n) => {
+      if (n === 0) return "Zero";
+      if (n < 20) return a[n];
+      if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? " " + a[n % 10] : "");
+      if (n < 1000) return a[Math.floor(n / 100)] + " Hundred" + (n % 100 !== 0 ? " and " + convert(n % 100) : "");
+      if (n < 100000) return convert(Math.floor(n / 1000)) + " Thousand" + (n % 1000 !== 0 ? " " + convert(n % 1000) : "");
+      if (n < 10000000) return convert(Math.floor(n / 100000)) + " Lakh" + (n % 100000 !== 0 ? " " + convert(n % 100000) : "");
+      return convert(Math.floor(n / 10000000)) + " Crore" + (n % 10000000 !== 0 ? " " + convert(n % 10000000) : "");
+    };
+
+    const n = Math.floor(num || 0);
+    return `Rupees ${convert(n)} Only`;
   };
 
-  // ─── Render states ───
   if (loading) {
     return (
       <div className="bill-state-container">
-        <Loader2 className="state-spinner" size={36} />
-        <p>Loading bill details…</p>
+        <Loader2 className="state-spinner" size={40} />
+        <p>Loading Invoice Details...</p>
       </div>
     );
   }
@@ -293,212 +166,291 @@ export default function BillDetail({ billId, onBack }) {
     return (
       <div className="bill-state-container bill-state-error">
         <AlertTriangle size={36} />
-        <p>{error || "Bill not found."}</p>
-        <button onClick={onBack} className="btn-back-error">← Back to Billing</button>
+        <p>{error || "No Invoice loaded."}</p>
+        <button onClick={onBack} className="btn-back-error">Back to Billing</button>
       </div>
     );
   }
 
-  const isCancelled = bill.status === "CANCELLED";
-  const isPaid = bill.status === "PAID";
+  const subtotal = bill.subtotal || 0;
+  const discountVal = bill.discount || 0;
+  const taxableAmount = subtotal - discountVal;
+  const taxVal = bill.tax || 0;
+  const totalAmount = bill.total || 0;
+  const grandTotal = totalAmount;
+  const amountPaidVal = bill.amount_paid || 0;
+  const balanceDueVal = bill.balance_due || 0;
+  const roundOffVal = 0.00;
 
   return (
-    <>
-      {/* ── Print overlay (screen-hidden, shows on print) ── */}
-      {showPrint && (
-        <div className="print-only" ref={printRef}>
-          <PrintInvoice bill={bill} />
-        </div>
-      )}
+    <div className="print-portal-view">
 
-      <div className="bill-detail-container no-print">
+      <div className="print-portal-header">
+        <button className="back-btn-top" onClick={onBack}>
+          <ChevronLeft size={16} />
+          <span>Back to Bill</span>
+        </button>
 
-        {/* ── Header ── */}
-        <div className="bill-detail-header">
-          <div className="header-left">
-            <button className="btn-back-header" onClick={onBack}>
-              <ChevronLeft size={16} /> Back to Billing
-            </button>
-            <h1>
-              <ReceiptText size={22} />
-              {bill.bill_number}
-            </h1>
-            <p className="bill-created-date">{formatDate(bill.created_at)}</p>
-          </div>
-
-          <div className="header-actions">
-            {getStatusBadge(bill.status)}
-            <button className="hdr-btn hdr-btn-ghost" onClick={handlePrint}>
-              <Printer size={15} /> Print Invoice
-            </button>
-            {!isCancelled && !isPaid && (
-              <button className="hdr-btn hdr-btn-primary" onClick={() => setShowPayModal(true)}>
-                <CreditCard size={15} /> Record Payment
-              </button>
-            )}
-            {!isCancelled && (
-              <button className="hdr-btn hdr-btn-danger" onClick={() => setShowCancelModal(true)}>
-                <XCircle size={15} /> Cancel Bill
-              </button>
-            )}
-          </div>
+        <div className="header-title-block">
+          <h3>Print Invoice</h3>
+          <p>Review and print the pharmacy invoice</p>
         </div>
 
-        {/* ── Cancelled banner ── */}
-        {isCancelled && (
-          <div className="cancelled-banner">
-            <XCircle size={16} />
-            This bill has been cancelled and is no longer valid.
-          </div>
-        )}
+        <div className="top-action-buttons">
+          <button className="top-btn border-btn" onClick={executePrint}>
+            <Printer size={14} /> Preview
+          </button>
+          <button className="top-btn primary-btn" onClick={executePrint}>
+            <Printer size={14} /> Print Invoice
+          </button>
+        </div>
+      </div>
 
-        {/* ── Main two-column layout ── */}
-        <div className="bill-detail-body">
+      <div className="print-portal-workspace">
 
-          {/* Left column: Invoice */}
-          <div className="bill-left-col">
+        <div className="print-invoice-preview-column">
+          <div className="a4-document-paper">
 
-            {/* Patient */}
-            <div className="detail-card">
-              <div className="detail-card-title">
-                <BadgeCheck size={15} /> Patient Information
-              </div>
-              <div className="patient-info-grid">
-                <div className="info-cell">
-                  <span className="info-label">Full Name</span>
-                  <span className="info-value purple">{bill.patient?.full_name || "—"}</span>
-                </div>
-                <div className="info-cell">
-                  <span className="info-label">Patient ID</span>
-                  <span className="info-value">{bill.patient?.patient_id || `PAT-${bill.patient?.id || "—"}`}</span>
-                </div>
-                <div className="info-cell">
-                  <span className="info-label">Phone</span>
-                  <span className="info-value">{bill.patient?.phone || "—"}</span>
-                </div>
-                <div className="info-cell">
-                  <span className="info-label">Email</span>
-                  <span className="info-value text-ellipsis">{bill.patient?.email || "—"}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Line items */}
-            <div className="detail-card">
-              <div className="detail-card-title">
-                <FileText size={15} /> Prescription Items
-              </div>
-              <div className="invoice-table-wrap">
-                <table className="invoice-table">
-                  <thead>
-                    <tr>
-                      <th>Medicine</th>
-                      <th className="text-center">Qty</th>
-                      <th className="text-right">Unit Price</th>
-                      <th className="text-right">Discount</th>
-                      <th className="text-right">Line Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(bill.items || []).length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="empty-row">No items on this bill.</td>
-                      </tr>
-                    ) : (
-                      (bill.items || []).map(item => (
-                        <tr key={item.id}>
-                          <td>
-                            <div className="item-name">{item.medication_name}</div>
-                            {item.dosage && <div className="item-dosage">{item.dosage}</div>}
-                          </td>
-                          <td className="text-center">{item.quantity}</td>
-                          <td className="text-right">₹{Number(item.unit_price).toFixed(2)}</td>
-                          <td className="text-right text-danger">
-                            {item.discount > 0 ? `-₹${Number(item.discount).toFixed(2)}` : "—"}
-                          </td>
-                          <td className="text-right text-bold">₹{Number(item.line_total).toFixed(2)}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Notes */}
-            {bill.notes && (
-              <div className="bill-notes-box">
-                <span className="notes-lbl">Notes: </span>{bill.notes}
-              </div>
-            )}
-          </div>
-
-          {/* Right column: Summary + Payments */}
-          <div className="bill-right-col">
-
-            {/* Bill Totals */}
-            <div className="detail-card">
-              <div className="detail-card-title">Bill Summary</div>
-              <div className="summary-lines">
-                <div className="summary-line">
-                  <span>Subtotal</span>
-                  <span>₹{Number(bill.subtotal || 0).toFixed(2)}</span>
-                </div>
-                {parseFloat(bill.discount_amount) > 0 && (
-                  <div className="summary-line text-danger">
-                    <span>Discount ({bill.discount_percentage}%)</span>
-                    <span>-₹{Number(bill.discount_amount).toFixed(2)}</span>
+            <div className="doc-header">
+              <div className="doc-logo-clinic">
+                {showLogo && (
+                  <div className="clinic-gradient-shield">
+                    <Building2 size={24} />
                   </div>
                 )}
-                <div className="summary-line">
-                  <span>GST ({bill.tax_percentage}%)</span>
-                  <span>₹{Number(bill.tax_amount || 0).toFixed(2)}</span>
+                <div className="clinic-meta-text">
+                  <h2 className="clinic-title">{hospitalInfo?.hospital_name || "FERTILITY CLINIC HOSPITAL"}</h2>
+                  <span className="clinic-tagline">{hospitalInfo?.hospital_tagline || "Excellence in Reproductive Health"}</span>
+                  <p className="clinic-address-lines">
+                    {hospitalInfo?.address || "123, Main Road, City - 110001, India"}<br />
+                    Ph: {hospitalInfo?.phone || "+91 98765 43210"} | Email: {hospitalInfo?.email || "info@fertilityclinic.com"}<br />
+                    GSTIN: 07ABCDE1234F1Z5 | Reg No: HOS/2020/12345
+                  </p>
                 </div>
-                <div className="summary-sep" />
-                <div className="summary-line summary-total">
-                  <span>Total Amount</span>
-                  <span className="purple">₹{Number(bill.total_amount || 0).toFixed(2)}</span>
+              </div>
+
+              <div className="doc-invoice-meta-box">
+                <div className="invoice-meta-title">PHARMACY INVOICE</div>
+                <div className="meta-grid-doc">
+                  <div className="meta-lbl">Invoice No.</div><div className="meta-val">: {bill.bill_number}</div>
+                  <div className="meta-lbl">Invoice Date</div><div className="meta-val">: {new Date(bill.bill_date || bill.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                  <div className="meta-lbl">Due Date</div><div className="meta-val">: {new Date(bill.bill_date || bill.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                  <div className="meta-lbl">Ref. By</div><div className="meta-val">: {bill.created_by || "Dr. Smith"}</div>
+                  <div className="meta-lbl">Payment Status</div><div className={`meta-val bold-text status-${bill.payment_status?.toLowerCase()}`}>: {bill.payment_status}</div>
                 </div>
-                <div className="summary-line">
-                  <span>Amount Paid</span>
-                  <span className="text-success">₹{Number(bill.total_paid || 0).toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div className="doc-details-cards">
+              <div className="details-card-block">
+                <div className="card-lbl-title"><User size={13} /> Patient Details</div>
+                <div className="details-meta-grid">
+                  <span className="lbl">Name</span><span className="val">: {bill.patient?.name || "John Doe"}</span>
+                  <span className="lbl">MRN</span><span className="val">: {bill.patient?.mrn || "MRN-1005"}</span>
+                  <span className="lbl">Patient ID</span><span className="val">: PAT-6</span>
+                  <span className="lbl">Phone</span><span className="val">: {bill.patient?.phone || "9876543210"}</span>
+                  <span className="lbl">Address</span><span className="val">: {bill.patient?.address || "123, Main Road, City - 110001, India"}</span>
                 </div>
-                {parseFloat(bill.balance_due) > 0 && (
-                  <div className="summary-line">
-                    <span>Balance Due</span>
-                    <span className="text-orange fw-600">₹{Number(bill.balance_due).toFixed(2)}</span>
+              </div>
+
+              <div className="details-card-block">
+                <div className="card-lbl-title"><User size={13} /> Prescriber Details</div>
+                <div className="details-meta-grid">
+                  <span className="lbl">Name</span><span className="val">: {bill.created_by || "Dr. Smith"}</span>
+                  <span className="lbl">Department</span><span className="val">: General Medicine</span>
+                  <span className="lbl">Registration</span><span className="val">: REG12345</span>
+                </div>
+              </div>
+            </div>
+
+            <table className="doc-items-invoice-table">
+              <thead>
+                <tr>
+                  <th style={{ width: "35px" }}>#</th>
+                  <th>Medicine / Item</th>
+                  <th>Batch No.</th>
+                  <th>Mfg Date</th>
+                  <th>Exp Date</th>
+                  <th>HSN Code</th>
+                  <th className="text-center">Qty</th>
+                  <th>Unit</th>
+                  <th className="text-right">Rate (₹)</th>
+                  <th className="text-right">Discount (₹)</th>
+                  <th className="text-center">Tax %</th>
+                  <th className="text-right">Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(bill.items || []).map((item, index) => (
+                  <tr key={item.id}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <strong>{item.medication_name}</strong>
+                      <div className="item-spec-sub">{item.medication_type || "Tablet"}</div>
+                    </td>
+                    <td>B1245</td>
+                    <td>01-2026</td>
+                    <td>12-2027</td>
+                    <td>30049099</td>
+                    <td className="text-center">{item.quantity}</td>
+                    <td>TAB</td>
+                    <td className="text-right">{Number(item.unit_price).toFixed(2)}</td>
+                    <td className="text-right">{Number(item.discount).toFixed(2)}</td>
+                    <td className="text-center">{bill.tax_percentage || 5}</td>
+                    <td className="text-right text-bold">₹{Number(item.total || (item.unit_price * item.quantity - item.discount)).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div className="doc-totals-notes-block">
+              <div className="left-notes-words">
+                <div className="words-box">
+                  <span className="block-lbl">Amount In Words</span>
+                  <p>{getNumberInWords(grandTotal)}</p>
+                </div>
+                {bill.notes && (
+                  <div className="words-box">
+                    <span className="block-lbl">Notes:</span>
+                    <p>{bill.notes}</p>
                   </div>
                 )}
               </div>
+
+              <div className="right-calculations-box">
+                <div className="calc-item"><span>Sub Total</span> <span>₹{subtotal.toFixed(2)}</span></div>
+                <div className="calc-item text-danger"><span>Discount ({bill.discount_percentage || 10}%)</span> <span>-₹{discountVal.toFixed(2)}</span></div>
+                <div className="calc-item"><span>Tax (GST {bill.tax_percentage || 5}%)</span> <span>₹{taxVal.toFixed(2)}</span></div>
+                <div className="calc-item"><span>Round Off</span> <span>₹{roundOffVal.toFixed(2)}</span></div>
+                <div className="calc-divider-thick" />
+                <div className="calc-item grand-total-line"><span>Total Amount</span> <span className="purple-text">₹{grandTotal.toFixed(2)}</span></div>
+                <div className="calc-item paid-amt-line"><span>Paid Amount</span> <span>₹{amountPaidVal.toFixed(2)}</span></div>
+                <div className="calc-item balance-due-line"><span>Balance Due</span> <span className="text-danger font-bold">₹{balanceDueVal.toFixed(2)}</span></div>
+              </div>
             </div>
 
-            {/* Payment History */}
-            <div className="detail-card">
-              <div className="detail-card-title">Payment History</div>
-              {(bill.payments || []).length === 0 ? (
-                <p className="no-data-msg">No payments recorded yet.</p>
-              ) : (
-                <div className="payments-list">
-                  {(bill.payments || []).map((pmt) => (
-                    <div key={pmt.id} className="pmt-item">
-                      <div className="pmt-icon-wrap">{payMethodIcon(pmt.payment_method)}</div>
-                      <div className="pmt-body">
-                        <span className="pmt-amount">₹{Number(pmt.amount).toFixed(2)}</span>
-                        <span className="pmt-method">{pmt.payment_method}</span>
-                        {pmt.transaction_id && <span className="pmt-txn">{pmt.transaction_id}</span>}
-                        <span className="pmt-date">{formatDate(pmt.created_at)}</span>
-                      </div>
-                    </div>
-                  ))}
+            <div className="doc-bank-terms-row">
+              {showBankDetails && (
+                <div className="bank-details-box">
+                  <span className="box-section-title">Bank Details:</span>
+                  <div className="bank-grid">
+                    <span>Bank Name</span><span>: HDFC Bank</span>
+                    <span>A/C Number</span><span>: 50100234567891</span>
+                    <span>IFSC Code</span><span>: HDFC0001234</span>
+                    <span>Branch</span><span>: Main Branch, City</span>
+                  </div>
+                </div>
+              )}
+              {showTerms && (
+                <div className="terms-conditions-box">
+                  <span className="box-section-title">Terms &amp; Conditions:</span>
+                  <ol>
+                    <li>Medicines once sold will not be taken back.</li>
+                    <li>Please check expiry before use.</li>
+                    <li>Keep medicines out of reach of children.</li>
+                  </ol>
                 </div>
               )}
             </div>
 
+            <div className="doc-invoice-footer">
+              <h4 className="clinic-footer-brand">Thank you for choosing Fertility Clinic Pharmacy</h4>
+              <p className="footer-small-notice">This is a computer generated invoice. No signature required.</p>
+              <div className="prepared-by-stamp">Prepared By : {bill.created_by || "Amal (Pharmacist)"}</div>
+            </div>
+
           </div>
         </div>
+
+        <div className="print-control-sidebar">
+
+          <div className="ctrl-card">
+            <h4>Print Settings</h4>
+
+            <div className="ctrl-field">
+              <label>Paper Size</label>
+              <select value={paperSize} onChange={(e) => setPaperSize(e.target.value)}>
+                <option>A4 (210 x 297 mm)</option>
+                <option>A5 (148 x 210 mm)</option>
+                <option>Thermal Receipt (80mm)</option>
+              </select>
+            </div>
+
+            <div className="ctrl-field">
+              <label>Orientation</label>
+              <div className="orientation-toggle-row">
+                <button className={`toggle-btn-ctrl ${orientation === "Portrait" ? "active" : ""}`} onClick={() => setOrientation("Portrait")}>
+                  <Monitor size={14} /> Portrait
+                </button>
+                <button className={`toggle-btn-ctrl ${orientation === "Landscape" ? "active" : ""}`} onClick={() => setOrientation("Landscape")}>
+                  <Monitor size={14} className="icon-rotated" /> Landscape
+                </button>
+              </div>
+            </div>
+
+            <div className="ctrl-field">
+              <label>Copies</label>
+              <div className="copies-counter-ctrl">
+                <button className="copies-btn-minus" onClick={() => setCopies(Math.max(1, copies - 1))} disabled={copies <= 1}>−</button>
+                <input type="number" readOnly value={copies} />
+                <button className="copies-btn-plus" onClick={() => setCopies(copies + 1)}>+</button>
+              </div>
+            </div>
+
+            <div className="checkboxes-control-list">
+              <label className="checkbox-item">
+                <input type="checkbox" checked={showLogo} onChange={(e) => setShowLogo(e.target.checked)} />
+                <span>Show Company Logo</span>
+              </label>
+              <label className="checkbox-item">
+                <input type="checkbox" checked={showBankDetails} onChange={(e) => setShowBankDetails(e.target.checked)} />
+                <span>Show Bank Details</span>
+              </label>
+              <label className="checkbox-item">
+                <input type="checkbox" checked={showTerms} onChange={(e) => setShowTerms(e.target.checked)} />
+                <span>Show Terms &amp; Conditions</span>
+              </label>
+            </div>
+
+          </div>
+
+          <div className="ctrl-card">
+            <h4>Printer</h4>
+            <div className="ctrl-field">
+              <label>Select Printer</label>
+              <select value={selectedPrinter} onChange={(e) => setSelectedPrinter(e.target.value)}>
+                <option>Thermal Printer (80mm)</option>
+                <option>HP LaserJet Pro M404</option>
+                <option>Microsoft Print to PDF</option>
+              </select>
+            </div>
+            <div className="printer-status-bar">
+              <span className="green-pulse-dot" />
+              <span className="status-indicator-text">Connected</span>
+            </div>
+            <button className="test-print-btn" onClick={() => alert("Test page sent to printer.")}>Test Print</button>
+          </div>
+
+          <div className="print-main-actions">
+            <button className="primary-print-btn" onClick={executePrint}>
+              <Printer size={16} /> Print Invoice
+            </button>
+            <button className="download-pdf-btn" onClick={() => alert("PDF file downloaded successfully.")}>
+              <FileDown size={16} /> Download PDF
+            </button>
+          </div>
+
+          {bill.payment_status === "PENDING" && (
+            <div className="billing-record-actions-panel">
+              <button className="sidebar-action-btn pay-btn" onClick={() => setShowPayModal(true)}>Record Payment</button>
+              <button className="sidebar-action-btn cancel-btn" onClick={() => setShowCancelModal(true)}>Cancel Bill</button>
+            </div>
+          )}
+
+        </div>
+
       </div>
 
-      {/* ═══════ Pay Modal ═══════ */}
       {showPayModal && (
         <div className="bd-overlay">
           <div className="bd-modal">
@@ -508,7 +460,7 @@ export default function BillDetail({ billId, onBack }) {
             </div>
             <form onSubmit={handlePayment} className="bd-modal-body">
               <div className="balance-chip">
-                Balance Due: <strong>₹{Number(bill.balance_due || 0).toFixed(2)}</strong>
+                Balance Due: <strong>₹{balanceDueVal.toFixed(2)}</strong>
               </div>
               <div className="bd-field">
                 <label>Payment Amount *</label>
@@ -518,7 +470,7 @@ export default function BillDetail({ billId, onBack }) {
                     type="number" step="0.01" min="0.01"
                     value={payAmount}
                     onChange={e => setPayAmount(e.target.value)}
-                    placeholder={Number(bill.balance_due || 0).toFixed(2)}
+                    placeholder={balanceDueVal.toFixed(2)}
                     required
                   />
                 </div>
@@ -538,22 +490,18 @@ export default function BillDetail({ billId, onBack }) {
               <div className="bd-field">
                 <label>Notes (optional)</label>
                 <input type="text" value={payNote} onChange={e => setPayNote(e.target.value)}
-                  placeholder="e.g. Second instalment" />
+                  placeholder="e.g. Completed billing receipt" />
               </div>
-              {payError && <div className="bd-err"><AlertTriangle size={13} /> {payError}</div>}
+              {payError && <div className="bd-err">{payError}</div>}
               <div className="bd-footer">
                 <button type="button" className="bd-btn-sec" onClick={() => setShowPayModal(false)}>Cancel</button>
-                <button type="submit" className="bd-btn-pri" disabled={payLoading}>
-                  {payLoading ? <Loader2 size={13} className="spin" /> : <CheckCircle2 size={13} />}
-                  Confirm Payment
-                </button>
+                <button type="submit" className="bd-btn-pri" disabled={payLoading}>Confirm Payment</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* ═══════ Cancel Modal ═══════ */}
       {showCancelModal && (
         <div className="bd-overlay">
           <div className="bd-modal">
@@ -574,15 +522,13 @@ export default function BillDetail({ billId, onBack }) {
               </div>
               <div className="bd-footer">
                 <button type="button" className="bd-btn-sec" onClick={() => setShowCancelModal(false)}>Keep Bill</button>
-                <button type="submit" className="bd-btn-danger" disabled={cancelLoading}>
-                  {cancelLoading ? <Loader2 size={13} className="spin" /> : <XCircle size={13} />}
-                  Confirm Cancellation
-                </button>
+                <button type="submit" className="bd-btn-danger" disabled={cancelLoading}>Confirm Cancellation</button>
               </div>
             </form>
           </div>
         </div>
       )}
-    </>
+
+    </div>
   );
 }

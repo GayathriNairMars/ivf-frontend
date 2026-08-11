@@ -41,6 +41,10 @@ import TestTypesList from "./pages/admin/lab/test_types";
 import CreateTestType from "./pages/admin/lab/create_test_type";
 import EditTestType from "./pages/admin/lab/edit_test_type";
 
+import FinanceDashboard from "./pages/admin/finance/FinanceDashboard";
+import JournalEntries from "./pages/admin/finance/JournalEntries";
+import ProcessBill from "./pages/admin/finance/ProcessBill";
+
 import AndrologistLoginPage from "./pages/andrology/auth/login";
 import AndrologistDashboardSection from "./pages/andrology/section";
 
@@ -124,6 +128,12 @@ export default function App() {
             <Route path="lab/test-types" element={<TestTypesList />} />
             <Route path="lab/test-types/edit/:id" element={<EditTestType />} />
             <Route path="lab/statistics" element={<LabStatistics />} />
+
+            {/* Finance Management */}
+            <Route path="finance" element={<Navigate to="/superadmin/finance/dashboard" replace />} />
+            <Route path="finance/dashboard" element={<FinanceDashboard />} />
+            <Route path="finance/journal-entries" element={<JournalEntries />} />
+            <Route path="finance/process-bill" element={<ProcessBill />} />
           </Route>
 
           {/* Receptionist */}

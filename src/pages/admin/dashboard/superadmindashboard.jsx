@@ -19,7 +19,11 @@ import {
   User,
   Users,
   UserPlus,
-  FlaskConical
+  FlaskConical,
+  Landmark,
+  ReceiptText,
+  BookOpen,
+  FilePlus2
 } from "lucide-react";
 
 const NAV=[
@@ -44,6 +48,11 @@ const NAV=[
   {id:"patients",label:"Patient Directory",icon:User,path:"/superadmin/patients/", subItems: [
     {id: "patients-manage", label: "Manage patient", icon: Users, path: "/superadmin/patients/"},
     {id: "patients-add", label: "Register patient", icon: UserPlus, path: "/superadmin/patients/add"}
+  ]},
+  {id:"finance",label:"Finance",icon:Landmark,path:"/superadmin/finance/", subItems: [
+    {id: "finance-dashboard", label: "General Ledger", icon: BookOpen, path: "/superadmin/finance/dashboard"},
+    {id: "finance-journal", label: "Journal Entries", icon: ReceiptText, path: "/superadmin/finance/journal-entries"},
+    {id: "finance-bill", label: "Process Bill", icon: FilePlus2, path: "/superadmin/finance/process-bill"}
   ]},
 ]
 
