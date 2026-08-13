@@ -445,3 +445,45 @@ button.logout-btn:hover,
   font-weight: 600;
 }
 
+/* Hospital branding area */
+.lab-brand {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 14px;
+  overflow: hidden;
+}
+
+/* Make the HospitalBrand fit inside the sidebar */
+.lab-brand > * {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Hospital name */
+.lab-brand h1,
+.lab-brand h2,
+.lab-brand h3,
+.lab-brand p {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* If HospitalBrand uses a flex layout */
+.lab-brand [class*="brand"] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Sidebar itself */
+.lab-sidebar {
+  width: 218px;
+  min-width: 218px;
+  max-width: 218px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.lab-brand {
+    overflow: visible !important;
+    width: 100% !important;
+}

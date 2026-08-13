@@ -432,3 +432,182 @@
 .legend-swatch.bg-medium { background: #cbd5e1; }
 .legend-swatch.bg-dark { background: #64748b; }
 .legend-swatch.bg-deep { background: #1e293b; }
+
+/* =========================================================
+   API-DRIVEN BOTTOM CHARTS
+========================================================= */
+
+.lab-bar-chart-container {
+  height: 210px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 24px;
+  padding: 25px 20px 0;
+  overflow-x: auto;
+}
+
+.lab-bar-group {
+  position: relative;
+  height: 100%;
+  flex: 1;
+  min-width: 70px;
+  max-width: 140px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.lab-bar {
+  width: 48px;
+  min-height: 10px;
+
+  background: #c7f5ef;
+
+  border-radius: 6px 6px 0 0;
+
+  transition:
+    height 0.3s ease,
+    opacity 0.2s ease;
+}
+
+.lab-bar.highlighted {
+  background: #111827;
+}
+
+.lab-bar:hover {
+  opacity: 0.75;
+}
+
+.lab-bar-value {
+  position: absolute;
+
+  bottom: calc(100% - 12px);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #475569;
+
+  white-space: nowrap;
+}
+
+.lab-bar-label {
+  width: 100%;
+
+  margin-top: 9px;
+
+  font-size: 11px;
+  color: #64748b;
+
+  text-align: center;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   TEST STATUS
+========================================================= */
+
+.lab-status-chart {
+  display: flex;
+  flex-direction: column;
+
+  gap: 17px;
+
+  padding: 18px 5px;
+}
+
+.lab-status-row {
+  width: 100%;
+}
+
+.lab-status-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 7px;
+}
+
+.lab-status-info span {
+  font-size: 13px;
+  font-weight: 500;
+
+  color: #475569;
+}
+
+.lab-status-info strong {
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #1e293b;
+}
+
+.lab-status-track {
+  width: 100%;
+  height: 9px;
+
+  background: #eef2f7;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.lab-status-fill {
+  height: 100%;
+
+  border-radius: 10px;
+
+  transition: width 0.4s ease;
+}
+
+
+/* Status colours */
+
+.lab-status-fill.ordered {
+  background: #8b5cf6;
+}
+
+.lab-status-fill.completed {
+  background: #10b981;
+}
+
+.lab-status-fill.progress {
+  background: #f59e0b;
+}
+
+.lab-status-fill.cancelled {
+  background: #ef4444;
+}
+
+.lab-status-fill.draft {
+  background: #64748b;
+}
+
+.lab-status-fill.default {
+  background: #94a3b8;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.lab-chart-empty {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #9ca3af;
+  font-size: 13px;
+}
