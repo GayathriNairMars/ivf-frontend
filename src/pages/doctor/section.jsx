@@ -14,15 +14,13 @@ import DoctorAttendance from "./doctor_attendance";
 import Icon from "../../components/Icons";
 import { IoNotificationsOutline } from "react-icons/io5";
 import "../receptionist/receptionist.css"; // Reuse the layout CSS
-import { CalendarCheck, CalendarOff,Pill,Building2,ClipboardCheck,User2Icon,LayoutGrid } from "lucide-react";
+import { CalendarCheck, CalendarOff,Pill,Building2,ClipboardCheck,User2Icon,LayoutGrid,UserIcon } from "lucide-react";
 import DoctorLabManagement from "./doctor_lab";
 
 const NAV_TOP = [
   { key: "dashboard", label: "Dashboard", lucideIcon: <LayoutGrid size={17} /> },
   { key: "patients", label: "Patient Directory", lucideIcon: <User2Icon size={17} /> },
   { key: "calendar", label: "My Calendar", lucideIcon: <CalendarCheck size={17} /> },
-  { key: "attendance", label: "My Attendance", lucideIcon: <ClipboardCheck size={17} /> },
-  { key: "leave", label: "Leave Management", lucideIcon: <CalendarOff size={17} /> },
   { key: "prescriptions", label: "Prescriptions", lucideIcon: <Pill size={17} /> },
   { key: "lab_management", label: "Lab Management", lucideIcon: <Pill size={17} /> },
 ];
@@ -215,6 +213,12 @@ export default function DoctorDashboardSection() {
                       <circle cx="12" cy="7" r="4" />
                     </svg>
                     My Profile
+                  </button>
+                  <button className="dropdown-item" onClick={() => { setProfileOpen(false); setActive("attendance"); }}>
+                      <UserIcon size={15} /> Attendance
+                  </button>
+                  <button className="dropdown-item" onClick={() => { setProfileOpen(false); setActive("leave"); }}>
+                      <CalendarOff size={17} /> Leave Management
                   </button>
                   <button
                     className="dropdown-item logout-btn"

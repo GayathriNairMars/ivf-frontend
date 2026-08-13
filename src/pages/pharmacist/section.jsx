@@ -3,7 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useHospital } from "../../context/HospitalContext";
 import { HospitalBrand } from "../../components/HospitalBrand";
 import "./section.css";
-import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck, ShoppingBag } from "lucide-react";
+import { FlaskConical, Beaker, FileText, Activity, ChevronDown, ClipboardCheck, ShoppingBag,UserIcon } from "lucide-react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { ROLE_LABELS } from "../../constants/constants";
 import arathyAvatar from "../../assets/arathy_avatar.png";
@@ -60,9 +60,6 @@ const NAV = [
     ]
   },
   {
-    key:"attendance", label:"My Attendance", icon: <ClipboardCheck size={16} />, 
-  },
-  {
     key: "settings", label: "Settings",
     icon: <Activity size={16} />,
   },
@@ -117,7 +114,7 @@ export default function PharmacistDashboardSection() {
   return (
     <div className="lab-root">
       <aside className="lab-sidebar">
-        <div className="lab-brand" style={{ cursor: "pointer" }} onClick={() => setActive("inventory_dashboard")}>
+        <div className="sidebar-brand" style={{ cursor: "pointer" }} onClick={() => setActive("dashboard")} >
           <HospitalBrand portal="Pharmacist Portal" logoSize={34} />
         </div>
 
@@ -212,6 +209,9 @@ export default function PharmacistDashboardSection() {
                     <h4>{user?.full_name || "Pharmacist"}</h4>
                     <p>{ROLE_LABELS?.[user?.role] || user?.role || "Pharmacy"}</p>
                   </div>
+                  <button className="dropdown-item" onClick={() => { setProfileOpen(false); setActive("attendance"); }}>
+                      <UserIcon size={15} /> Attendance
+                  </button>
 
                   <button className="dropdown-item logout-btn" onClick={handleLogout}>
                     Sign out

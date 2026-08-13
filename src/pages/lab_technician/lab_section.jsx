@@ -35,8 +35,6 @@ const NAV_TOP = [
   { key: "pending_tests", label: "Pending Tests", icon: <ClipboardCheck size={18} /> },
   { key: "in_progress", label: "In Progress", icon: <Beaker size={18} /> },
   { key: "completed", label: "Completed", icon: <FileText size={18} /> },
-  { key: "attendance", label: "My Attendance", icon: <Calendar size={18} /> },
-  { key: "reports", label: "Analytics", icon: <Activity size={18} /> },
 ];
 
 function ComingSoon({ title }) {

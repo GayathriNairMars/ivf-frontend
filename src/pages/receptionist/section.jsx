@@ -75,6 +75,7 @@ export default function ReceptionistDashboardSection() {
   const [labOpen,      setLabOpen]      = useState(false);
   const [profileOpen,  setProfileOpen]  = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
+    const { hospital } = useHospital();
 
   // Lab Orders sub-view state
   const [labView,      setLabView]      = useState("list"); // list | create | detail | opticket
@@ -421,22 +422,6 @@ export default function ReceptionistDashboardSection() {
             )}
           </div>
         </nav>
-
-        <div className="sidebar-footer">
-          {sidebarOpen ? (
-            <div className="organization-info">
-              <HospitalLogo size={32} />
-              <div className="org-text">
-                <span className="org-name">{hospital.hospital_short_name || hospital.hospital_name}</span>
-                <span className="org-district">{hospital.hospital_tagline || "Reception Portal"}</span>
-              </div>
-            </div>
-          ) : (
-            <div className="org-avatar" style={{ margin: "0 auto" }}>
-              <HospitalLogo size={28} />
-            </div>
-          )}
-        </div>
       </aside>
 
       {/* ══ Main area ════════════════════════════════════════════════════════ */}
